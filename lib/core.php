@@ -154,7 +154,7 @@ echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="'.wp_create_no
 				break;
 			
 			case 'select': //Выпадающее меню
-				echo '<select name="'.$field['id'].'" seze="1">';
+				echo '<select class="tkgp_select tkgp_group_select" name="'.$field['id'].'" seze="1">';
 				$current_val = get_post_meta($post->ID,$field['id'],true);
 				$current_val = $current_val == '' ? '1' : $current_val;
 				
@@ -246,19 +246,31 @@ function save_tkgp_post_meta($post_id) {
 		return $post_id;
 		
 	foreach ($tkgp_settings_fields as $field) {
-		if(!isset($_POST[ $field['id'] ]))
+		if(!isset($_POST[ $field['id'] ])) {
+			delete_post_meta($post_id, $field['id']);
 			continue;
+		}
 			
 		$old = get_post_meta($post_id, $field['id'], true);
+		$m_type;
+		$cnt_idx;
 		
 		switch ($field['id']) {
 			case 'manager':
-				if(isset($_POST['mgr_cnt']) && is_numeric($_POST['mgr_cnt'])) {
-					$cnt = $_POST['mgr_cnt'];
+				$m_type = 'manager';
+				$cnt_idx = 'mgr_cnt';
+			case 'group':
+				if(!isset($m_type)) {
+					$m_type = 'group';
+					$cnt_idx = 'grp_cnt';
+				}
+							
+				if(isset($_POST[$cnt_idx]) && is_numeric($_POST[$cnt_idx])) {
+					$cnt = $_POST[$cnt_idx];
 					$new = array();
 					
 					for($i=0; $i< $cnt; $i++) {
-						$idx = 'manager'.($i > 0 ? $i : '');
+						$idx = $m_type.($i > 0 ? $i : '');
 						
 						if(isset($_POST[$idx]) && is_numeric($_POST[$idx]))
 							array_push($new, $_POST[$idx]);
@@ -273,12 +285,11 @@ function save_tkgp_post_meta($post_id) {
 				
 				break;
 			
-			case 'group':
-			
-				break;
-				
 			default:
+				$new = $_POST[ $field['id'] ];
 				
+				if($old != $new)
+					update_post_meta($post_id, $field['id'], $new);
 				break;
 		}
 	}
