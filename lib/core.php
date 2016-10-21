@@ -25,7 +25,7 @@
 				'exclude_from_search' => false,
 				'menu_position'	=> 15,
 				'hierarchical' => false,
-				'supports' => array( 'title', 'editor', 'comments', 'thumbnail' ),
+				'supports' => array( 'title', 'editor', 'comments', 'thumbnail',  ),
 				'taxonomies' => array( 'tkgp_tax' ),
 				'has_archive' => true	
 			)
@@ -177,14 +177,14 @@ echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="'.wp_create_no
 					echo '<input type="text" placeholder= value="'.$current_val.'">';
 				}*/
 				elseif($current_val != '') {
-					echo '<div class="tkgp_user button">
-						'.get_user_by('ID',$current_val)->display_name.'
+					echo '<div class="button tkgp_user">
+						<a id="tkgp_user">'.get_user_by('ID',$current_val)->display_name.'</a>
 						<input type="hidden" name="'.$field['id'].'" value="'.$current_val.'">
 					</div>';
 				}
 
-				echo '<div class="tkgp_btn tkgp_user_add button">
-					'._x('Add','Project Settings','tkgp').'
+				echo '<div class="button tkgp_btn tkgp_user_add">
+					<a id="tkgp_user_add">'._x('Add','Project Settings','tkgp').'</a>
 					</div>';
 				break;
 			
@@ -202,15 +202,15 @@ echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="'.wp_create_no
 						echo '<input type="text" value="'.$current_val.'">';
 					}*/
 					elseif($current_val != '') {
-						echo '<div class="tkgp_user button">
-							'.groups_get_group(array('group_id' => $current_val))->name.'
+						echo '<div class="tkgp_group button">
+							<a id="tkgp_group" data-permalink="">'.groups_get_group(array('group_id' => $current_val))->name.'</a>
 							<input type="hidden" name="'.$field['id'].'" value="'.$current_val.'">
 						</div>';
 					}
 				}
 				
-				echo '<div class="tkgp_btn tkgp_user_add button">
-						'._x('Add','Project Settings','tkgp').'
+				echo '<div class="tkgp_btn tkgp_group_add button">
+						<a id="tkgp_group_add">'._x('Add','Project Settings','tkgp').'</a>
 						</div>';
 				
 				break;
@@ -229,12 +229,64 @@ echo '</table>';
 
 function show_tkgp_metabox_steps() {
 ?>
-<input type="hidden" name="tkgp_meta_settings_nonce" value="<?php echo wp_create_nonce(basename(__FILE__).'_steps'); ?>" />
+<input type="hidden" name="tkgp_meta_steps_nonce" value="<?php echo wp_create_nonce(basename(__FILE__).'_steps'); ?>" />
 
 <?php
+}
+
+function save_tkgp_post_meta($post_id) {
+	global $tkgp_settings_fields;
+	
+	if(!wp_verify_nonce($_POST['tkgp_meta_settings_nonce'],basename(__FILE__).'_settings') 
+			|| !wp_verify_nonce($_POST['tkgp_meta_steps_nonce'],basename(__FILE__).'_steps')
+			|| $_POST['post_type'] != 'tk_project'
+			|| (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+			|| !current_user_can('edit_page', $post_id) //проверка на доступ пользователя, потом нужно будет доработать
+	  )
+		return $post_id;
+		
+	foreach ($tkgp_settings_fields as $field) {
+		if(!isset($_POST[ $field['id'] ]))
+			continue;
+			
+		$old = get_post_meta($post_id, $field['id'], true);
+		
+		switch ($field['id']) {
+			case 'manager':
+				if(isset($_POST['mgr_cnt']) && is_numeric($_POST['mgr_cnt'])) {
+					$cnt = $_POST['mgr_cnt'];
+					$new = array();
+					
+					for($i=0; $i< $cnt; $i++) {
+						$idx = 'manager'.($i > 0 ? $i : '');
+						
+						if(isset($_POST[$idx]) && is_numeric($_POST[$idx]))
+							array_push($new, $_POST[$idx]);
+					}
+					
+					$new = serialize($new);	
+				}
+				else $new = $_POST[ $field['id'] ];
+				
+				if($old != $new)
+					update_post_meta($post_id, $field['id'], $new);
+				
+				break;
+			
+			case 'group':
+			
+				break;
+				
+			default:
+				
+				break;
+		}
+	}
+	return $post_id;
 }
 
 	add_action( 'init', 'create_tkgp_type' );
 	add_action( 'init', 'create_tkgp_taxonomy');
 	add_action( 'add_meta_boxes', 'create_tkgp_meta_box');
+	add_action( 'save_post', 'save_tkgp_post_meta',0);
 ?>

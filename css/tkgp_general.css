@@ -1,15 +1,7 @@
 .tkgp_btn, .tkgp_user {
 	display: inline;
-}
-
-.tkgp_user_del {
+	margin-left: 5px;
 	padding: 3px;
-}
-
-.tkgp_btn, .tkgp_user {
-	display: inline;
-	margin-right: 5px;
-	/*padding: 3px;
 	border: 1px solid;
-	border-radius: 5px;*/
+	border-radius: 5px;
 }

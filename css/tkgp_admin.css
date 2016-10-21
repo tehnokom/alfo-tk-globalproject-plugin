@@ -2,15 +2,10 @@
 	display: inline;
 }
 
-.tkgp_user_del {
-	padding: 3px;
-}
-
-.tkgp_btn, .tkgp_user {
+.tkgp_btn, .tkgp_user, .tkgp_group {
 	display: inline;
-	margin-right: 5px;
-	/*padding: 3px;
+	margin-left: 5px !important;
+	padding: 3px;
 	border: 1px solid;
-	border-radius: 5px;*/
+	border-radius: 5px;
 }
-
