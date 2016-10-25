@@ -5,7 +5,7 @@ function tkgp_ajax_get_user() {
 		$users;
 		if(isset($_POST['tkgp_ufilter']) || isset($_POST['tkgp_ugfilter'])) {
 			//выводим отформатированный список найденных пользователей
-			echo "Ураааа!!!";
+			
 		} else {
 			//выводим форму
 ?>
