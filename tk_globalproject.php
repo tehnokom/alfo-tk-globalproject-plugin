@@ -26,6 +26,7 @@ define('TKGP_ROOT', plugin_dir_path(__FILE__));
 define('TKGP_URL', plugin_dir_url(__FILE__));
 
 require_once(TKGP_ROOT.'lib/core.php');
+require_once(TKGP_ROOT.'lib/ajax_functions.php');
 
 function tkgp_css_registry() {
 	wp_register_style('tkgp_general', TKGP_URL.'css/tkgp_general.css');

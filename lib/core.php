@@ -63,6 +63,11 @@
 
 /*Метаданные для Проектов*/
 function create_tkgp_meta_box() {
+	global $post;
+		
+	if($post->post_type != 'tk_project')
+		return;
+	
 	add_meta_box('tk_project_meta_settings', 
 		_x( 'Settings of Project', 'tk_meta', 'tkgp' ), 
 		'show_tkgp_metabox_settings',
@@ -132,6 +137,9 @@ $tkgp_settings_fields = array (
 function show_tkgp_metabox_settings() {
 	global $tkgp_settings_fields;
 	global $post;
+	
+	if($post->post_type != 'tk_project')
+		return;
 
 echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="'.wp_create_nonce(basename(__FILE__).'_settings').'" />
 <table class="form-table">';
