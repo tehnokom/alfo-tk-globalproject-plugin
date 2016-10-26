@@ -61,6 +61,20 @@
 	width: 100%;
 }
 
+#tkgp_modal_user .alt1 {
+	background: #dbf6d6;
+}
+
+#tkgp_modal_user .alt2 {
+	background: #f3f3f3;
+}
+
+#tkgp_modal_user .container {
+	overflow-y: auto;
+	overflow-x: auto;
+	height: 80%;
+}
+
 #tkgp_modal_user th {
 	margin-left: 3px;
 	background: #ffedce;

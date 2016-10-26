@@ -59,7 +59,7 @@ function handler_tkgp_search(e) {
 }
 
 function show_search_result(resp) {
-	alert(resp);
+	$j('#tkgp_modal_user table tbody').append(resp);
 }
 
 function handler_tkgp_add_user() {

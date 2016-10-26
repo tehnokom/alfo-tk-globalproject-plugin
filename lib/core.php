@@ -152,7 +152,7 @@ echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="'.wp_create_no
 			case 'radio': //Переключатель
 				echo '<ul class="tkgp_radio">';
 				$current_val = get_post_meta($post->ID,$field['id'],true);
-				$current_val = $current_val == '' ? '0' : $current_val;
+				$current_val = $current_val == '' ? '1' : $current_val;
 				
 				foreach ($field['options'] as $option) {
 					echo '<li><input type="radio" name="'.$field['id'].'" '.($current_val == $option['value'] ? 'checked="true"' : '').' value="'.$option['value'].'">'.$option['label'].'</li>';	
@@ -260,6 +260,8 @@ function save_tkgp_post_meta($post_id) {
 		}
 			
 		$old = get_post_meta($post_id, $field['id'], true);
+		$new = array();
+		$user_meta;
 		$m_type;
 		$cnt_idx;
 		
@@ -275,18 +277,30 @@ function save_tkgp_post_meta($post_id) {
 							
 				if(isset($_POST[$cnt_idx]) && is_numeric($_POST[$cnt_idx])) {
 					$cnt = $_POST[$cnt_idx];
-					$new = array();
 					
 					for($i=0; $i< $cnt; $i++) {
 						$idx = $m_type.($i > 0 ? $i : '');
 						
-						if(isset($_POST[$idx]) && is_numeric($_POST[$idx]))
+						if(isset($_POST[$idx]) && is_numeric($_POST[$idx])) {
 							array_push($new, $_POST[$idx]);
+							
+							if($field['id'] == 'manager') {
+								//тут же добавляем текущий проект к выбранному пользователю
+								update_user_meta($_POST[$idx], 'tkgp_projects', $post_id);
+								
+							}
+						}
 					}
 					
 					$new = serialize($new);	
 				}
-				else $new = $_POST[ $field['id'] ];
+				else {
+					$new = $_POST[ $field['id'] ];
+					if($field['id'] == 'manager') {
+						//тут же добавляем текущий проект к выбранному пользователю
+						update_user_meta($_POST[ $field['id'] ], 'tkgp_projects', $post_id);
+					}
+				}
 				
 				if($old != $new)
 					update_post_meta($post_id, $field['id'], $new);
