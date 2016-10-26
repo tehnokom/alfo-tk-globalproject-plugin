@@ -17,18 +17,18 @@ function tkgp_ajax_get_user()
             ));
 
             if (!empty($query->results)) {
-                echo tkgpPrintResults($query->results);
+                echo tkgp_print_results($query->results);
             }
         } else {
             //выводим форму
-            echo tkgpPrintForm();
+            echo tkgp_print_form();
         }
     }
 
     wp_die();
 }
 
-function tkgpPrintForm()
+function tkgp_print_form()
 {
     return '<div id="tkgp_modal_user">
                 <span id="modal_close">x</span>
@@ -48,7 +48,7 @@ function tkgpPrintForm()
             <div id="tkgp_overlay"></div>';
 }
 
-function tkgpPrintResults($results)
+function tkgp_print_results($results)
 {
     $html = '';
     if ($results) {
