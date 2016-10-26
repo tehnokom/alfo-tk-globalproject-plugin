@@ -98,6 +98,7 @@ function tkgp_create_meta_box()
 /**
  * Список полей для настройки Проекта
  * text|select|radio|date|select_user|select_group
+ * return array
  */
 function tkgp_get_settings_fields() {
     return array(
@@ -292,7 +293,7 @@ function tkgp_save_post_meta($post_id)
     }
 
     foreach (tkgp_get_settings_fields() as $field) {
-        if (!isset($_POST[$field['id']])) {
+        if (empty($_POST[$field['id']])) {
             delete_post_meta($post_id, $field['id']);
             continue;
         }
@@ -313,13 +314,13 @@ function tkgp_save_post_meta($post_id)
                     $cnt_idx = 'grp_cnt';
                 }
 
-                if (isset($_POST[$cnt_idx]) && is_numeric($_POST[$cnt_idx])) {
+                if (!empty($_POST[$cnt_idx]) && is_numeric($_POST[$cnt_idx])) {
                     $cnt = $_POST[$cnt_idx];
 
                     for ($i = 0; $i < $cnt; $i++) {
                         $idx = $m_type . ($i > 0 ? $i : '');
 
-                        if (isset($_POST[$idx]) && is_numeric($_POST[$idx])) {
+                        if (!empty($_POST[$idx]) && is_numeric($_POST[$idx])) {
                             array_push($new, $_POST[$idx]);
 
                             if ($field['id'] == 'manager') {
