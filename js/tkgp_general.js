@@ -45,7 +45,12 @@ function handler_tkgp_select_radio() {
 }
 
 function handler_tkgp_search(e) {
-	if($j(this).val().length >= 2 && e.keyCode !== 27) {
+	if(/*$j(this).val().length >= 2 &&*/ e.keyCode !== 27) {
+		if($j(this).val().length == 0) {
+			show_search_result('');
+			return;		
+		}
+		
 		$j.ajax({url: ajaxurl,
 				 type: 'POST',
 				 async: true,
@@ -59,6 +64,7 @@ function handler_tkgp_search(e) {
 }
 
 function show_search_result(resp) {
+	$j('tr.alt1, tr.alt2').remove();
 	$j('#tkgp_modal_user table tbody').append(resp);
 }
 
@@ -70,6 +76,8 @@ function handler_tkgp_add_user() {
 					$j('body').append(resp);
 					$j('#tkgp_modal_user #modal_close, #tkgp_overlay').click(function(){
 							$j('#tkgp_modal_user, #tkgp_overlay').removeAttr('style');
+							show_search_result();
+							$j('#tkgp_search').attr('value','');
 						});
 					$j('#tkgp_search').keypress(handler_tkgp_search);
 					$j('#tkgp_modal_user, #tkgp_overlay').css('display', 'block');

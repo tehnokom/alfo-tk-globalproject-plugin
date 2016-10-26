@@ -47,5 +47,11 @@ function tkgp_admin_js_registry() {
 add_action('wp_enqueue_scripts', 'tkgp_admin_css_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_css_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_js_registry');
-	
+
+function tkgp_add_search_columns($columns) {
+	$columns[] = 'display_name';
+	return $columns;
+}
+
+add_filter('user_search_columns', 'tkgp_add_search_columns');	
 ?>
