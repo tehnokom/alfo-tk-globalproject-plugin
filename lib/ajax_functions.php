@@ -1,5 +1,6 @@
 <?php
 
+
 function tkgp_ajax_get_user()
 {
     if (is_admin()) {
@@ -28,6 +29,9 @@ function tkgp_ajax_get_user()
     wp_die();
 }
 
+/**
+ * @return string
+ */
 function tkgp_print_form()
 {
     return '<div id="tkgp_modal_user">
@@ -48,6 +52,10 @@ function tkgp_print_form()
             <div id="tkgp_overlay"></div>';
 }
 
+/**
+ * @param $results
+ * @return string
+ */
 function tkgp_print_results($results)
 {
     $html = '';
