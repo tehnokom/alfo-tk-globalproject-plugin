@@ -1,85 +1,85 @@
-.tkgp_radio li{
-	display: inline;
+.tkgp_radio li {
+    display: inline;
 }
 
 .tkgp_btn, .tkgp_user, .tkgp_group {
-	display: inline;
-	margin-left: 5px !important;
-	padding: 3px;
-	border: 1px solid;
-	border-radius: 5px;
+    display: inline;
+    margin-left: 5px !important;
+    padding: 3px;
+    border: 1px solid;
+    border-radius: 5px;
 }
 
 #tkgp_modal_user {
-	width: 40%; 
-	height: 40%;
-	min-height: 180px;
-	border: 2px #000 solid;
-	background: #fff;
-	position: fixed;
-	top: 40%;
-	left: 30%;
-	margin: -150px auto auto auto;
-	#margin-top: -150px;
-	#margin-left: -150px; 
-	display: none; 
-	opacity: 1.0; 
-	z-index: 9999; 
-	padding: 20px 10px;
+    width: 40%;
+    height: 40%;
+    min-height: 180px;
+    border: 2px #000 solid;
+    background: #fff;
+    position: fixed;
+    top: 40%;
+    left: 30%;
+    margin: -150px auto auto auto;
+    #margin-top: -150px;
+    #margin-left: -150px;
+    display: none;
+    opacity: 1.0;
+    z-index: 9999;
+    padding: 20px 10px;
 }
 
 #tkgp_search {
-	width: 50%;
+    width: 50%;
 }
 
 #tkgp_modal_user #modal_close {
-	width: 21px;
-	height: 21px;
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	cursor: pointer;
-	display: block;
+    width: 21px;
+    height: 21px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    display: block;
 }
 
 #tkgp_overlay {
-	z-index:9998;
-	position:fixed; 
-	background-color:#000;
-	opacity:0.8;
-	-moz-opacity:0.8;
-	filter:alpha(opacity=80);
-	width:100%; 
-	height:100%;
-	top:0; 
-	left:0;
-	cursor:pointer;
-	display:none;
+    z-index: 9998;
+    position: fixed;
+    background-color: #000;
+    opacity: 0.8;
+    -moz-opacity: 0.8;
+    filter: alpha(opacity=80);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    display: none;
 }
 
 #tkgp_modal_user table {
-	width: 100%;
+    width: 100%;
 }
 
 #tkgp_modal_user .alt1 {
-	background: #dbf6d6;
+    background: #dbf6d6;
 }
 
 #tkgp_modal_user .alt2 {
-	background: #f3f3f3;
+    background: #f3f3f3;
 }
 
 #tkgp_modal_user .container {
-	overflow-y: auto;
-	overflow-x: auto;
-	height: 80%;
+    overflow-y: auto;
+    overflow-x: auto;
+    height: 80%;
 }
 
 #tkgp_modal_user th {
-	margin-left: 3px;
-	background: #ffedce;
+    margin-left: 3px;
+    background: #ffedce;
 }
 
 #tkgp_modal_user th:last-child {
-	width: 35px;
+    width: 35px;
 }
