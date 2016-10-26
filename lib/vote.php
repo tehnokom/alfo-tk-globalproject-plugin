@@ -1,5 +1,5 @@
 <?php
-    class tk_gvote {
+    class TK_GVote {
     	
     };
 ?>

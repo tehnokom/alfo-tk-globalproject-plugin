@@ -8,7 +8,7 @@ function tkgp_ajax_get_user()
             //выводим отформатированный список найденных пользователей
             $pr = new TK_GProject($_POST['post_id']);
             $query = new WP_User_Query(array(
-                'exclude' => $pr->get_managers(),
+                'exclude' => $pr->getManagers(),
                 'fields' => array('ID', 'display_name'),
                 'orderby' => 'display_name',
                 'search' => '*' . $_POST['tkgp_ufilter'] . '*',
