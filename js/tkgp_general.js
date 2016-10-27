@@ -71,7 +71,7 @@ function tkgp_handler_search(e) {
                 }
             })
             .done(function (result) {
-                tkgp_show_search_result(result)
+                tkgp_show_search_result(result);
             })
             .fail(function (jqXHR, textStatus) {
                 console.log("Request failed: " + textStatus);

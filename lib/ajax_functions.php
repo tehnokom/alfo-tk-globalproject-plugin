@@ -34,15 +34,15 @@ function tkgp_ajax_get_user()
  */
 function tkgp_print_form()
 {
-    return '<div id="tkgp_modal_user">
+?> '<div id="tkgp_modal_user">
                 <span id="modal_close">x</span>
                 <input id="tkgp_search" type="text"
-                       placeholder="<?php echo _x(\'Search...\', \'Project Settings\', \'tkgp\'); ?>">
+                       placeholder="<?php echo _x('Search...', 'Project Settings', 'tkgp'); ?>">
                 <hr>
                 <div class="container">
                     <table>
                         <tr>
-                            <th> <?php echo _x(\'Users\', \'Project Settings\', \'tkgp\'); ?></th>
+                            <th> <?php echo _x('Users', 'Project Settings', 'tkgp'); ?></th>
                             <th>v</th>
                         </tr>
                     </table>
@@ -50,6 +50,7 @@ function tkgp_print_form()
             </div>
             </div>
             <div id="tkgp_overlay"></div>';
+<?php
 }
 
 /**
