@@ -216,8 +216,16 @@ function tkgp_show_metabox_settings()
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? wp_get_current_user()->ID : $current_val;
 
-                if (is_array($current_val) == true) { //если несколько менеджеров
-
+                if (is_array($current_val) == true && !empty($current_val)) { //если несколько менеджеров
+					echo '<input name="mgr_cnt" value="' . count($current_val) . '" type="hidden">';
+					$uidx = 0;
+					foreach ($current_val as $user) {
+						echo '<div class="button tkgp_user">
+								<a id="tkgp_user">' . get_user_by('ID', $user)->display_name . '</a>
+								<input type="hidden" name="' . $field['id'] . ($uidx == 0 ? '' : $uidx) . '" value="' . $user . '">
+							</div>';
+						++$uidx;
+					}
                 } /*elseif($current_val == '') { //если не назначен менеджер
 					echo '<input type="text" placeholder= value="'.$current_val.'">';
 				}*/
@@ -331,7 +339,7 @@ function tkgp_save_post_meta($post_id)
                         }
                     }
 
-                    $new = serialize($new);
+                    //$new = serialize($new);
                 } else {
                     $new = $_POST[$field['id']];
                     if ($field['id'] == 'manager') {

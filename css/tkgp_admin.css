@@ -26,6 +26,7 @@
     opacity: 1.0;
     z-index: 9999;
     padding: 20px 10px;
+    box-sizing: border-box;
 }
 
 #tkgp_search {
@@ -72,7 +73,16 @@
 #tkgp_modal_user .container {
     overflow-y: auto;
     overflow-x: auto;
-    height: 80%;
+    height: 74%;
+    margin-bottom: 5px;
+}
+
+#tkgp_modal_footer, #tkgp_modal_header {
+	height: 12%;
+}
+
+#tkgp_add_selected {
+	float: right;
 }
 
 #tkgp_modal_user th {

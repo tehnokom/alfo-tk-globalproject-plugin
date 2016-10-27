@@ -79,9 +79,39 @@ function tkgp_handler_search(e) {
     }
 }
 
+function tkgp_handler_add_selected() {
+	var selected = $j('#tkgp_modal_user input[type="checkbox"]:checked');
+	
+	if($j('input[name="mgr_cnt"]').length == 0) {
+		$j('.tkgp_user_add').before('<input name="mgr_cnt" value="1" type="hidden">');	
+	}
+	
+	var offset = parseInt($j('input[name="mgr_cnt"]').val(),10);
+	
+	for(var i = 0; i < selected.length; i++) {
+		var cur = selected[i];
+		var display_name = ($j(cur).parents('tr').find('td:first-child')).text();
+		var output = '<div class="button tkgp_user"><a id="tkgp_user">' + display_name + '</a><input type="hidden" name="manager' + (i + offset) + '" value="' + cur.value + '"></div>';
+		$j('.tkgp_user_add').before(output);
+	}
+	
+	$j('input[name="mgr_cnt"]').val(offset + selected.length);
+	tkgp_hide_user_modal();
+}
+
 function tkgp_show_search_result(resp) {
     $j('tr.alt1, tr.alt2').remove();
     $j('#tkgp_modal_user table tbody').append(resp);
+}
+
+function tkgp_show_user_modal() {
+	$j('#tkgp_modal_user, #tkgp_overlay').css('display', 'block');
+}
+
+function tkgp_hide_user_modal() {
+	$j('#tkgp_modal_user, #tkgp_overlay').removeAttr('style');
+	$j('#tkgp_search').attr('value', '');
+	tkgp_show_search_result();
 }
 
 function tkgp_handler_add_user() {
@@ -90,16 +120,15 @@ function tkgp_handler_add_user() {
             function (resp) {
                 var $j = jQuery.noConflict();
                 $j('body').append(resp);
+                $j('#tkgp_add_selected').click(tkgp_handler_add_selected);
                 $j('#tkgp_modal_user #modal_close, #tkgp_overlay').click(function () {
-                    $j('#tkgp_modal_user, #tkgp_overlay').removeAttr('style');
-                    tkgp_show_search_result();
-                    $j('#tkgp_search').attr('value', '');
-                });
+	                   tkgp_hide_user_modal();
+                	});
                 $j('#tkgp_search').keypress(tkgp_handler_search);
-                $j('#tkgp_modal_user, #tkgp_overlay').css('display', 'block');
+                tkgp_show_user_modal();
             }
         );
     } else {
-        $j('#tkgp_modal_user, #tkgp_overlay').css('display', 'block');
+        tkgp_show_user_modal();
     }
 }
