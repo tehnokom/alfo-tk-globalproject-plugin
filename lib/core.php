@@ -30,7 +30,7 @@ function tkgp_create_type()
             'exclude_from_search' => false,
             'menu_position' => 15,
             'hierarchical' => false,
-            'supports' => array('title', 'editor', 'comments', 'thumbnail',),
+            'supports' => array('title', 'editor', 'comments', 'thumbnail'),
             'taxonomies' => array('tkgp_tax'),
             'has_archive' => true
         )
@@ -90,6 +90,13 @@ function tkgp_create_meta_box()
     add_meta_box('tk_project_meta_steps',
         _x('Plane of Project', 'tk_meta', 'tkgp'),
         'tkgp_show_metabox_steps',
+        null,
+        'normal',
+        'high');
+		
+	add_meta_box('tk_project_meta_votes',
+		_x('Votes', 'tk_meta', 'tkgp'),
+        'tkgp_show_metabox_votes',
         null,
         'normal',
         'high');
@@ -288,6 +295,60 @@ function tkgp_show_metabox_steps()
 
     <?php
 }
+
+function tkgp_show_metabox_votes()
+{
+	global $post;
+?>
+	<input type="hidden" name="tkgp_meta_votes_nonce" 
+			value="<?php echo wp_create_nonce(basename(__FILE__) . '_votes'); ?>" />
+	<table class="form-table">
+<?php
+	foreach (TK_GVote::getVotesFields() as $field) {
+?>
+	<tr>
+		<th><label for="<?php echo $filed['id']; ?>" /><?php echo $field['label']; ?></th>
+		<td>
+<?php
+	switch ($field['type']) {
+		case 'radio':
+			echo '<ul class="tkgp_radio">';
+            $current_val = get_post_meta($post->ID, $field['id'], true);
+            $current_val = $current_val == '' ? '1' : $current_val;
+
+            foreach ($field['options'] as $option) {
+                echo '<li><input type="radio" name="' . $field['id'] . '" ' . ($current_val == $option['value'] ? 'checked="true"' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</li>';
+            }
+
+            echo '</ul>';
+			break;
+		case 'number':
+			echo '<input type="number" name="'.$field['id'].'"';
+			$options = '';
+			
+			if(isset($field['options'])) {
+				foreach ($field['options'] as $key => $val) {
+					echo ' '.$key.'="'.$val.'"';
+				}
+			}
+			
+			echo '/>';
+			break;
+		
+		default:
+			echo '<input type="'.$field['type'].'" name="'.$field['id'].'" value="'.$field['value'].'" />';
+			break;
+	}
+?>
+		</td>
+	</tr>
+<?php		
+	}
+?>
+	</table>
+<?php
+}
+
 
 function tkgp_save_post_meta($post_id)
 {

@@ -8,13 +8,13 @@ $j(document).ready(function ($j) {
 
         $j(".tkgp_user_add").click(tkgp_handler_add_user);
 
-        if ($j(".tkgp_radio li input[type='radio']:checked").length == 0) {
-            $j(".tkgp_radio li input[type='radio'][checked='true']")
+        if ($j(".tkgp_radio li input[type='radio'][name='ptype']:checked").length == 0) {
+            $j(".tkgp_radio li input[type='radio'][name='ptype'][checked='true']")
                 .addClass('tkgp_radio_checked')
                 .trigger('click');
         }
         else {
-            $j(".tkgp_radio li input[type='radio']:checked")
+            $j(".tkgp_radio li input[type='radio'][name='ptype']:checked")
                 .addClass('tkgp_radio_checked')
                 .click();
         }
@@ -35,8 +35,9 @@ function tkgp_url_vars() {
 }
 
 function tkgp_handler_radio() {
-    $j(".tkgp_radio li input[type='radio']").removeClass('tkgp_radio_checked');
-    $j(".tkgp_radio li input[type='radio']").removeAttr('checked');
+	var radio_name = $j(this).attr('name');
+    $j(".tkgp_radio li input[type='radio'][name='"+radio_name+"']").removeClass('tkgp_radio_checked');
+    $j(".tkgp_radio li input[type='radio'][name='"+radio_name+"']").removeAttr('checked');
     $j(this).addClass('tkgp_radio_checked');
     $j(this).attr('checked', 'true');
 
