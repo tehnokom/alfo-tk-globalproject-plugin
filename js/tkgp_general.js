@@ -1,6 +1,16 @@
 var $j = jQuery.noConflict();
 
 $j(document).ready(function ($j) {
+		$j('.tkgp_datepicker[name="start_date"]').datepicker({
+    		dateFormat: 'dd-mm-yy',
+    		minDate: 'today'
+		});
+		
+		$j('.tkgp_datepicker[name="end_date"]').datepicker({
+    		dateFormat: 'dd-mm-yy',
+    		minDate: $j('.tkgp_datepicker[name="start_date"]').val()
+		});
+		
         $j(".tkgp_radio li input[type='radio']")
             .addClass('tkgp_radio_hidden')
             .on('click', tkgp_handler_radio) //обработчик для переключателей

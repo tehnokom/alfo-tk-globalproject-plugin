@@ -25,8 +25,11 @@ License: GPLv2
 define('TKGP_ROOT', plugin_dir_path(__FILE__));
 define('TKGP_URL', plugin_dir_url(__FILE__));
 
+require_once(TKGP_ROOT.'lib/plug_initial.php');
 require_once(TKGP_ROOT.'lib/core.php');
 require_once(TKGP_ROOT.'lib/ajax_functions.php');
+
+register_activation_hook(__FILE__, 'tkgp_db_install');
 
 function tkgp_css_registry() {
 	wp_register_style('tkgp_general', TKGP_URL.'css/tkgp_general.css');
@@ -35,12 +38,15 @@ function tkgp_css_registry() {
 
 function tkgp_admin_css_registry() {
 	wp_register_style('tkgp_admin', TKGP_URL.'css/tkgp_admin.css');
+	wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
+  	wp_enqueue_style( 'jquery-ui' );
 	wp_enqueue_style('tkgp_admin');
 }
 
 function tkgp_admin_js_registry() {
 	wp_register_script('tkgp_js_general', TKGP_URL.'js/tkgp_general.js');
 	wp_enqueue_script('jquery');
+	wp_enqueue_script('jquery-ui-datepicker');
 	wp_enqueue_script('tkgp_js_general');
 }
 

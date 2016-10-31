@@ -334,7 +334,14 @@ function tkgp_show_metabox_votes()
 			
 			echo '/>';
 			break;
-		
+		case 'date':
+			$opts = '';
+			foreach ($field['options'] as $option) {
+				$opts = $opts . ' ' . $option;
+			}
+			echo '<input type="'.$field['type'].'" name="'.$field['id'].'"'.$opts.' class="tkgp_datepicker" />';
+			break;
+			
 		default:
 			echo '<input type="'.$field['type'].'" name="'.$field['id'].'" value="'.$field['value'].'" />';
 			break;

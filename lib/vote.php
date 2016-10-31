@@ -15,9 +15,46 @@
 		public function __destruct() {
 			
 		}
-		
-		public static function getVotesFields() {
-				
+		/**
+		 * @param integer
+		 * @return bool
+		 */
+		public function userCanVote($user_id) {
+			return false;
+		}
+		/**
+		 * @param mixed[]
+		 * @return mixed[]
+		 */
+		public function getUsersVotes($arg) {
+			return array();
+		}
+		/**
+		 * @param bool
+		 * @return mixed[]
+		 */
+		public function getVoteState($include_percents = false) {
+			return array();
+		}
+		/**
+		 * @param mixed[]
+		 * @return mixed[]
+		 */
+		public function getVoteSettings($arg) {
+			return array();
+		}
+		/**
+		 * @param string $key
+		 * @param mixed $val
+		 * @return bool
+		 */
+		public function setVoteSetting($key, $val) {
+			return false;
+		}
+		/**
+		 * @return mixed[]
+		 */
+		public static function getVotesFields() {	
 			return array(
 		        array(
 		            'label' => _x('Enable Vote', 'Project Settings', 'tkgp'),
@@ -42,7 +79,7 @@
 		            'type' => 'number',
 		            'options' => array('min' => '1',
 		            				   'value' => 100,
-		            				   'step' => 100
+		            				   'step' => 1
 										)
 		        ),
 		        array(
@@ -50,6 +87,19 @@
 		            'desc' => _x('Reset voting results.', 'Project Settings', 'tkgp'),
 		            'id' => 'reset_vote',
 		            'type' => 'checkbox'
+				),
+				array(
+		            'label' => _x('Start date', 'Project Settings', 'tkgp'),
+		            'desc' => _x('The date of commencement of voting.', 'Project Settings', 'tkgp'),
+		            'id' => 'start_date',
+		            'type' => 'date',
+		            'options' => array('required')
+				),
+				array(
+		            'label' => _x('End date', 'Project Settings', 'tkgp'),
+		            'desc' => _x('The data of the end of voting.', 'Project Settings', 'tkgp'),
+		            'id' => 'end_date',
+		            'type' => 'date'
 				)
 		    );	
 		} 
