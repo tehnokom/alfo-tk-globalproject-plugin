@@ -349,7 +349,9 @@ function tkgp_show_metabox_votes()
 ?>
 		</td>
 	</tr>
-<?php		
+<?php
+	$a = new TK_GVote($post->ID);
+	$a->createVote();		
 	}
 ?>
 	</table>

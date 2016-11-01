@@ -19,6 +19,7 @@
 				  `enabled` bit(1) DEFAULT NULL,
 				  `start_date` datetime(6) NOT NULL,
 				  `end_date` datetime(6) DEFAULT NULL,
+				  `target_votes` bigint(20) unsigned NOT NULL,
 				  PRIMARY KEY (`id`),
 				  KEY `post_index` (`post_id`)
 				){$charset_collate};";
@@ -33,11 +34,13 @@
 			$sql = "CREATE TABLE {$table_name} (
 				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				  `vote_id` bigint(20) unsigned NOT NULL,
+				  `variant_id` tinyint(2) unsigned NOT NULL,
 				  `variant` varchar(255) NOT NULL,
 				  `votes_count` bigint(20) unsigned NOT NULL DEFAULT '0',
 				  `approval_flag` bit(1) DEFAULT NULL,
 				  PRIMARY KEY (`id`),
-				  UNIQUE KEY `variant_UNIQUE` (`variant`),
+				  UNIQUE KEY `variant_UNIQUE` (`vote_id`,`variant`),
+				  UNIQUE KEY `variant_id` (`vote_id`,`variant_id`),
 				  UNIQUE KEY `approval_UNIQUE` (`vote_id`,`approval_flag`)
 				){$charset_collate};";
 			
@@ -52,7 +55,7 @@
 				  `id` bigint(20) unsigned NOT NULL,
 				  `vote_id` bigint(20) unsigned NOT NULL,
 				  `user_id` bigint(20) unsigned NOT NULL,
-				  `variant_id` tinyint(2) unsigned NOT NULL,
+				  `variant_id` tinyint(3) NOT NULL,
 				  PRIMARY KEY (`id`),
 				  UNIQUE KEY `user_vote_unique` (`vote_id`,`user_id`,`variant_id`)
 				){$charset_collate};";
