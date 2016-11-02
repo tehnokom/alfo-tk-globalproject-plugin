@@ -27,7 +27,7 @@
 					$this->vote_id = $wpdb->get_var($wpdb->prepare("SELECT id 
 													 FROM {$wpdb->prefix}tkgp_votes 
 													 WHERE post_id = %d", 
-													 esc_sql($this->project_id))
+													 $this->project_id)
 													);
 				}
 	        } else {
@@ -45,6 +45,18 @@
 		 * @return bool
 		 */
 		public function userCanVote($user_id) {
+			if(isset($this->vote_id) && isset($user_id)) {
+				global $wpdb;
+				
+				$res = $wpdb->get_var($wpdb->prepare("SELECT count(id)
+										FROM {$wpdb->prefix}tkgp_usersvotes
+										WHERE vote_id = %d
+										AND user_id = %d;", 
+										$this->vote_id, $user_id)
+										);
+				if(intvar($res) == 0)
+					return true;
+			}
 			return false;
 		}
 		
@@ -53,6 +65,24 @@
 		 * @return mixed[]
 		 */
 		public function getUsersVotes($arg) {
+			if(isset($this->vote_id) && isset($arg)) {
+				global $wpdb;
+				
+				$where_in = '';
+				foreach ($arg as $user) {
+					if($where_in == '')
+						$where_in = $user;
+					else $where_i = $where_in . ',' . $user; 
+				}
+				
+				$query = $wpdb->prepare("SELECT * 
+										FROM {$wpdb->prefix}tkgp_usersvotes 
+										WHERE vote_id = %d 
+										AND user_id IN ({$where_in});",
+										$this->vote_id);
+				
+				return $wpdb->get_results($query, ARRAY_A);	
+			}
 			return array();
 		}
 		
@@ -61,8 +91,47 @@
 		 * @return mixed[]
 		 */
 		public function getVoteState($include_percents = false) {
-			
+			if(isset($this->vote_id)) {
+				global $wpdb;
+				
+				$query = '';
+				
+				if($this->variantExist()) {
+					$query = $wpdb->prepare("SELECT uv.variant_id AS id, vv.variant AS variant, count(uv.id) AS cnt 
+											FROM {$wpdb->prefix}tkgp_usersvotes uv, {$wpdb->prefix}tkgp_votevariant vv
+											WHERE vv.vote_id = uv.vote_id
+											AND uv.vote_id = %d
+											GROUP BY uv.variant_id, vv.variant"
+										, $this->vote_id);
+				} else {
+					$query = $wpdb->prepare("SELECT uv.variant_id AS id, count(uv.id) AS cnt 
+											FROM {$wpdb->prefix}tkgp_usersvotes uv
+											WHERE uv.vote_id = %d
+											GROUP BY uv.variant_id"
+										, $this->vote_id);
+				}
+				
+				return $wpdb->get_results($query, ARRAY_A);
+			}
 			return array();
+		}
+		
+		/**
+		 * @return bool
+		 */
+		public function variantExist() {
+			if(isset($this->vote_id)) {
+				global $wpdb;
+				
+				$res = $wpdb->get_var($wpdb->prepare("SELECT count(id) 
+												FROM {$wpdb->prefix}tkgp_votevariant 
+												WHERE vote_id = %d", 
+												$this->vote_id)
+												);				
+				if(intval($res))
+					return true;
+			}
+			return false;
 		}
 		
 		/**
@@ -85,8 +154,7 @@
 						case 'target_votes':
 							if($columns == '*')
 								$columns = $cur;
-							
-							$columns = $columns . ', ' . $columns;
+							else $columns = $columns . ', ' . $columns;
 							break;
 						
 						default:
@@ -96,7 +164,7 @@
 				
 				global $wpdb;
 				
-				return $wpdb->get_row($wpdb->prepare("SELECT {$columns} FROM {$wpdb->prefix}tkgp_votes WHERE id = %d", array($this->vote_id)), ARRAY_A);
+				return $wpdb->get_row($wpdb->prepare("SELECT {$columns} FROM {$wpdb->prefix}tkgp_votes WHERE id = %d;", array($this->vote_id)), ARRAY_A);
 				
 			}			
 			return array();
@@ -108,6 +176,31 @@
 		 * @return bool
 		 */
 		public function setVoteSetting($key, $val) {
+			if(isset($this->vote_id)) {
+				global $wpdb;
+				
+				$format = array();
+				
+				switch ($key) {
+					case 'start_date':
+					case 'end_date':
+						$format[] = '%s';
+						break;
+					
+					default:
+						$format[] = '%d';
+						break;
+				}
+				
+				$res = $wpdb->update($wpdb->prefix . 'tkgp_votes', 
+							  array($key => $val), 
+							  array('id' => $this->vote_id),
+							  $format,
+					
+							  array('%d'));
+				if($res !== false)
+					return true;
+			}
 			return false;
 		}
 		
@@ -120,14 +213,14 @@
 			if(isset($user_id) && isset($variant_id) && $this->userCanVote($user_id)) {
 				global $wpdb;
 				
-				$data = array('vote_id' => '%d',
-							  'user_id' => '%d',
-							  'variant_id' => '%d'
+				$data = array('vote_id' => $this->vote_id,
+							  'user_id' => $user_id,
+							  'variant_id' => $variant_id
 							  );
 				
-				$format = array($this->vote_id,
-								esc_sql($user_id),
-								esc_sql($variant_id));
+				$format = array('%d',
+								'%d',
+								'%d');
 				
 				$res = $wpdb->insert($wpdb->prefix.'tkgp_usersvotes', $data, $format);
 				
@@ -142,15 +235,15 @@
 		 * @return bool
 		 */
 		public function deleteUserVote($user_id) {
-			if(isset($this->vote_id)) {
+			if(isset($this->vote_id) && isset($user_id)) {
 				global $wpdb;
 				
 				$res = $wpdb->query($wpdb->prepare("
 					DELETE FROM {$wpdb->prefix}tkgp_usersvotes 
 					WHERE vote_id = %d 
-					AND user_id = %d
+					AND user_id = %d;
 					", 
-					array($this->vote_id, $user_id))
+					$this->vote_id, $user_id)
 				);
 				
 				if(intval($res) == 0)
@@ -168,17 +261,17 @@
 				global $wpdb;
 				
 				$wpdb->enable_nulls = true;
-				$data = array('post_id' => '%d',
-							  'enabled' => '%d',
-							  'start_date' => '%s',
-							  'end_date' => '%s',
-							  'target_votes' => '%d');
+				$data = array('post_id' => $this->project_id,
+							  'enabled' => 1,
+							  'start_date' => $this->val($arg['tkgp_start_date'], date('YmdHis')),
+							  'end_date' => $this->val($arg['tkgp_end_date'], NULL),
+							  'target_votes' => $this->val($arg['tkgp_target_votes'], 100));
 							  
-				$format = array($this->project_id,
-								1,
-								esc_sql($this->val($arg['tkgp_start_date'], date('YmdHis'))),
-								esc_sql($this->val($arg['tkgp_end_date'], 'NULL')),
-								$this->val($arg['tkgp_target_votes'], 100)
+				$format = array('%d',
+								'%d',
+								'%s',
+								'%s',
+								'%d'
 								);
 				
 				$wpdb->insert($wpdb->prefix.'tkgp_votes',$data,$format);
@@ -209,8 +302,8 @@
 				$res = $wpdb->get_var($wpdb->prepare("
 													SELECT count(id) 
 													FROM {$wpdb->prefix}tkgp_votes 
-													WHERE post_id = %d",
-													esc_sql($post_id))
+													WHERE post_id = %d;",
+													array($post_id))
 									 );
 				if(intval($res) > 0)
 					return true;
@@ -290,17 +383,17 @@
 					if(!isset($arg['tkgp_var_id'.$i]) || !isset($arg['tkgp_var'.$i]))
 						continue;
 						
-					$data = array('vote_id' => '%d',
-								  'variant_id' => '%d',
-								  'variant' => '%s',
-								  'approval_flab' => '%d'
+					$data = array('vote_id' => $this->vote_id,
+								  'variant_id' => $i,
+								  'variant' => $arg['tkgp_var'.$i],
+								  'approval_flab' => intval($arg['tkgp_appr_id']) == $i ? 1 : 0
 								 );
 					
 					$format = array(
-									$this->vote_id,
-									$i,
-									esc_sql($arg['tkgp_var'.$i]),
-									intval($arg['tkgp_appr_id']) == $i ? 1 : 0
+									'%d',
+									'%d',
+									'%s',
+									'%d'
 								   );
 									
 					
