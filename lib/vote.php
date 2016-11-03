@@ -48,10 +48,12 @@
 			if(isset($this->vote_id) && isset($user_id)) {
 				global $wpdb;
 				
-				$res = $wpdb->get_var($wpdb->prepare("SELECT count(id)
-										FROM {$wpdb->prefix}tkgp_usersvotes
-										WHERE vote_id = %d
-										AND user_id = %d;", 
+				$res = $wpdb->get_var($wpdb->prepare("SELECT count(uv.id)
+										FROM {$wpdb->prefix}tkgp_usersvotes uv, {$wpdb->prefix}tkgp_votes vv
+										WHERE vv.id = uv.vote_id
+										AND vv.enabled = 1
+										AND uv.vote_id = %d
+										AND uv.user_id = %d;", 
 										$this->vote_id, $user_id)
 										);
 				if(intvar($res) == 0)
@@ -96,7 +98,7 @@
 				
 				$query = '';
 				
-				if($this->variantExist()) {
+				if($this->variantExists()) {
 					$query = $wpdb->prepare("SELECT uv.variant_id AS id, vv.variant AS variant, count(uv.id) AS cnt 
 											FROM {$wpdb->prefix}tkgp_usersvotes uv, {$wpdb->prefix}tkgp_votevariant vv
 											WHERE vv.vote_id = uv.vote_id
@@ -107,7 +109,8 @@
 					$query = $wpdb->prepare("SELECT uv.variant_id AS id, count(uv.id) AS cnt 
 											FROM {$wpdb->prefix}tkgp_usersvotes uv
 											WHERE uv.vote_id = %d
-											GROUP BY uv.variant_id"
+											GROUP BY uv.variant_id
+											ORDER BY uv.variant_id DESC"
 										, $this->vote_id);
 				}
 				
@@ -119,7 +122,7 @@
 		/**
 		 * @return bool
 		 */
-		public function variantExist() {
+		public function variantExists () {
 			if(isset($this->vote_id)) {
 				global $wpdb;
 				
@@ -138,7 +141,7 @@
 		 * @param mixed[] $arg
 		 * @return mixed[]|null
 		 */
-		public function getVoteSettings($arg) {
+		public function getVoteSettings($arg = array()) {
 			if(is_array($arg) && isset($this->vote_id))
 			{
 				$columns = '*';
@@ -164,7 +167,7 @@
 				
 				global $wpdb;
 				
-				return $wpdb->get_row($wpdb->prepare("SELECT {$columns} FROM {$wpdb->prefix}tkgp_votes WHERE id = %d;", array($this->vote_id)), ARRAY_A);
+				return $wpdb->get_row($wpdb->prepare("SELECT {$columns} FROM {$wpdb->prefix}tkgp_votes WHERE id = %d;", $this->vote_id), ARRAY_A);
 				
 			}			
 			return array();
@@ -405,6 +408,55 @@
 			}
 			return false;
 		}
+
+		/**
+		 * @return mixed[]
+		 */
+		public function getVoteVariants() {
+			if(isset($this->vote_id)) {
+				global $wpdb;
+				
+				$quote = $wpdb->prepare("SELECT variant_id, variant 
+										FROM {$wpdb->prefix}tkgp_votevariant
+										WHERE vote_id = %d
+										",
+										$this->vote_id); 
+				
+				return $wpdb->get_results($query, ARRAY_A);
+			}
+			
+			return array();
+		}
+		
+		/**
+		 * @return string
+		 */
+		public function getResultVoteHtml() {
+			$form = '';
+			
+			if(isset($this->vote_id)) {
+				$target_votes = $this->getVoteSettings(array('target_votes'));
+				$target_votes = floatval($target_votes['target_votes']);
+				$votes = $this->getVoteState();	
+				$form .= '<dev id="tkgp_vote_result">';
+				
+				if($this->variantExists()) {
+
+				} else {
+					$approval = 100.0 * floatval(isset($votes[0]) ? $votes[0]['cnt'] : 0) / $target_votes;
+					$reproval = 100.0 * floatval(isset($votes[1]) ? $votes[1]['cnt'] : 0) / $target_votes;
+								
+					$form .= '<dev id="tkgp_approval_status">';								
+					$form .= '<div id="tkgp_approval" style="display: inline; width: '. $approval .'%; background: #FF0000;"></div>
+					<div id="tkgp_reproval" style="display: inline; width: '. $reproval .'%; background: #EEE;"></div>';
+					$forum .= '	</dev>';
+				}
+										
+				$form .= '</dev>';
+			}
+			return $form;
+		}
+				
 		/**
 		 * @param mixed|mixed[] $val
 		 * @param mixed|mixed[] $default

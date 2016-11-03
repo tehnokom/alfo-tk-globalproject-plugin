@@ -437,8 +437,20 @@ function tkgp_save_post_meta($post_id)
     return $post_id;
 }
 
+function tkgp_content($data) {
+	global $post;
+	
+	if($post->post_type == 'tk_project' && TK_GVote::exists($post->ID)) {
+		$vote = new TK_GVote($post->ID);
+		
+		$data = $data . $vote->getResultVoteHtml();
+	}
+	return $data;	
+}
+
 add_action('init', 'tkgp_create_type');
 add_action('init', 'tkgp_create_taxonomy');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
+add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);
 ?>
