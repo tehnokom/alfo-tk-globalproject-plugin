@@ -93,9 +93,9 @@ function tkgp_create_meta_box()
         null,
         'normal',
         'high');
-		
-	add_meta_box('tk_project_meta_votes',
-		_x('Votes', 'tk_meta', 'tkgp'),
+
+    add_meta_box('tk_project_meta_votes',
+        _x('Votes', 'tk_meta', 'tkgp'),
         'tkgp_show_metabox_votes',
         null,
         'normal',
@@ -107,7 +107,8 @@ function tkgp_create_meta_box()
  * text|select|radio|date|select_user|select_group
  * return array
  */
-function tkgp_get_settings_fields() {
+function tkgp_get_settings_fields()
+{
     return array(
         array(
             'label' => _x('Type', 'Project Settings', 'tkgp'),
@@ -224,15 +225,15 @@ function tkgp_show_metabox_settings()
                 $current_val = $current_val == '' ? wp_get_current_user()->ID : $current_val;
 
                 if (is_array($current_val) == true && !empty($current_val)) { //если несколько менеджеров
-					echo '<input name="mgr_cnt" value="' . count($current_val) . '" type="hidden">';
-					$uidx = 0;
-					foreach ($current_val as $user) {
-						echo '<div class="button tkgp_user">
+                    echo '<input name="mgr_cnt" value="' . count($current_val) . '" type="hidden">';
+                    $uidx = 0;
+                    foreach ($current_val as $user) {
+                        echo '<div class="button tkgp_user">
 								<a id="tkgp_user">' . get_user_by('ID', $user)->display_name . '</a>
 								<input type="hidden" name="' . $field['id'] . ($uidx == 0 ? '' : $uidx) . '" value="' . $user . '">
 							</div>';
-						++$uidx;
-					}
+                        ++$uidx;
+                    }
                 } /*elseif($current_val == '') { //если не назначен менеджер
 					echo '<input type="text" placeholder= value="'.$current_val.'">';
 				}*/
@@ -298,65 +299,65 @@ function tkgp_show_metabox_steps()
 
 function tkgp_show_metabox_votes()
 {
-	global $post;
-?>
-	<input type="hidden" name="tkgp_meta_votes_nonce" 
-			value="<?php echo wp_create_nonce(basename(__FILE__) . '_votes'); ?>" />
-	<table class="form-table">
-<?php
-	foreach (TK_GVote::getVotesFields() as $field) {
-?>
-	<tr>
-		<th><label for="<?php echo $filed['id']; ?>" /><?php echo $field['label']; ?></th>
-		<td>
-<?php
-	switch ($field['type']) {
-		case 'radio':
-			echo '<ul class="tkgp_radio">';
-            $current_val = get_post_meta($post->ID, $field['id'], true);
-            $current_val = $current_val == '' ? '1' : $current_val;
+    global $post;
+    ?>
+    <input type="hidden" name="tkgp_meta_votes_nonce"
+           value="<?php echo wp_create_nonce(basename(__FILE__) . '_votes'); ?>"/>
+    <table class="form-table">
+        <?php
+        foreach (TK_GVote::getVotesFields() as $field) {
+            ?>
+            <tr>
+                <th><label for="<?php echo $field['id']; ?>"/><?php echo $field['label']; ?></th>
+                <td>
+                    <?php
+                    switch ($field['type']) {
+                        case 'radio':
+                            echo '<ul class="tkgp_radio">';
+                            $current_val = get_post_meta($post->ID, $field['id'], true);
+                            $current_val = $current_val == '' ? '1' : $current_val;
 
-            foreach ($field['options'] as $option) {
-                echo '<li><input type="radio" name="' . $field['id'] . '" ' . ($current_val == $option['value'] ? 'checked="true"' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</li>';
-            }
+                            foreach ($field['options'] as $option) {
+                                echo '<li><input type="radio" name="' . $field['id'] . '" ' . ($current_val == $option['value'] ? 'checked="true"' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</li>';
+                            }
 
-            echo '</ul>';
-			break;
-		case 'number':
-			echo '<input type="number" name="'.$field['id'].'"';
-			$options = '';
-			
-			if(isset($field['options'])) {
-				foreach ($field['options'] as $key => $val) {
-					echo ' '.$key.'="'.$val.'"';
-				}
-			}
-			
-			echo '/>';
-			break;
-		case 'date':
-			$opts = '';
-			foreach ($field['options'] as $option) {
-				$opts = $opts . ' ' . $option;
-			}
-			echo '<input type="'.$field['type'].'" name="'.$field['id'].'"'.$opts.' class="tkgp_datepicker" />';
-			break;
-			
-		default:
-			echo '<input type="'.$field['type'].'" name="'.$field['id'].'" value="'.$field['value'].'" />';
-			break;
-	}
-?>
-		</td>
-	</tr>
-<?php
-	/*$a = new TK_GVote($post->ID);
-	if(!$a->voteExists()) $a->createVote();
-	echo var_dump($a->getVoteState());*/		
-	}
-?>
-	</table>
-<?php
+                            echo '</ul>';
+                            break;
+                        case 'number':
+                            echo '<input type="number" name="' . $field['id'] . '"';
+                            $options = '';
+
+                            if (isset($field['options'])) {
+                                foreach ($field['options'] as $key => $val) {
+                                    echo ' ' . $key . '="' . $val . '"';
+                                }
+                            }
+
+                            echo '/>';
+                            break;
+                        case 'date':
+                            $opts = '';
+                            foreach ($field['options'] as $option) {
+                                $opts = $opts . ' ' . $option;
+                            }
+                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '"' . $opts . ' class="tkgp_datepicker" />';
+                            break;
+
+                        default:
+                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '" value="' . $field['value'] . '" />';
+                            break;
+                    }
+                    ?>
+                </td>
+            </tr>
+            <?php
+            /*$a = new TK_GVote($post->ID);
+            if(!$a->voteExists()) $a->createVote();
+            echo var_dump($a->getVoteState());*/
+        }
+        ?>
+    </table>
+    <?php
 }
 
 
@@ -437,15 +438,16 @@ function tkgp_save_post_meta($post_id)
     return $post_id;
 }
 
-function tkgp_content($data) {
-	global $post;
-	
-	if($post->post_type == 'tk_project' && TK_GVote::exists($post->ID)) {
-		$vote = new TK_GVote($post->ID);
-		
-		$data = $data . $vote->getResultVoteHtml();
-	}
-	return $data;	
+function tkgp_content($data)
+{
+    global $post;
+
+    if ($post->post_type == 'tk_project' && TK_GVote::exists($post->ID)) {
+        $vote = new TK_GVote($post->ID);
+
+        $data = $data . $vote->getResultVoteHtml();
+    }
+    return $data;
 }
 
 add_action('init', 'tkgp_create_type');
