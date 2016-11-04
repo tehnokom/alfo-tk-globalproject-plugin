@@ -28,6 +28,7 @@ class TK_GVote
     {
         global $wpdb;
         $this->wpdb = $wpdb;
+		$this->wpdb->enable_nulls = true;
         
 
 
@@ -76,7 +77,7 @@ class TK_GVote
             array(
                 'label' => _x('Enable Vote', 'Project Settings', 'tkgp'),
                 'desc' => _x('Enable/Disable vote for this project.', 'Project Settings', 'tkgp'),
-                'id' => 'vote_enabled',
+                'id' => 'tkgp_vote_enabled',
                 'type' => 'radio',
                 'options' => array(
                     array(
@@ -257,6 +258,41 @@ class TK_GVote
         return array();
     }
 
+	/**
+	 * @param mixed[] $arg
+	 * @return bool
+	 */
+	public function updateVoteSettings($arg) {
+		if(isset($this->vote_id) && isset($arg)) {
+			$data = array();
+			$format = array();
+			foreach ($arg as $key => $val) {
+				$cur_format;
+				switch ($key) {
+					case 'enabled':
+					case 'target_votes':
+						$cur_format = '%d';
+					case 'start_date':
+					case 'end_date':
+						if(!isset($cur_format))
+							$cur_format = '%s';
+						$data[$key] = $val;
+						$format[] = $cur_format;
+						break;
+					
+					default:
+						continue;
+				}
+			}
+			
+			$res = $this->wpdb->update($this->wpdb->prefix . 'tkgp_votes', $data, 
+								array('id' => $this->vote_id),
+								$format,
+								array('%d'));
+		}
+		return false;
+	}
+
     /**
      * @param string $key
      * @param mixed $val
@@ -265,8 +301,6 @@ class TK_GVote
     public function setVoteSetting($key, $val)
     {
         if (isset($this->vote_id)) {
-            
-
             $format = array();
 
             switch ($key) {
@@ -279,7 +313,7 @@ class TK_GVote
                     $format[] = '%d';
                     break;
             }
-
+			
             $res = $this->wpdb->update($this->wpdb->prefix . 'tkgp_votes',
                 array($key => $val),
                 array('id' => $this->vote_id),
@@ -355,9 +389,6 @@ class TK_GVote
     public function createVote($arg = array())
     {
         if (isset($this->project_id) && !$this->voteExists()) {
-            
-
-            $this->wpdb->enable_nulls = true;
             $data = array(
                 'post_id' => $this->project_id,
                 'enabled' => 1,

@@ -337,8 +337,11 @@ function tkgp_show_metabox_votes()
                             break;
                         case 'date':
                             $opts = '';
-                            foreach ($field['options'] as $option) {
-                                $opts = $opts . ' ' . $option;
+							if(isset($field['options']))
+							{
+	                            foreach ($field['options'] as $option) {
+	                                $opts = $opts . ' ' . $option;
+	                            }
                             }
                             echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '"' . $opts . ' class="tkgp_datepicker" />';
                             break;
@@ -372,17 +375,17 @@ function tkgp_save_post_meta($post_id)
         return $post_id;
     }
 
-    foreach (tkgp_get_settings_fields() as $field) {
-        if (empty($_POST[$field['id']])) {
+	$vote_updates = array();
+	$fields = array_merge(tkgp_get_settings_fields(), TK_GVote::getVotesFields());
+	
+    foreach ($fields as $field) {
+        if (!isset($_POST[$field['id']])) {
             delete_post_meta($post_id, $field['id']);
             continue;
         }
 
         $old = get_post_meta($post_id, $field['id'], true);
         $new = array();
-//		$user_meta;
-//		$m_type;
-//		$cnt_idx;
 
         switch ($field['id']) {
             case 'manager':
@@ -410,8 +413,6 @@ function tkgp_save_post_meta($post_id)
                             }
                         }
                     }
-
-                    //$new = serialize($new);
                 } else {
                     $new = $_POST[$field['id']];
                     if ($field['id'] == 'manager') {
@@ -425,7 +426,23 @@ function tkgp_save_post_meta($post_id)
                 }
 
                 break;
-
+				
+			case 'tkgp_vote_enabled':
+				$vote_updates['enabled'] = intval($_POST[$field['id']]);
+				break;
+			case 'tkgp_target_votes':
+				$vote_updates['target_votes'] = intval($_POST[$field['id']]);
+				break;
+			case 'tkgp_start_date':
+				$vote_updates['start_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
+				break;
+			case 'tkgp_end_date':
+				if($_POST[$field['id']] == null) 
+					$vote_updates['end_date'] = null; 
+				else 
+					$vote_updates['end_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
+				break;
+			
             default:
                 $new = $_POST[$field['id']];
 
@@ -435,6 +452,15 @@ function tkgp_save_post_meta($post_id)
                 break;
         }
     }
+
+	if(!empty($vote_updates)) {
+		global $post;
+		$vote = new TK_GVote($post->ID);
+		if(!$vote->voteExists() && $vote_updates['enabled'] == 1)
+			$vote->createVote();
+		$vote->updateVoteSettings($vote_updates);
+	}
+
     return $post_id;
 }
 
