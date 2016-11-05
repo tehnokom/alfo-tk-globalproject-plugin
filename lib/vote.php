@@ -259,7 +259,7 @@ class TK_GVote
     }
 
 	/**
-	 * @param mixed[] $arg
+	 * @param array $arg
 	 * @return bool
 	 */
 	public function updateVoteSettings($arg) {
@@ -267,15 +267,17 @@ class TK_GVote
 			$data = array();
 			$format = array();
 			foreach ($arg as $key => $val) {
-				$cur_format;
+				$cur_format = '';
 				switch ($key) {
 					case 'enabled':
 					case 'target_votes':
 						$cur_format = '%d';
 					case 'start_date':
 					case 'end_date':
-						if(!isset($cur_format))
+						if(empty($cur_format)) {
 							$cur_format = '%s';
+						}
+						
 						$data[$key] = $val;
 						$format[] = $cur_format;
 						break;

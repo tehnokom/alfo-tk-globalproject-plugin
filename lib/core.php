@@ -337,7 +337,7 @@ function tkgp_show_metabox_votes()
                             break;
                         case 'date':
                             $opts = '';
-							if(isset($field['options']))
+							if(!empty($field['options']))
 							{
 	                            foreach ($field['options'] as $option) {
 	                                $opts = $opts . ' ' . $option;
@@ -437,10 +437,11 @@ function tkgp_save_post_meta($post_id)
 				$vote_updates['start_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
 				break;
 			case 'tkgp_end_date':
-				if($_POST[$field['id']] == null) 
-					$vote_updates['end_date'] = null; 
-				else 
+				if(empty($_POST[$field['id']])) { 
+					$vote_updates['end_date'] = null;
+				} else { 
 					$vote_updates['end_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
+				}
 				break;
 			
             default:
@@ -456,8 +457,11 @@ function tkgp_save_post_meta($post_id)
 	if(!empty($vote_updates)) {
 		global $post;
 		$vote = new TK_GVote($post->ID);
-		if(!$vote->voteExists() && $vote_updates['enabled'] == 1)
+		
+		if(!$vote->voteExists() && $vote_updates['enabled'] == 1) {
 			$vote->createVote();
+		}
+		
 		$vote->updateVoteSettings($vote_updates);
 	}
 
