@@ -50,7 +50,7 @@ function tkgp_admin_js_registry() {
 	wp_enqueue_script('tkgp_js_general');
 }
 
-add_action('wp_enqueue_scripts', 'tkgp_admin_css_registry');
+add_action('wp_enqueue_scripts', 'tkgp_css_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_css_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_js_registry');
 

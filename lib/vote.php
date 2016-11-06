@@ -464,7 +464,8 @@ class TK_GVote
             $target_votes = $this->getVoteSettings(array('target_votes'));
             $target_votes = floatval($target_votes['target_votes']);
             $votes = $this->getVoteState();
-            $form .= '<dev id="tkgp_vote_result">';
+            $form .= '<div id="tkgp_vote_result">
+            	<div><b>'. _x('Voting status', 'tk_project', 'tkgp') .'</b></div>';
 
             if ($this->variantExists()) {
 
@@ -472,13 +473,22 @@ class TK_GVote
                 $approval = 100.0 * floatval(isset($votes[0]) ? $votes[0]['cnt'] : 0) / $target_votes;
                 $reproval = 100.0 * floatval(isset($votes[1]) ? $votes[1]['cnt'] : 0) / $target_votes;
 
-                $form .= '<dev id="tkgp_approval_status">';
-                $form .= '<div id="tkgp_approval" style="display: inline; width: ' . $approval . '%; background: #FF0000;"></div>
-					<div id="tkgp_reproval" style="display: inline; width: ' . $reproval . '%; background: #EEE;"></div>';
-                $form .= '	</dev>';
-            }
+                $form .= '<table>
+                	<tr><th>'. _x('Progress of the approval', 'tk_project', 'tkgp') .'</th>
+                	<td>
+                		<div id="tkgp_approval_status">';
+                $form .= '<div id="tkgp_approval" style="float: left; width: ' . $approval . '%; height: 100%; background: #FF0000;"></div>';
+                	/*Код на будущее, когда будет реализация голосов против Проекта*/
+					/*<div id="tkgp_reproval" style="float: left; width: ' . $reproval . '%; height: 100%; background: #EEE;"></div>';*/
+                $form .= '</td>
+                </tr>';
+				
+				$form .= '<tr><th>'. _x('Supported', 'tk_project', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[0]['cnt'] : 0) .'</td></tr>';
+				$form .= '<tr><th>'. _x('Not Supported', 'tk_project', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[1]['cnt'] : 0) .'</td></tr>';
+            	$form .= '</table>';
+			}
 
-            $form .= '</dev>';
+            $form .= '</div>';
         }
         return $form;
     }

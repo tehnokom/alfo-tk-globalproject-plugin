@@ -354,9 +354,6 @@ function tkgp_show_metabox_votes()
                 </td>
             </tr>
             <?php
-            /*$a = new TK_GVote($post->ID);
-            if(!$a->voteExists()) $a->createVote();
-            echo var_dump($a->getVoteState());*/
         }
         ?>
     </table>
