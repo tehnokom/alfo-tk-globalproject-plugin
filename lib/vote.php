@@ -28,6 +28,7 @@ class TK_GVote
     {
         global $wpdb;
         $this->wpdb = $wpdb;
+		$this->wpdb->enable_nulls = true;
         
 
 
@@ -76,7 +77,7 @@ class TK_GVote
             array(
                 'label' => _x('Enable Vote', 'Project Settings', 'tkgp'),
                 'desc' => _x('Enable/Disable vote for this project.', 'Project Settings', 'tkgp'),
-                'id' => 'vote_enabled',
+                'id' => 'tkgp_vote_enabled',
                 'type' => 'radio',
                 'options' => array(
                     array(
@@ -257,6 +258,43 @@ class TK_GVote
         return array();
     }
 
+	/**
+	 * @param array $arg
+	 * @return bool
+	 */
+	public function updateVoteSettings($arg) {
+		if(isset($this->vote_id) && isset($arg)) {
+			$data = array();
+			$format = array();
+			foreach ($arg as $key => $val) {
+				$cur_format = '';
+				switch ($key) {
+					case 'enabled':
+					case 'target_votes':
+						$cur_format = '%d';
+					case 'start_date':
+					case 'end_date':
+						if(empty($cur_format)) {
+							$cur_format = '%s';
+						}
+						
+						$data[$key] = $val;
+						$format[] = $cur_format;
+						break;
+					
+					default:
+						continue;
+				}
+			}
+			
+			$res = $this->wpdb->update($this->wpdb->prefix . 'tkgp_votes', $data, 
+								array('id' => $this->vote_id),
+								$format,
+								array('%d'));
+		}
+		return false;
+	}
+
     /**
      * @param string $key
      * @param mixed $val
@@ -265,8 +303,6 @@ class TK_GVote
     public function setVoteSetting($key, $val)
     {
         if (isset($this->vote_id)) {
-            
-
             $format = array();
 
             switch ($key) {
@@ -279,7 +315,7 @@ class TK_GVote
                     $format[] = '%d';
                     break;
             }
-
+			
             $res = $this->wpdb->update($this->wpdb->prefix . 'tkgp_votes',
                 array($key => $val),
                 array('id' => $this->vote_id),
@@ -355,9 +391,6 @@ class TK_GVote
     public function createVote($arg = array())
     {
         if (isset($this->project_id) && !$this->voteExists()) {
-            
-
-            $this->wpdb->enable_nulls = true;
             $data = array(
                 'post_id' => $this->project_id,
                 'enabled' => 1,
@@ -431,7 +464,8 @@ class TK_GVote
             $target_votes = $this->getVoteSettings(array('target_votes'));
             $target_votes = floatval($target_votes['target_votes']);
             $votes = $this->getVoteState();
-            $form .= '<dev id="tkgp_vote_result">';
+            $form .= '<div id="tkgp_vote_result">
+            	<div><b>'. _x('Voting status', 'tk_project', 'tkgp') .'</b></div>';
 
             if ($this->variantExists()) {
 
@@ -439,13 +473,22 @@ class TK_GVote
                 $approval = 100.0 * floatval(isset($votes[0]) ? $votes[0]['cnt'] : 0) / $target_votes;
                 $reproval = 100.0 * floatval(isset($votes[1]) ? $votes[1]['cnt'] : 0) / $target_votes;
 
-                $form .= '<dev id="tkgp_approval_status">';
-                $form .= '<div id="tkgp_approval" style="display: inline; width: ' . $approval . '%; background: #FF0000;"></div>
-					<div id="tkgp_reproval" style="display: inline; width: ' . $reproval . '%; background: #EEE;"></div>';
-                $form .= '	</dev>';
-            }
+                $form .= '<table>
+                	<tr><th>'. _x('Progress of the approval', 'tk_project', 'tkgp') .'</th>
+                	<td>
+                		<div id="tkgp_approval_status">';
+                $form .= '<div id="tkgp_approval" style="float: left; width: ' . $approval . '%; height: 100%; background: #FF0000;"></div>';
+                	/*Код на будущее, когда будет реализация голосов против Проекта*/
+					/*<div id="tkgp_reproval" style="float: left; width: ' . $reproval . '%; height: 100%; background: #EEE;"></div>';*/
+                $form .= '</td>
+                </tr>';
+				
+				$form .= '<tr><th>'. _x('Supported', 'tk_project', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[0]['cnt'] : 0) .'</td></tr>';
+				$form .= '<tr><th>'. _x('Not Supported', 'tk_project', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[1]['cnt'] : 0) .'</td></tr>';
+            	$form .= '</table>';
+			}
 
-            $form .= '</dev>';
+            $form .= '</div>';
         }
         return $form;
     }
