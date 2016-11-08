@@ -324,7 +324,7 @@ function tkgp_show_metabox_votes()
                             echo '</ul>';
                             break;
                         case 'number':
-                            echo '<input type="number" name="' . $field['id'] . '"';
+                            echo '<input type="number" name="' . $field['id'] . '" value="' . $field['value'] . '"';
                             $options = '';
 
                             if (isset($field['options'])) {
@@ -376,7 +376,7 @@ function tkgp_save_post_meta($post_id)
 	$fields = array_merge(tkgp_get_settings_fields(), TK_GVote::getVotesFields());
 	
     foreach ($fields as $field) {
-        if (!isset($_POST[$field['id']])) {
+        if (!isset($_POST[$field['id']]) && $field['exclude'] != 1) {
             delete_post_meta($post_id, $field['id']);
             continue;
         }
@@ -439,6 +439,9 @@ function tkgp_save_post_meta($post_id)
 				} else { 
 					$vote_updates['end_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
 				}
+				break;
+			case 'tkgp_allow_revote':
+				$vote_updates['allow_revote'] = (empty($_POST['tkgp_allow_revote']) ? null : 1);
 				break;
 			
             default:

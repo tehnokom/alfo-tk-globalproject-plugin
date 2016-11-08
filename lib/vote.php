@@ -96,9 +96,9 @@ class TK_GVote
                     'tkgp'),
                 'id' => 'tkgp_target_votes',
                 'type' => 'number',
+                'value' => 100,
                 'options' => array(
                     'min' => '1',
-                    'value' => 100,
                     'step' => 1
                 )
             ),
@@ -116,10 +116,21 @@ class TK_GVote
                 'type' => 'date'
             ),
             array(
+                'label' => _x('Allow re-vote', 'Project Settings', 'tkgp'),
+                'desc' => _x('Users can reset their vote and vote again, or not to vote :)', 'Project Settings', 'tkgp'),
+                'id' => 'tkgp_allow_revote',
+                'type' => 'checkbox',
+                'exclude' => 1,
+                'value' => 1
+            ),
+            array(
                 'label' => _x('Reset voting results', 'Project Settings', 'tkgp'),
                 'desc' => _x('Reset voting results.', 'Project Settings', 'tkgp'),
                 'id' => 'tkgp_reset_vote',
-                'type' => 'checkbox'
+                'type' => 'checkbox',
+                'exclude' => 1,
+                'value' => 1
+                
             )
         );
     }
@@ -237,6 +248,7 @@ class TK_GVote
                     case 'start_date':
                     case 'end_date':
                     case 'target_votes':
+					case 'allow_revote':
                         if ($columns == '*') {
                             $columns = $cur;
                         } else {
@@ -271,6 +283,7 @@ class TK_GVote
 				switch ($key) {
 					case 'enabled':
 					case 'target_votes':
+					case 'allow_revote':
 						$cur_format = '%d';
 					case 'start_date':
 					case 'end_date':
@@ -464,7 +477,8 @@ class TK_GVote
         $form = '';
 
         if (isset($this->vote_id)) {
-            $target_votes = $this->getVoteSettings(array('target_votes'));
+        	$settings = $this->getVoteSettings(array('target_votes','enabled','allow_revote','start_date','end_date'));
+            $target_votes = $settings['target_votes'];
             $target_votes = floatval($target_votes['target_votes']);
             $votes = $this->getVoteState();
             $form .= '<div id="tkgp_vote_result">
