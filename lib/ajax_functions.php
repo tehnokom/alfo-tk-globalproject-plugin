@@ -80,6 +80,37 @@ function tkgp_print_results($results)
     return $html;
 }
 
+function tkgp_ajax_user_vote() {
+	if(empty($_POST['post_id']) 
+		|| empty($_POST['vote_id'])
+		|| !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')
+		|| !is_user_logged_in()
+		) {
+			//проблемы безопасности
+			wp_die();	
+		}
+		
+		$vote = new TK_GVote(intval($_POST['post_id']));
+		if(!$vote->voteExists() || $vote->getVoteId() != $_POST['vote_id']) {
+			//не существует такого голосования
+			wp_die();
+		}
+		
+		$user_id = get_current_user_id();
+		$res = $vote->addUserVote($user_id, intval($_POST['vote_variant']));
+		
+		echo json_encode(array('status' => $res, 
+								'message' => ($res ? _x('Your vote has been counted', 'Project Vote', 'tkgp')
+												   : _x('Your vote was not counted', 'Project Vote', 'tkgp' )
+											 )
+							  )
+						);
+		
+		wp_die();
+}
+
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');
+add_action('wp_ajax_tkgp_user_vote', 'tkgp_ajax_user_vote');
+add_action('wp_ajax_nopriv_tkgp_user_vote', 'tkgp_ajax_user_vote');
 
 ?>

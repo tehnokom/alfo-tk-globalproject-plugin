@@ -36,6 +36,13 @@ function tkgp_css_registry() {
 	wp_enqueue_style('tkgp_general');
 }
 
+function tkgp_js_registry() {
+	wp_register_script('tkgp_js_global', TKGP_URL.'js/tkgp_general.js');
+	wp_enqueue_script('tkgp_js_global');
+	wp_localize_script( 'tkgp_js_global', 'tkgp_js_vars',
+            array( 'ajax_url' => admin_url( 'admin-ajax.php' )));
+}
+
 function tkgp_admin_css_registry() {
 	wp_register_style('tkgp_admin', TKGP_URL.'css/tkgp_admin.css');
 	wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
@@ -44,13 +51,14 @@ function tkgp_admin_css_registry() {
 }
 
 function tkgp_admin_js_registry() {
-	wp_register_script('tkgp_js_general', TKGP_URL.'js/tkgp_general.js');
+	wp_register_script('tkgp_js_admin', TKGP_URL.'js/tkgp_admin.js');
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('jquery-ui-datepicker');
-	wp_enqueue_script('tkgp_js_general');
+	wp_enqueue_script('tkgp_js_admin');
 }
 
 add_action('wp_enqueue_scripts', 'tkgp_css_registry');
+add_action('wp_enqueue_scripts', 'tkgp_js_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_css_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_js_registry');
 

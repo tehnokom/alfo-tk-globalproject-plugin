@@ -472,7 +472,8 @@ function tkgp_content($data)
     if ($post->post_type == 'tk_project' && TK_GVote::exists($post->ID)) {
         $vote = new TK_GVote($post->ID);
 
-        $data = $data . $vote->getResultVoteHtml();
+		$show_vote_buttons = (is_user_logged_in() && $vote->userCanVote(get_current_user_id())/*тут нужно еще проверка на право голосовать исходя из типа проекта*/);
+        $data = $data . $vote->getResultVoteHtml($show_vote_buttons, !is_single($post->ID));
     }
     return $data;
 }

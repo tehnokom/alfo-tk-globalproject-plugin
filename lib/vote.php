@@ -441,9 +441,10 @@ class TK_GVote
         if (isset($this->vote_id)) {
 
 
-            $query = $this->wpdb->prepare("SELECT variant_id, variant 
+            $query = $this->wpdb->prepare("SELECT variant_id, variant, approval_flag 
 										FROM {$this->wpdb->prefix}tkgp_votevariant
 										WHERE vote_id = %d
+										ORDER BY approval_flag DESC
 										",
                 $this->vote_id);
 
@@ -454,9 +455,11 @@ class TK_GVote
     }
 
     /**
-     * @return string
+     * @param false $show_vote_button
+	 * @param false $short
+	 * @return string
      */
-    public function getResultVoteHtml()
+    public function getResultVoteHtml($show_vote_button = false, $short = false)
     {
         $form = '';
 
@@ -465,16 +468,16 @@ class TK_GVote
             $target_votes = floatval($target_votes['target_votes']);
             $votes = $this->getVoteState();
             $form .= '<div id="tkgp_vote_result">
-            	<div><b>'. _x('Voting status', 'tk_project', 'tkgp') .'</b></div>';
+            	<div><b>'. _x('Voting status', 'Project Vote', 'tkgp') .'</b></div>';
 
             if ($this->variantExists()) {
-
+				$form .= $this->getVoteButtonHtml(true);
             } else {
                 $approval = 100.0 * floatval(isset($votes[0]) ? $votes[0]['cnt'] : 0) / $target_votes;
                 $reproval = 100.0 * floatval(isset($votes[1]) ? $votes[1]['cnt'] : 0) / $target_votes;
 
                 $form .= '<table>
-                	<tr><th>'. _x('Progress of the approval', 'tk_project', 'tkgp') .'</th>
+                	<tr><th>'. _x('Progress of the approval', 'Project Vote', 'tkgp') .'</th>
                 	<td>
                 		<div id="tkgp_approval_status">';
                 $form .= '<div id="tkgp_approval" style="float: left; width: ' . $approval . '%; height: 100%; background: #FF0000;"></div>';
@@ -482,9 +485,13 @@ class TK_GVote
 					/*<div id="tkgp_reproval" style="float: left; width: ' . $reproval . '%; height: 100%; background: #EEE;"></div>';*/
                 $form .= '</td>
                 </tr>';
-				
-				$form .= '<tr><th>'. _x('Supported', 'tk_project', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[0]['cnt'] : 0) .'</td></tr>';
-				$form .= '<tr><th>'. _x('Not Supported', 'tk_project', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[1]['cnt'] : 0) .'</td></tr>';
+				if(!$short) {
+					$form .= '<tr><th>'. _x('Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[0]['cnt'] : 0) .'</td></tr>';
+					$form .= '<tr><th>'. _x('Not Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[1]['cnt'] : 0) .'</td></tr>';
+					if($show_vote_button) {
+						$form .= '<tr><td colspan="2">' . $this->getVoteButtonHtml() . '</td></tr>';
+					}
+				}
             	$form .= '</table>';
 			}
 
@@ -492,7 +499,48 @@ class TK_GVote
         }
         return $form;
     }
-
+	
+	/**
+	 * @param bool $variant_exists[optional]
+	 * @return string
+	 */
+	protected function getVoteButtonHtml($variant_exists = false) {
+		$html_code = '<div id="tkgp_vote_buttons">
+							<input type="hidden" name="tkgp_vote_nonce" value="'. wp_create_nonce('tkgp_user_vote') .'" />
+							<input type="hidden" name="tkgp_vote_id" value="'. $this->vote_id .'">
+							<input type="hidden" name="tkgp_post_id" value="'. $this->project_id .'">';
+		
+		if($variant_exists) {
+			$vars = $this->getVoteVariants();
+			$html_code .= '<ul class="tkgp_variants">';
+			
+			foreach ($vars as $var) {
+				$html_code .= '<li><input type="radio" name="user_vote" value="'. $var['variant_id'] .'" require/>'. $var['variant'] .'</li>';
+			}
+			
+			$html_code .= '</ul>
+			<div class="tkgp_button"><a>'. _x('Vote', 'Project Vote', 'tkgp') .'</a></div>';
+			
+		} else {
+			$html_code .= '<div>
+							<div class="tkgp_button">
+							<a>'. _x('I support','Project Vote', 'tkgp') .'</a>
+							<input type="hidden" name="user_vote" value="-1"/>
+						  	</div>
+						  </div>
+						  <div>
+						  	<div class="tkgp_button">
+						  		<a>'. _x('I do\'t support','Project Vote', 'tkgp') .'</a>
+						  		<input type="hidden" name="user_vote" value="-2"/>
+						  	</div>
+						  </div>';
+		}
+		
+		$html_code .= '</div>';
+		
+		return $html_code;
+	}
+	
     /**
      * @param mixed[] $arg
      * @return bool
@@ -532,6 +580,20 @@ class TK_GVote
         return false;
     }
 
+	/**
+	 * @return null|int
+	 */
+	public function getPostId() {
+		return $this->project_id;
+	}
+	
+	/**
+	 * @return null|int
+	 */
+	public function getVoteId() {
+		return $this->vote_id;
+	}
+	
     /**
      * @param mixed|mixed[] $val
      * @param mixed|mixed[] $default

@@ -53,7 +53,7 @@
 		$table_name = $wpdb->prefix . 'tkgp_usersvotes';
 		if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
 			$sql = "CREATE TABLE {$table_name} (
-				  `id` bigint(20) unsigned NOT NULL,
+				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				  `vote_id` bigint(20) unsigned NOT NULL,
 				  `user_id` bigint(20) unsigned NOT NULL,
 				  `variant_id` tinyint(3) NOT NULL,
