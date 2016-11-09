@@ -94,7 +94,7 @@ class TK_GVote
                 'label' => _x('Vote for approval', 'Project Settings', 'tkgp'),
                 'desc' => _x('Number of votes in which the project is considered approved.', 'Project Settings',
                     'tkgp'),
-                'id' => 'tkgp_target_votes',
+                'id' => 'tkgp_vote_target_votes',
                 'type' => 'number',
                 'value' => 100,
                 'options' => array(
@@ -105,20 +105,20 @@ class TK_GVote
             array(
                 'label' => _x('Start date', 'Project Settings', 'tkgp'),
                 'desc' => _x('The date of commencement of voting.', 'Project Settings', 'tkgp'),
-                'id' => 'tkgp_start_date',
+                'id' => 'tkgp_vote_start_date',
                 'type' => 'date',
                 'options' => array('required')
             ),
             array(
                 'label' => _x('End date', 'Project Settings', 'tkgp'),
                 'desc' => _x('The data of the end of voting.', 'Project Settings', 'tkgp'),
-                'id' => 'tkgp_end_date',
+                'id' => 'tkgp_vote_end_date',
                 'type' => 'date'
             ),
             array(
                 'label' => _x('Allow re-vote', 'Project Settings', 'tkgp'),
                 'desc' => _x('Users can reset their vote and vote again, or not to vote :)', 'Project Settings', 'tkgp'),
-                'id' => 'tkgp_allow_revote',
+                'id' => 'tkgp_vote_allow_revote',
                 'type' => 'checkbox',
                 'exclude' => 1,
                 'value' => 1
@@ -126,7 +126,7 @@ class TK_GVote
             array(
                 'label' => _x('Reset voting results', 'Project Settings', 'tkgp'),
                 'desc' => _x('Reset voting results.', 'Project Settings', 'tkgp'),
-                'id' => 'tkgp_reset_vote',
+                'id' => 'tkgp_vote_reset',
                 'type' => 'checkbox',
                 'exclude' => 1,
                 'value' => 1
@@ -397,6 +397,22 @@ class TK_GVote
         return false;
     }
 
+	/**
+	 * Reset all votes
+	 */
+	public function resetVote() {
+		if (isset($this->vote_id)) {
+            
+
+            $res = $this->wpdb->query($this->wpdb->prepare("
+					DELETE FROM {$this->wpdb->prefix}tkgp_usersvotes 
+					WHERE vote_id = %d
+					",
+                $this->vote_id)
+            );
+        }
+	}
+
     /**
      * @param mixed[] $arg
      * @return bool
@@ -478,8 +494,7 @@ class TK_GVote
 
         if (isset($this->vote_id)) {
         	$settings = $this->getVoteSettings(array('target_votes','enabled','allow_revote','start_date','end_date'));
-            $target_votes = $settings['target_votes'];
-            $target_votes = floatval($target_votes['target_votes']);
+            $target_votes = floatval($settings['target_votes']);
             $votes = $this->getVoteState();
             $form .= '<div id="tkgp_vote_result">
             	<div><b>'. _x('Voting status', 'Project Vote', 'tkgp') .'</b></div>';
