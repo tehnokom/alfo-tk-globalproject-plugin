@@ -112,7 +112,7 @@ function tkgp_ajax_user_vote() {
 function tkgp_ajax_reset_user_vote() {
 	if(empty($_POST['post_id']) 
 		|| empty($_POST['vote_id'])
-		|| !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')
+		|| !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote')
 		|| !is_user_logged_in()
 		) {
 			//проблемы безопасности
@@ -127,7 +127,7 @@ function tkgp_ajax_reset_user_vote() {
 		
 		$user_id = get_current_user_id();
 		
-		if(!$vote->userCanVote($user_id)) {
+		if($vote->userCanVote($user_id)) {
 			//пользователь не голосовал
 			wp_die();
 		}
@@ -143,9 +143,35 @@ function tkgp_ajax_reset_user_vote() {
 		wp_die();
 }
 
+function tkgp_ajax_get_vote_status() {
+	if(empty($_POST['post_id']) 
+		|| empty($_POST['vote_id'])
+		|| (!wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote') && !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote') )
+		|| !is_user_logged_in()
+		) {
+			//проблемы безопасности
+			wp_die();	
+		}
+		
+		$vote = new TK_GVote($_POST['post_id']);
+		if(!$vote->voteExists() || $vote->getVoteId() != $_POST['vote_id']) {
+			//не существует такого голосования
+			wp_die();
+		}
+		
+		$res = $vote->deleteUserVote($user_id);
+		$can_vote = $vote->userCanVote(get_current_user_id());
+		$show_vote_buttons = is_user_logged_in();/*тут нужно еще проверка на право голосовать исходя из типа проекта*/		
+		echo json_encode(array('status' => true, 
+								'new_content' => $vote->getResultVoteHtml($show_vote_buttons, false, $can_vote)
+							  )
+						);
+		wp_die();
+}
 
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');
 add_action('wp_ajax_tkgp_user_vote', 'tkgp_ajax_user_vote');
+add_action('wp_ajax_tkgp_get_vote_status', 'tkgp_ajax_get_vote_status');
 add_action('wp_ajax_tkgp_reset_user_vote', 'tkgp_ajax_reset_user_vote');
 
 ?>

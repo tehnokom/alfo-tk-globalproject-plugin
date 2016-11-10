@@ -390,7 +390,7 @@ class TK_GVote
                 $this->vote_id, $user_id)
             );
 
-            if (intval($res) == 0) {
+            if (intval($res) > 0) {
                 return true;
             }
         }
@@ -484,26 +484,42 @@ class TK_GVote
     }
 
     /**
-     * @param false $show_vote_button
-	 * @param false $short
+     * When $show_vote_button = TRUE and $user_can_vote = FALSE then button "Reset my vote" displayed.
+	 * 
+	 * @param bool $show_vote_button[optional] Default is FALSE. Set TRUE when you need show vote buttons.
+	 * @param bool $short[optional] Defailt is FALSE. Set TRUE when you need show only Vote status.
+	 * @param null|bool $user_can_vote[optional] Default is TRUE. Set this param TRUE when current user can vote and.
 	 * @return string
-     */
-    public function getResultVoteHtml($show_vote_button = false, $short = false)
+	 */
+    public function getResultVoteHtml($show_vote_button = false, $short = false, $user_can_vote = null)
     {
         $form = '';
 
         if (isset($this->vote_id)) {
         	$settings = $this->getVoteSettings(array('target_votes','enabled','allow_revote','start_date','end_date'));
             $target_votes = floatval($settings['target_votes']);
+			$allow_revote = (bool)$settings['allow_vote'];
             $votes = $this->getVoteState();
             $form .= '<div id="tkgp_vote_result">
             	<div><b>'. _x('Voting status', 'Project Vote', 'tkgp') .'</b></div>';
 
             if ($this->variantExists()) {
-				$form .= $this->getVoteButtonHtml(true);
+            	if($show_vote_button) {
+					$form .= $this->getVoteButtonHtml(true);
+				}
             } else {
-                $approval = 100.0 * floatval(isset($votes[0]) ? $votes[0]['cnt'] : 0) / $target_votes;
-                $reproval = 100.0 * floatval(isset($votes[1]) ? $votes[1]['cnt'] : 0) / $target_votes;
+            	$approval_votes = 0;
+				$reproval_votes = 0;
+            	if(isset($votes[0]) && intval($votes[0]['id']) === -1) {
+            		$approval_votes = intval($votes[0]['cnt']);
+					$reproval_votes = empty($votes[1]['cnt']) ? 0 : $votes[1]['cnt'];
+            	} else {
+            		$reproval_votes = intval($votes[0]['cnt']);
+					$approval_votes = empty($votes[1]['cnt']) ? 0 : $votes[1]['cnt'];
+            	}
+				
+                $approval = 100.0 * floatval(/*isset($votes[0]) ? $votes[0]['cnt'] : 0*/$approval_votes) / $target_votes;
+                $reproval = 100.0 * floatval(/*isset($votes[1]) ? $votes[1]['cnt'] : 0*/$reproval_votes) / $target_votes;
 
                 $form .= '<table>
                 	<tr><th>'. _x('Progress of the approval', 'Project Vote', 'tkgp') .'</th>
@@ -515,13 +531,14 @@ class TK_GVote
                 $form .= '</td>
                 </tr>';
 				if(!$short) {
-					$form .= '<tr><th>'. _x('Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[0]['cnt'] : 0) .'</td></tr>';
-					$form .= '<tr><th>'. _x('Not Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval(isset($votes[0]) ? $votes[1]['cnt'] : 0) .'</td></tr>';
+					$form .= '<tr><th>'. _x('Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($approval_votes) .'</td></tr>';
+					$form .= '<tr><th>'. _x('Not Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($reproval_votes) .'</td></tr>';
+					
 					if($show_vote_button) {
-						$form .= '<tr><td colspan="2">' . $this->getVoteButtonHtml() . '</td></tr>';
+						$form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml() : $this->getVoteResetButtonHtml()) . '</td></tr>';
 					}
 				}
-            	$form .= '</table>';
+				$form .= '</table>';
 			}
 
             $form .= '</div>';
@@ -567,6 +584,24 @@ class TK_GVote
 		
 		$html_code .= '</div>';
 		
+		return $html_code;
+	}
+	
+	/**
+	 * @return string
+	 */
+	protected function getVoteResetButtonHtml() {
+		$html_code = '<div>
+							<input type="hidden" name="tkgp_vote_nonce" value="'. wp_create_nonce('tkgp_reset_user_vote') .'" />
+							<input type="hidden" name="tkgp_vote_id" value="'. $this->vote_id .'">
+							<input type="hidden" name="tkgp_post_id" value="'. $this->project_id .'">
+							<div>
+								<div class="tkgp_button_reset">
+								<a>'. _x('Reset my vote','Project Vote', 'tkgp') .'</a>
+						  		</div>
+						  </div>
+					  </div>';
+							
 		return $html_code;
 	}
 	

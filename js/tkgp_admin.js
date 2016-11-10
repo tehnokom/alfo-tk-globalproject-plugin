@@ -11,6 +11,8 @@ $j(document).ready(function ($j) {
     		minDate: $j('.tkgp_datepicker[name="start_date"]').val()
 		});
 		
+		$j('input[name="tkgp_vote_reset"]').on('click', tkgp_vote_reset);
+		
         $j(".tkgp_radio li input[type='radio']")
             .addClass('tkgp_radio_hidden')
             .on('click', tkgp_handler_radio) //обработчик для переключателей
@@ -30,6 +32,12 @@ $j(document).ready(function ($j) {
         }
     }
 );
+
+function tkgp_vote_reset() {
+	if($j(this).is(':checked') && confirm(tkgp_i18n.vote_reset)) {
+		$j(this).prop('checked', true);
+	} else $j(this).prop('checked', false);
+}
 
 function tkgp_url_vars() {
     var pair = window.location.href.slice(window.location.href.indexOf('?')).split(/[&?]{1}/);
