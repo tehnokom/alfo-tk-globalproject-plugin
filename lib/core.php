@@ -452,7 +452,9 @@ function tkgp_save_post_meta($post_id)
 				break;
 				
 			case 'tkgp_vote_reset':
-				$vote_updates['reset'] = true;
+				if(!empty($_POST['tkgp_vote_reset']) && $_POST['tkgp_vote_reset'] == 1) {
+					$vote_updates['reset'] = true;
+				}
 				break;
 			
             default:

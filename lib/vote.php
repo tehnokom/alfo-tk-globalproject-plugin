@@ -249,10 +249,10 @@ class TK_GVote
                     case 'end_date':
                     case 'target_votes':
 					case 'allow_revote':
-                        if ($columns == '*') {
+                        if ($columns === '*') {
                             $columns = $cur;
                         } else {
-                            $columns = $columns . ', ' . $columns;
+                            $columns .= ', ' . $cur;
                         }
                         break;
 
@@ -260,8 +260,6 @@ class TK_GVote
                         continue;
                 }
             }
-
-
 
             return $this->wpdb->get_row($this->wpdb->prepare("SELECT {$columns} FROM {$this->wpdb->prefix}tkgp_votes WHERE id = %d;",
                 $this->vote_id), ARRAY_A);
@@ -380,7 +378,9 @@ class TK_GVote
     public function deleteUserVote($user_id)
     {
         if (isset($this->vote_id) && isset($user_id)) {
-            
+            if(!$this->getVoteSettings(array('allow_revote'))['allow_revote']) {
+            	return false;
+            }
 
             $res = $this->wpdb->query($this->wpdb->prepare("
 					DELETE FROM {$this->wpdb->prefix}tkgp_usersvotes 
@@ -498,7 +498,7 @@ class TK_GVote
         if (isset($this->vote_id)) {
         	$settings = $this->getVoteSettings(array('target_votes','enabled','allow_revote','start_date','end_date'));
             $target_votes = floatval($settings['target_votes']);
-			$allow_revote = (bool)$settings['allow_vote'];
+			$allow_revote = (bool)$settings['allow_revote'];
             $votes = $this->getVoteState();
             $form .= '<div id="tkgp_vote_result">
             	<div><b>'. _x('Voting status', 'Project Vote', 'tkgp') .'</b></div>';
@@ -533,9 +533,9 @@ class TK_GVote
 				if(!$short) {
 					$form .= '<tr><th>'. _x('Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($approval_votes) .'</td></tr>';
 					$form .= '<tr><th>'. _x('Not Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($reproval_votes) .'</td></tr>';
-					
-					if($show_vote_button) {
-						$form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml() : $this->getVoteResetButtonHtml()) . '</td></tr>';
+
+					if($show_vote_button && ($user_can_vote || $allow_revote)) {
+						$form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml() : ($allow_revote ? $this->getVoteResetButtonHtml() : '')) . '</td></tr>';
 					}
 				}
 				$form .= '</table>';
