@@ -378,7 +378,8 @@ class TK_GVote
     public function deleteUserVote($user_id)
     {
         if (isset($this->vote_id) && isset($user_id)) {
-            if(!$this->getVoteSettings(array('allow_revote'))['allow_revote']) {
+        	$vote_settings = $this->getVoteSettings(array('allow_revote'));
+            if(!$vote_settings['allow_revote']) {
             	return false;
             }
 
@@ -501,7 +502,7 @@ class TK_GVote
 			$allow_revote = (bool)$settings['allow_revote'];
             $votes = $this->getVoteState();
             $form .= '<div id="tkgp_vote_result">
-            	<div><b>'. _x('Voting status', 'Project Vote', 'tkgp') .'</b></div>';
+            	<div class="tkgp_title"><b>'. _x('Voting status', 'Project Vote', 'tkgp') .'</b></div>';
 
             if ($this->variantExists()) {
             	if($show_vote_button) {

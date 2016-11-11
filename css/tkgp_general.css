@@ -14,7 +14,7 @@
 	text-align: center;
 }
 
-#tkgp_vote_result div:first-child {
+.tkgp_title, #tkgp_vote_result div:first-child {
 	display: block;
 	margin: 0 auto;
 	text-align: center;

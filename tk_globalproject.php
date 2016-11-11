@@ -41,7 +41,12 @@ function tkgp_js_registry() {
 	wp_register_script('tkgp_js_general', TKGP_URL.'js/tkgp_general.js');
 	wp_enqueue_script('tkgp_js_general');
 	wp_localize_script( 'tkgp_js_general', 'tkgp_js_vars',
-            array( 'ajax_url' => admin_url( 'admin-ajax.php' )));
+            array( 'ajax_url' => admin_url( 'admin-ajax.php' ),
+				   'plug_url' => TKGP_URL,
+				   'images' => array('load.png','ok_status.gif','err_status.gif')));
+				   
+	wp_localize_script( 'tkgp_js_general', 'tkgp_i18n',
+            array( 'loading' => __('Loading...','tkgp')));
 }
 
 function tkgp_admin_css_registry() {

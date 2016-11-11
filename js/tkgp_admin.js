@@ -15,10 +15,11 @@ $j(document).ready(function ($j) {
 		
         $j(".tkgp_radio li input[type='radio']")
             .addClass('tkgp_radio_hidden')
-            .on('click', tkgp_handler_radio) //обработчик для переключателей
-            .on('click', tkgp_handler_select_radio);
+            .on('click', function() {tkgp_handler_radio(); 
+            						 tkgp_handler_select_radio();
+            					}); //обработчик для переключателей
 
-        $j(".tkgp_user_add").click(tkgp_handler_add_user);
+        $j(".tkgp_user_add").on('click',tkgp_handler_add_user);
 
         if ($j(".tkgp_radio li input[type='radio'][name='ptype']:checked").length == 0) {
             $j(".tkgp_radio li input[type='radio'][name='ptype'][checked='true']")
@@ -28,7 +29,7 @@ $j(document).ready(function ($j) {
         else {
             $j(".tkgp_radio li input[type='radio'][name='ptype']:checked")
                 .addClass('tkgp_radio_checked')
-                .click();
+                .trigger('click');
         }
     }
 );
@@ -54,8 +55,8 @@ function tkgp_url_vars() {
 
 function tkgp_handler_radio() {
 	var radio_name = $j(this).attr('name');
-    $j(".tkgp_radio li input[type='radio'][name='"+radio_name+"']").removeClass('tkgp_radio_checked');
-    $j(".tkgp_radio li input[type='radio'][name='"+radio_name+"']").removeAttr('checked');
+    $j(".tkgp_radio li input[type='radio'][name='"+radio_name+"']").removeClass('tkgp_radio_checked')
+    															   .removeAttr('checked');
     $j(this).addClass('tkgp_radio_checked');
     $j(this).attr('checked', 'true');
 
@@ -139,8 +140,8 @@ function tkgp_handler_add_user() {
             function (resp) {
                 var $j = jQuery.noConflict();
                 $j('body').append(resp);
-                $j('#tkgp_add_selected').click(tkgp_handler_add_selected);
-                $j('#tkgp_modal_user #modal_close, #tkgp_overlay').click(function () {
+                $j('#tkgp_add_selected').on('click',tkgp_handler_add_selected);
+                $j('#tkgp_modal_user #modal_close, #tkgp_overlay').on('click',function () {
 	                   tkgp_hide_user_modal();
                 	});
                 $j('#tkgp_search').keypress(tkgp_handler_search);

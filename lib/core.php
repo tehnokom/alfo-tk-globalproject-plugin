@@ -302,7 +302,7 @@ function tkgp_show_metabox_votes()
     global $post;
 	
 	$vote = new TK_GVote($post->ID);
-	$vote_sett = $vote->getVoteSettings();
+	$vote_settings = $vote->getVoteSettings();
     ?>
     <input type="hidden" name="tkgp_meta_votes_nonce"
            value="<?php echo wp_create_nonce(basename(__FILE__) . '_votes'); ?>"/>
@@ -310,7 +310,7 @@ function tkgp_show_metabox_votes()
         <?php
         foreach (TK_GVote::getVotesFields() as $field) {
         	$cur_id = str_replace('tkgp_vote_', '', $field['id']);
-			$current_val = $vote_sett[ $cur_id ];
+			$current_val = $vote_settings[ $cur_id ];
             ?>
             <tr>
                 <th><label for="<?php echo $field['id']; ?>"/><?php echo $field['label']; ?></th>
