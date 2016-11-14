@@ -300,12 +300,17 @@ function tkgp_show_metabox_steps()
 function tkgp_show_metabox_votes()
 {
     global $post;
+	
+	$vote = new TK_GVote($post->ID);
+	$vote_settings = $vote->getVoteSettings();
     ?>
     <input type="hidden" name="tkgp_meta_votes_nonce"
            value="<?php echo wp_create_nonce(basename(__FILE__) . '_votes'); ?>"/>
     <table class="form-table">
         <?php
         foreach (TK_GVote::getVotesFields() as $field) {
+        	$cur_id = str_replace('tkgp_vote_', '', $field['id']);
+			$current_val = $vote_settings[ $cur_id ];
             ?>
             <tr>
                 <th><label for="<?php echo $field['id']; ?>"/><?php echo $field['label']; ?></th>
@@ -314,7 +319,6 @@ function tkgp_show_metabox_votes()
                     switch ($field['type']) {
                         case 'radio':
                             echo '<ul class="tkgp_radio">';
-                            $current_val = get_post_meta($post->ID, $field['id'], true);
                             $current_val = $current_val == '' ? '1' : $current_val;
 
                             foreach ($field['options'] as $option) {
@@ -324,10 +328,10 @@ function tkgp_show_metabox_votes()
                             echo '</ul>';
                             break;
                         case 'number':
-                            echo '<input type="number" name="' . $field['id'] . '"';
+                            echo '<input type="number" name="' . $field['id'] . '" value="' . (empty($current_val) ? $field['value'] : $current_val) . '"';
                             $options = '';
 
-                            if (isset($field['options'])) {
+                            if (!empty($field['options'])) {
                                 foreach ($field['options'] as $key => $val) {
                                     echo ' ' . $key . '="' . $val . '"';
                                 }
@@ -343,11 +347,14 @@ function tkgp_show_metabox_votes()
 	                                $opts = $opts . ' ' . $option;
 	                            }
                             }
-                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '"' . $opts . ' class="tkgp_datepicker" />';
+							
+							$current_val = !empty($current_val) ? $current_val = date('d-m-Y',strtotime($current_val)) : $current_val;	
+                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '" value="' . $current_val . '" ' . $opts . ' class="tkgp_datepicker" />';
                             break;
 
                         default:
-                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '" value="' . $field['value'] . '" />';
+							$opt = empty($current_val) ? '' : 'checked'; 
+                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '" value="' . $field['value'] . '" ' . $opt . ' />';
                             break;
                     }
                     ?>
@@ -376,7 +383,7 @@ function tkgp_save_post_meta($post_id)
 	$fields = array_merge(tkgp_get_settings_fields(), TK_GVote::getVotesFields());
 	
     foreach ($fields as $field) {
-        if (!isset($_POST[$field['id']])) {
+        if (!isset($_POST[$field['id']]) && $field['exclude'] != 1) {
             delete_post_meta($post_id, $field['id']);
             continue;
         }
@@ -427,17 +434,26 @@ function tkgp_save_post_meta($post_id)
 			case 'tkgp_vote_enabled':
 				$vote_updates['enabled'] = intval($_POST[$field['id']]);
 				break;
-			case 'tkgp_target_votes':
+			case 'tkgp_vote_target_votes':
 				$vote_updates['target_votes'] = intval($_POST[$field['id']]);
 				break;
-			case 'tkgp_start_date':
+			case 'tkgp_vote_start_date':
 				$vote_updates['start_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
 				break;
-			case 'tkgp_end_date':
+			case 'tkgp_vote_end_date':
 				if(empty($_POST[$field['id']])) { 
 					$vote_updates['end_date'] = null;
 				} else { 
 					$vote_updates['end_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
+				}
+				break;
+			case 'tkgp_vote_allow_revote':
+				$vote_updates['allow_revote'] = (empty($_POST['tkgp_vote_allow_revote']) ? null : 1);
+				break;
+				
+			case 'tkgp_vote_reset':
+				if(!empty($_POST['tkgp_vote_reset']) && $_POST['tkgp_vote_reset'] == 1) {
+					$vote_updates['reset'] = true;
 				}
 				break;
 			
@@ -459,6 +475,11 @@ function tkgp_save_post_meta($post_id)
 			$vote->createVote();
 		}
 		
+		if(!empty($vote_updates['reset'])) {
+			$vote->resetVote();
+			unset($vote_updates['reset']);
+		}
+		
 		$vote->updateVoteSettings($vote_updates);
 	}
 
@@ -471,8 +492,10 @@ function tkgp_content($data)
 
     if ($post->post_type == 'tk_project' && TK_GVote::exists($post->ID)) {
         $vote = new TK_GVote($post->ID);
-
-        $data = $data . $vote->getResultVoteHtml();
+		
+		$can_vote = $vote->userCanVote(get_current_user_id());
+		$show_vote_buttons = is_user_logged_in();/*тут нужно еще проверка на право голосовать исходя из типа проекта*/
+        $data .= $vote->getResultVoteHtml($show_vote_buttons, !is_single($post->ID), $can_vote);
     }
     return $data;
 }

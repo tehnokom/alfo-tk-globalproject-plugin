@@ -1,12 +1,13 @@
 <?php
 /*
-Plugin Name: TehnoKom Global Project
-Plugin URI: http://rikkimongoose.ru/projects/rikkis-wp-social-icons/
-Description: Allows you to group projects with the possibility of voting.
-Version: 0.1a
-Author: Ravil Sarvaritdinov <ra9oaj@gmail.com>
-Author URI: http://github.com/RA9OAJ/
-License: GPLv2
+* Plugin Name: TehnoKom Global Project
+* Plugin URI: http://rikkimongoose.ru/projects/rikkis-wp-social-icons/
+* Text Domain: tkgp
+* Description: Allows you to group projects with the possibility of voting.
+* Version: 0.1a
+* Author: Ravil Sarvaritdinov <ra9oaj@gmail.com>
+* Author URI: http://github.com/RA9OAJ/
+* License: GPLv2
 */
 /*  Copyright 2016  Ravil Sarvaritdinov  (email : ra9oaj@gmail.com)
     This program is free software; you can redistribute it and/or modify
@@ -36,6 +37,18 @@ function tkgp_css_registry() {
 	wp_enqueue_style('tkgp_general');
 }
 
+function tkgp_js_registry() {
+	wp_register_script('tkgp_js_general', TKGP_URL.'js/tkgp_general.js');
+	wp_enqueue_script('tkgp_js_general');
+	wp_localize_script( 'tkgp_js_general', 'tkgp_js_vars',
+            array( 'ajax_url' => admin_url( 'admin-ajax.php' ),
+				   'plug_url' => TKGP_URL,
+				   'images' => array('load.png','ok_status.gif','err_status.gif')));
+				   
+	wp_localize_script( 'tkgp_js_general', 'tkgp_i18n',
+            array( 'loading' => __('Loading...','tkgp')));
+}
+
 function tkgp_admin_css_registry() {
 	wp_register_style('tkgp_admin', TKGP_URL.'css/tkgp_admin.css');
 	wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
@@ -44,13 +57,16 @@ function tkgp_admin_css_registry() {
 }
 
 function tkgp_admin_js_registry() {
-	wp_register_script('tkgp_js_general', TKGP_URL.'js/tkgp_general.js');
+	wp_register_script('tkgp_js_admin', TKGP_URL.'js/tkgp_admin.js');
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('jquery-ui-datepicker');
-	wp_enqueue_script('tkgp_js_general');
+	wp_enqueue_script('tkgp_js_admin');
+	wp_localize_script( 'tkgp_js_admin', 'tkgp_i18n',
+            array( 'vote_reset' => __('You want to definitely reset the voting results?','tkgp')));
 }
 
 add_action('wp_enqueue_scripts', 'tkgp_css_registry');
+add_action('wp_enqueue_scripts', 'tkgp_js_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_css_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_js_registry');
 

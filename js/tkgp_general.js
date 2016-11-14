@@ -1,145 +1,123 @@
 var $j = jQuery.noConflict();
 
 $j(document).ready(function ($j) {
-		$j('.tkgp_datepicker[name="tkgp_start_date"]').datepicker({
-    		dateFormat: 'dd-mm-yy',
-    		minDate: 'today'
-		});
-		
-		$j('.tkgp_datepicker[name="tkgp_end_date"]').datepicker({
-    		dateFormat: 'dd-mm-yy',
-    		minDate: $j('.tkgp_datepicker[name="start_date"]').val()
-		});
-		
-        $j(".tkgp_radio li input[type='radio']")
-            .addClass('tkgp_radio_hidden')
-            .on('click', tkgp_handler_radio) //обработчик для переключателей
-            .on('click', tkgp_handler_select_radio);
+	tkgp_js_init();
+	tkgp_image_preload();
+});
 
-        $j(".tkgp_user_add").click(tkgp_handler_add_user);
-
-        if ($j(".tkgp_radio li input[type='radio'][name='ptype']:checked").length == 0) {
-            $j(".tkgp_radio li input[type='radio'][name='ptype'][checked='true']")
-                .addClass('tkgp_radio_checked')
-                .trigger('click');
-        }
-        else {
-            $j(".tkgp_radio li input[type='radio'][name='ptype']:checked")
-                .addClass('tkgp_radio_checked')
-                .click();
-        }
-    }
-);
-
-function tkgp_url_vars() {
-    var pair = window.location.href.slice(window.location.href.indexOf('?')).split(/[&?]{1}/);
-    var out = {};
-
-    for (var i = 0; i < pair.length; ++i) {
-        if (pair[i] != '') {
-            out[pair[i].split('=')[0]] = pair[i].split('=')[1];
-        }
-    }
-
-    return out;
+function tkgp_image_preload() {
+	tkgp_js_vars.images.forEach(function (item) {
+		(new Image()).src = tkgp_js_vars.plug_url+'/images/' + item;
+	});
 }
 
-function tkgp_handler_radio() {
-	var radio_name = $j(this).attr('name');
-    $j(".tkgp_radio li input[type='radio'][name='"+radio_name+"']").removeClass('tkgp_radio_checked');
-    $j(".tkgp_radio li input[type='radio'][name='"+radio_name+"']").removeAttr('checked');
-    $j(this).addClass('tkgp_radio_checked');
-    $j(this).attr('checked', 'true');
-
+function tkgp_js_init() {
+	$j('#tkgp_vote_buttons div.tkgp_button').on('click', tkgp_handler_vote);
+	$j('div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
 }
 
-function tkgp_handler_select_radio() {
-    if (this.value === '3') {
-        //alert($j('.tkgp_group_select').length);
-        $j('.tkgp_group_select option').attr('disabled', '');
-        $j('.tkgp_group_select option[selected=""]').removeAttr('selected');
-        $j('.tkgp_group_select [value="0"]').attr('selected', '').removeAttr('disabled');
-    }
-    else $j('.tkgp_group_select option').removeAttr('disabled');
-}
-
-function tkgp_handler_search(e) {
-    if (/*$j(this).val().length >= 2 &&*/ e.keyCode !== 27) {
-        if ($j(this).val().length == 0) {
-            tkgp_show_search_result('');
-            return;
-        }
-
-        $j
-            .ajax({
-                url: ajaxurl,
+function tkgp_handler_vote() {
+	var vote = $j(this).children('input[name="user_vote"]').val();
+	var vote_id = $j(this).parents().find('input[name="tkgp_vote_id"]').val();
+	var vote_nonce = $j(this).parents().find('input[name="tkgp_vote_nonce"]').val();
+	var post_id = $j(this).parents().find('input[name="tkgp_post_id"]').val();
+	var wait_obj = $j(this).parents().find('#tkgp_vote_result');
+	tkgp_wait_animate(wait_obj);
+	
+	$j.ajax({
+                url: tkgp_js_vars.ajax_url,
                 type: 'POST',
-                async: true,
                 data: {
-                    action: 'tkgp_get_user',
-                    tkgp_ufilter: $j(this).val(),
-                    post_id: tkgp_url_vars()['post']
+                    action: 'tkgp_user_vote',
+                    vote_id: vote_id,
+                    post_id: post_id,
+                    vote_variant: vote,
+                    vote_nonce: vote_nonce
                 }
             })
             .done(function (result) {
-                tkgp_show_search_result(result);
+                tkgp_handler_vote_result(result, {vote_id: vote_id, vote_nonce: vote_nonce, post_id: post_id});
             })
             .fail(function (jqXHR, textStatus) {
                 console.log("Request failed: " + textStatus);
             });
-    }
 }
 
-function tkgp_handler_add_selected() {
-	var selected = $j('#tkgp_modal_user input[type="checkbox"]:checked');
+function tkgp_handler_reset_vote() {
+	var vote_id = $j(this).parents().find('input[name="tkgp_vote_id"]').val();
+	var vote_nonce = $j(this).parents().find('input[name="tkgp_vote_nonce"]').val();
+	var post_id = $j(this).parents().find('input[name="tkgp_post_id"]').val();
+	var wait_obj = $j(this).parents().find('#tkgp_vote_result');
+	tkgp_wait_animate(wait_obj);
+
+	$j.ajax({
+                url: tkgp_js_vars.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'tkgp_reset_user_vote',
+                    post_id: post_id,
+                    vote_id: vote_id,
+                    vote_nonce: vote_nonce
+                }
+            })
+            .done(function (result) {
+                tkgp_handler_vote_result(result, {vote_id: vote_id, vote_nonce: vote_nonce, post_id: post_id});
+            })
+            .fail(function (jqXHR, textStatus) {
+                console.log("Request failed: " + textStatus);
+                location.reload();
+            });
+}
+
+function tkgp_handler_vote_result(result, args) {
+	$j.ajax({
+                url: tkgp_js_vars.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'tkgp_get_vote_status',
+                    post_id: args.post_id,
+                    vote_id: args.vote_id,
+                    vote_nonce: args.vote_nonce
+                }
+            })
+            .done(function (new_html) {
+                tkgp_update_vote(args.vote_id, new_html, result);
+            })
+            .fail(function (jqXHR, textStatus) {
+                console.log("Request failed: " + textStatus);
+                location.reload();
+            });
+}
+
+function tkgp_update_vote(vote_id, result, message, stage) {
+	var res = $j.parseJSON(result);
+	var mes = $j.parseJSON(message);
 	
-	if($j('input[name="mgr_cnt"]').length == 0) {
-		$j('.tkgp_user_add').before('<input name="mgr_cnt" value="1" type="hidden">');	
+	if(stage === undefined) {
+		var vr = $j('input[name="tkgp_vote_id"][value="' + vote_id + '"]').parents().find('#tkgp_vote_result');
+		var color = mes.status === false ? '#f00' : '#22ff22' ;
+		var img = mes.status === false ? 'err_status.png' : 'ok_status.png';
+		$j(vr).find('#tkgp_message').text(mes.message)
+									.css('color', color);
+		
+		$j(vr).find('#tkgp_icon').attr('src', tkgp_js_vars.plug_url + '/images/' + img);
+		setTimeout(tkgp_update_vote, 2000, vote_id, result, '',1);
+	} else if(stage === 1) {
+		if(res.status === false) {
+			location.reload();
+		} else {
+			$j('input[name="tkgp_vote_id"][value="' + vote_id + '"]').parents().find('#tkgp_vote_result').replaceWith(res.new_content);
+		tkgp_js_init();
+		}	
+	}	
+}
+
+function tkgp_wait_animate(obj) {
+	if(typeof obj == 'object') {
+		$j(obj).prepend('<dev id="tkgp_modal_box" style="position: absolute; width: 99%; height: 96%;z-index: 999; background: rgba(45,45,45,0.6);box-sizing: border-box;">'
+						+ '<img id="tkgp_icon" src="' + tkgp_js_vars.plug_url + '/images/load.gif" width="32px" style="margin-left: 48%; margin-top: 10%;"/>'
+						+ '<div id="tkgp_message" style="display: inline-block; width: 100%; margin-top: 5px; color: #FFF; text-align: center;">' + tkgp_i18n.loading + '</div>'
+						+ '</dev>'
+						);
 	}
-	
-	var offset = parseInt($j('input[name="mgr_cnt"]').val(),10);
-	
-	for(var i = 0; i < selected.length; i++) {
-		var cur = selected[i];
-		var display_name = ($j(cur).parents('tr').find('td:first-child')).text();
-		var output = '<div class="button tkgp_user"><a id="tkgp_user">' + display_name + '</a><input type="hidden" name="manager' + (i + offset) + '" value="' + cur.value + '"></div>';
-		$j('.tkgp_user_add').before(output);
-	}
-	
-	$j('input[name="mgr_cnt"]').val(offset + selected.length);
-	tkgp_hide_user_modal();
-}
-
-function tkgp_show_search_result(resp) {
-    $j('tr.alt1, tr.alt2').remove();
-    $j('#tkgp_modal_user table tbody').append(resp);
-}
-
-function tkgp_show_user_modal() {
-	$j('#tkgp_modal_user, #tkgp_overlay').css('display', 'block');
-}
-
-function tkgp_hide_user_modal() {
-	$j('#tkgp_modal_user, #tkgp_overlay').removeAttr('style');
-	$j('#tkgp_search').attr('value', '');
-	tkgp_show_search_result();
-}
-
-function tkgp_handler_add_user() {
-    if ($j('#tkgp_modal_user').length == 0) {
-        $j.post(ajaxurl, {action: 'tkgp_get_user', post_id: tkgp_url_vars()['post']},
-            function (resp) {
-                var $j = jQuery.noConflict();
-                $j('body').append(resp);
-                $j('#tkgp_add_selected').click(tkgp_handler_add_selected);
-                $j('#tkgp_modal_user #modal_close, #tkgp_overlay').click(function () {
-	                   tkgp_hide_user_modal();
-                	});
-                $j('#tkgp_search').keypress(tkgp_handler_search);
-                tkgp_show_user_modal();
-            }
-        );
-    } else {
-        tkgp_show_user_modal();
-    }
 }
