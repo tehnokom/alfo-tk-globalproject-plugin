@@ -26,7 +26,8 @@ class TK_GVote
      */
     public function __construct($post_id = null)
     {
-        global $wpdb;
+    	global $wpdb;
+		
         $this->wpdb = $wpdb;
 		$this->wpdb->enable_nulls = true;
         
@@ -49,18 +50,50 @@ class TK_GVote
     }
 
     /**
-     * @todo этот метод лишний в классе
      * @param integer $post_id
      * @return bool
      */
     public static function exists($post_id)
     {
-        global $wpdb;
+    	global $wpdb;
+		
         if (isset($post_id)) {
             
             $res = $wpdb->get_var(
                 $wpdb->prepare("SELECT count(id) FROM {$wpdb->prefix}tkgp_votes  WHERE post_id = %d;", array($post_id))
             );
+            if ($res) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
+	/**
+     * Retun TRUE if Project is approved, else return FALSE.
+	 * 
+     * @return bool
+     */
+    public function approved()
+    {
+        if (!empty($this->vote_id) && !empty($this->project_id)) {
+            $query = '';
+			
+			if($this->variantExists()) { //если пользовательское голосование
+				$query = $this->wpdb->prepare("SELECT 1 FROM DUAL WHERE 0"); //SQL заглушка
+			} else {
+				$query = $this->wpdb->prepare("SELECT 1 FROM DUAL 
+                				WHERE 
+                				(SELECT COUNT(id) FROM {$this->wpdb->prefix}tkgp_usersvotes WHERE vote_id = %d AND variant_id = -1 GROUP BY variant_id) 
+                				> 
+                				(SELECT target_votes FROM {$this->wpdb->prefix}tkgp_votes WHERE id = %d AND post_id = %d)"
+                				, array($this->vote_id,
+										$this->vote_id,
+										$this->project_id)
+								);
+			}
+			
+            $res = $this->wpdb->get_var($query);
             if ($res) {
                 return true;
             }
@@ -98,8 +131,9 @@ class TK_GVote
                 'type' => 'number',
                 'value' => 100,
                 'options' => array(
-                    'min' => '1',
-                    'step' => 1
+                    'min' => 1,
+                    'step' => 1,
+                    'required' => 'true'
                 )
             ),
             array(
@@ -498,54 +532,95 @@ class TK_GVote
 
         if (isset($this->vote_id)) {
         	$settings = $this->getVoteSettings(array('target_votes','enabled','allow_revote','start_date','end_date'));
-            $target_votes = floatval($settings['target_votes']);
-			$allow_revote = (bool)$settings['allow_revote'];
-            $votes = $this->getVoteState();
+            
             $form .= '<div id="tkgp_vote_result">
             	<div class="tkgp_title"><b>'. _x('Voting status', 'Project Vote', 'tkgp') .'</b></div>';
 
-            if ($this->variantExists()) {
-            	if($show_vote_button) {
-					$form .= $this->getVoteButtonHtml(true);
-				}
-            } else {
-            	$approval_votes = 0;
-				$reproval_votes = 0;
-            	if(isset($votes[0]) && intval($votes[0]['id']) === -1) {
-            		$approval_votes = intval($votes[0]['cnt']);
-					$reproval_votes = empty($votes[1]['cnt']) ? 0 : $votes[1]['cnt'];
-            	} else {
-            		$reproval_votes = intval($votes[0]['cnt']);
-					$approval_votes = empty($votes[1]['cnt']) ? 0 : $votes[1]['cnt'];
-            	}
-				
-                $approval = 100.0 * floatval(/*isset($votes[0]) ? $votes[0]['cnt'] : 0*/$approval_votes) / $target_votes;
-                $reproval = 100.0 * floatval(/*isset($votes[1]) ? $votes[1]['cnt'] : 0*/$reproval_votes) / $target_votes;
-
-                $form .= '<table>
-                	<tr><th>'. _x('Progress of the approval', 'Project Vote', 'tkgp') .'</th>
-                	<td>
-                		<div id="tkgp_approval_status">';
-                $form .= '<div id="tkgp_approval" style="float: left; width: ' . $approval . '%; height: 100%; background: #FF0000;"></div>';
-                	/*Код на будущее, когда будет реализация голосов против Проекта*/
-					/*<div id="tkgp_reproval" style="float: left; width: ' . $reproval . '%; height: 100%; background: #EEE;"></div>';*/
-                $form .= '</td>
-                </tr>';
-				if(!$short) {
-					$form .= '<tr><th>'. _x('Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($approval_votes) .'</td></tr>';
-					$form .= '<tr><th>'. _x('Not Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($reproval_votes) .'</td></tr>';
-
-					if($show_vote_button && ($user_can_vote || $allow_revote)) {
-						$form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml() : ($allow_revote ? $this->getVoteResetButtonHtml() : '')) . '</td></tr>';
-					}
-				}
-				$form .= '</table>';
+            if ($this->variantExists()) { // формируем HTML для голосования с пользовательскими вариантами
+            	$form .= $this->getVariantVoteHtml($settings, $show_vote_button, $short, $user_can_vote);	
+            } else { // формируем HTML для стандартного голосования-одобрения проекта
+            	$form .= $this->getStandartVoteHtml($settings, $show_vote_button, $short, $user_can_vote);
 			}
 
             $form .= '</div>';
         }
         return $form;
     }
+	
+	/**
+	 * @param array $settings
+	 * @param bool $show_vote_button
+	 * @param bool $short
+	 * @param bool $user_can_vote
+	 * @return string
+	 */
+	protected function getStandartVoteHtml($settings, $show_vote_button, $short, $user_can_vote) {
+		$target_votes = floatval($settings['target_votes']);
+		$allow_revote = (bool)$settings['allow_revote'];
+		$votes = $this->getVoteState();
+		$approval_votes = 0;
+		$reproval_votes = 0;
+
+        if(isset($votes[0]) && intval($votes[0]['id']) === -1) {
+        	$approval_votes = intval($votes[0]['cnt']);
+			$reproval_votes = empty($votes[1]['cnt']) ? 0 : intval($votes[1]['cnt']);
+        } else {
+        	$reproval_votes = intval($votes[0]['cnt']);
+			$approval_votes = empty($votes[1]['cnt']) ? 0 : intval($votes[1]['cnt']);
+        }
+		
+		$approval_color = $approval_votes < $target_votes ? '#FF0000' : '#00FF00';
+		
+		$total_factor = $approval_votes > $target_votes ? intval($approval_votes / $target_votes) + 1 : 1; //Если голосов одобрения больше или равно требуемому количеству	
+		$total_votes = $approval_votes + $reproval_votes; //Всего проголосовало человек
+        $approval = 100.0 * floatval($approval_votes) / ($target_votes * $total_factor); //Процент одобрения от требуемых голосов для одобрения
+        $reproval = 100.0 * floatval($reproval_votes) / ($target_votes * $total_factor); //Процент не одобрения от требуемых голосов для одобрения
+               
+        $total_approval = $total_votes ? 100.0 * floatval($approval_votes) / $total_votes : 0; //Процент одобривших от общего количества проголосовавших
+		$total_reproval = $total_votes ? 100.0 * floatval($reproval_votes) / $total_votes : 0; //Процент не одобривших от общего количества проголосовавших
+		$approval_percent = str_replace(',0', '', number_format($total_approval, 1, ',', '')); //Процент одобривших от общего количества проголосовавших
+		$reproval_percent = str_replace(',0', '', number_format($total_reproval, 1, ',', '')); //Процент не одобривших от общего количества проголосовавших
+
+        $form .= '<table>
+        	<tr><th>'. _x('Progress of the approval', 'Project Vote', 'tkgp') .'</th>
+               		<td>
+                		<div id="tkgp_approval_status">';
+        $form .= '<div id="tkgp_approval" style="float: left; width: ' . $approval . '%; height: 100%; background: ' . $approval_color . ';"></div>';
+        /*Код на будущее, когда будет реализация голосов против Проекта*/
+		/*<div id="tkgp_reproval" style="float: left; width: ' . $reproval . '%; height: 100%; background: #EEE;"></div>';*/
+		$form .= '</div><div id="tkgp_approval_desc">' . ($approval_votes < $target_votes ? $approval_votes . ' <b>/</b> ' . $target_votes 
+															: _x('APPROVED!', 'Project Vote', 'tkgp'));
+        $form .= '</div></td>
+        </tr>';
+		if(!$short) {
+			$form .= '<tr><th>'. _x('Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($approval_votes) .' (' . $approval_percent . '%)</td></tr>';
+			$form .= '<tr><th>'. _x('Not Supported', 'Project Vote', 'tkgp') . '</th><td>' . intval($reproval_votes) .' (' . $reproval_percent . '%)</td></tr>';
+
+			if($show_vote_button && ($user_can_vote || $allow_revote)) {
+				$form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml() : ($allow_revote ? $this->getVoteResetButtonHtml() : '')) . '</td></tr>';
+			}
+		}
+		$form .= '</table>';
+		
+		return $form;
+	}
+	
+	/**
+	 * @param array $settings
+	 * @param bool $show_vote_button
+	 * @param bool $short
+	 * @param bool $user_can_vote
+	 * @return string
+	 */
+	protected function getVariantVoteHtml($settings, $show_vote_button, $short, $user_can_vote) {
+		$form .= '';
+		
+		if($show_vote_button) {
+			$form .= $this->getVoteButtonHtml(true);
+		}
+		
+		return $form;
+	}
 	
 	/**
 	 * @param bool $variant_exists[optional]
