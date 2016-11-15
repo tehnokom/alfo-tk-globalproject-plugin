@@ -15,9 +15,8 @@ $j(document).ready(function ($j) {
 		
         $j(".tkgp_radio li input[type='radio']")
             .addClass('tkgp_radio_hidden')
-            .on('click', function() {tkgp_handler_radio(); 
-            						 tkgp_handler_select_radio();
-            					}); //обработчик для переключателей
+            .on('click', tkgp_handler_radio) //обработчик для переключателей
+            .on('click',tkgp_handler_select_radio); 
 
         $j(".tkgp_user_add").on('click',tkgp_handler_add_user);
 
@@ -64,7 +63,6 @@ function tkgp_handler_radio() {
 
 function tkgp_handler_select_radio() {
     if (this.value === '3') {
-        //alert($j('.tkgp_group_select').length);
         $j('.tkgp_group_select option').attr('disabled', '');
         $j('.tkgp_group_select option[selected=""]').removeAttr('selected');
         $j('.tkgp_group_select [value="0"]').attr('selected', '').removeAttr('disabled');
