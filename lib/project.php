@@ -45,10 +45,9 @@ class TK_GProject
             return null;
         }
 
-        $managers = array();
         $post = get_post($this->project_id);
-
-        array_push(get_post_meta($this->project_id, 'manager', false), $managers);
+        $managers = get_post_meta($this->project_id, 'manager', true);
+		
         if (count($managers) == 0) {
             $managers[] = $post->post_author;
         }
@@ -74,10 +73,9 @@ class TK_GProject
             return null;
         }
 		
-		$members = array();
 		$post = get_post($this->project_id);
 		
-		$members[] = get_post_meta($this->project_id, 'member', false);
+		$members = get_post_meta($this->project_id, 'member', true);
 		
 		if ($show_display_name) {
             for ($i = 0; $i < count($members); ++$i) {
@@ -137,10 +135,8 @@ class TK_GProject
 				$vote = new TK_GVote($post->ID);
 			
 				$user_id = get_current_user_id();
-				$can_vote = $vote->userCanVote($user_id);
-				$show_vote_buttons = is_user_logged_in();/*тут нужно еще проверка на право голосовать исходя из типа проекта*/
-				//$html .= $vote->getResultVoteHtml($show_vote_buttons, !is_single($post->ID), $can_vote);
-				$html .= $vote->getResultVoteHtml($this->userCan($user_id, array('vote')), !is_single($post->ID), !$this->userCan($user_id, array('revote')));	
+				$caps = $this->userCan($user_id);
+				$html .= $vote->getResultVoteHtml($caps['vote'], !is_single($post->ID), !$caps['revote']);	
 			}
 		}
 		
@@ -188,15 +184,20 @@ class TK_GProject
 						break;
 					
 					case 'work':
-						$access = false; //заглушка, доделать при реализации Плана Работ Проекта
+						$can_edit = $this->userCan($user_id, array('edit'));
+						$can_edit = $can_edit['edit'];
+						$access = $can_edit ? true : false; //заглушка, доделать при реализации Плана Работ Проекта
 						break;
 						
 					case 'vote':
 						if($p_type === 0) {
 							$access = false;
 						} elseif ($p_type === 1) {
-							$all_members = array_unique( array_merge($this->getManagers(),$this->getMembers()) );
-							$access = (array_search($user_id, $all_members, true) !== false) ? true : false;
+							$managers = $this->getManagers();
+							$members = $this->getMembers();
+							$all_members = !empty($members) ? array_merge($managers, $members) : $managers;
+							
+							$access = (array_search($user_id, $all_members) !== false) ? true : false;
 						}
 						break;
 						

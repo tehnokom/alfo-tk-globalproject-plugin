@@ -263,7 +263,7 @@ function tkgp_save_post_meta($post_id)
                         }
                     }
                 } else {
-                    $new = $_POST[$field['id']];
+                    $new[] = $_POST[$field['id']];
                     if ($field['id'] == 'manager') {
                         //тут же добавляем текущий проект к выбранному пользователю
                         update_user_meta($_POST[$field['id']], 'tkgp_projects', $post_id);
