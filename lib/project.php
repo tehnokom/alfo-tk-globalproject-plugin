@@ -186,7 +186,7 @@ class TK_GProject
 					case 'work':
 						$can_edit = $this->userCan($user_id, array('edit'));
 						$can_edit = $can_edit['edit'];
-						$access = $can_edit ? true : false; //заглушка, доделать при реализации Плана Работ Проекта
+						$access = $can_edit || array_search($user_id, $this->getMembers()) !== false ? true : false;
 						break;
 						
 					case 'vote':
