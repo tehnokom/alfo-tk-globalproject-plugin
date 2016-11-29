@@ -102,80 +102,6 @@ function tkgp_create_meta_box()
         'high');
 }
 
-/**
- * Список полей для настройки Проекта
- * text|select|radio|date|select_user|select_group
- * return array
- */
-function tkgp_get_settings_fields()
-{
-    return array(
-        array(
-            'label' => _x('Type', 'Project Settings', 'tkgp'),
-            'desc' => _x('Type of this project.', 'Project Settings', 'tkgp'),
-            'id' => 'ptype',
-            'type' => 'radio',
-            'options' => array(
-                array(
-                    'label' => _x('Private', 'Project Settings', 'tkgp'),
-                    'value' => 0
-                ),
-                array(
-                    'label' => _x('Working', 'Project Settings Type', 'tkgp'),
-                    'value' => 1
-                ),
-                array(
-                    'label' => _x('Members only', 'Project Settings Type', 'tkgp'),
-                    'value' => 2
-                ),
-                array(
-                    'label' => _x('Public', 'Project Settings Type', 'tkgp'),
-                    'value' => 3
-                )
-            )
-        ),
-        array(
-            'label' => _x('Project Manager', 'Project Settings', 'tkgp'),
-            'desc' => _x('Manager with full access to settings this Project.', 'Project Settings', 'tkgp'),
-            'id' => 'manager',
-            'type' => 'select_user',
-            'options' => null
-        ),
-        array(
-            'label' => _x('Working group', 'Project Settings', 'tkgp'),
-            'desc' => _x('Group to which the project was created.', 'Project Settings', 'tkgp'),
-            'id' => 'group',
-            'type' => 'select_group',
-            'options' => null
-        ),
-        array(
-            'label' => _x('Visibility', 'Project Settings', 'tkgp'),
-            'desc' => _x('Visibility for the categories of users.', 'Project Settings', 'tkgp'),
-            'id' => 'visiblity',
-            'type' => 'select',
-            'options' => array(
-                array(
-                    'label' => _x('Public', 'Project Settings', 'tkgp'),
-                    'value' => 0
-                ),
-                array(
-                    'label' => _x('Registered', 'Project Settings', 'tkgp'),
-                    'value' => 1
-                ),
-                array(
-                    'label' => _x('Members only', 'Project Settings', 'tkgp'),
-                    'value' => 2
-                ),
-                array(
-                    'label' => _x('Private', 'Project Settings', 'tkgp'),
-                    'value' => 3
-                )
-            )
-        ),
-    );
-}
-
-
 function tkgp_show_metabox_settings()
 {
     global $post;
@@ -187,93 +113,34 @@ function tkgp_show_metabox_settings()
     echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="' . wp_create_nonce(basename(__FILE__) . '_settings') . '" />
 <table class="form-table">';
 
-    foreach (tkgp_get_settings_fields() as $field) {
+    foreach (TK_GProject::getProjectFields() as $field) {
         echo '<tr>
 	<th><label for="' . $field['id'] . '">' . $field['label'] . '</label></th>
 	<td>';
         switch ($field['type']) {
             case 'radio': //Переключатель
-                echo '<ul class="tkgp_radio">';
                 $current_val = get_post_meta($post->ID, $field['id'], true);
-                $current_val = $current_val == '' ? '1' : $current_val;
-
-                foreach ($field['options'] as $option) {
-                    echo '<li><input type="radio" name="' . $field['id'] . '" ' . ($current_val == $option['value'] ? 'checked="true"' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</li>';
-                }
-
-                echo '</ul>';
+                $current_val = $current_val == '' ? '1' : $current_val;				
+				
+				tkgp_display_options_field($field, $current_val);
                 break;
 
             case 'select': //Выпадающее меню
-                echo '<select class="tkgp_select tkgp_group_select" name="' . $field['id'] . '" seze="1">';
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? '1' : $current_val;
-
-                foreach ($field['options'] as $option) {
-                    if (is_array($current_val) == true) {
-                        echo '<option ' . (array_search($option['value'],
-                                $current_val) != false ? 'selected' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</option>';
-                    } else {
-                        echo '<option ' . ($current_val == $option['value'] ? 'selected' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</option>';
-                    }
-                }
-                echo '</select>';
+				
+				tkgp_display_options_field($field, $current_val);
                 break;
 
             case 'select_user':
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? wp_get_current_user()->ID : $current_val;
-
-                if (is_array($current_val) == true && !empty($current_val)) { //если несколько менеджеров
-                    echo '<input name="mgr_cnt" value="' . count($current_val) . '" type="hidden">';
-                    $uidx = 0;
-                    foreach ($current_val as $user) {
-                        echo '<div class="button tkgp_user">
-								<a id="tkgp_user">' . get_user_by('ID', $user)->display_name . '</a>
-								<input type="hidden" name="' . $field['id'] . ($uidx == 0 ? '' : $uidx) . '" value="' . $user . '">
-							</div>';
-                        ++$uidx;
-                    }
-                } /*elseif($current_val == '') { //если не назначен менеджер
-					echo '<input type="text" placeholder= value="'.$current_val.'">';
-				}*/
-                elseif ($current_val != '') {
-                    echo '<div class="button tkgp_user">
-						<a id="tkgp_user">' . get_user_by('ID', $current_val)->display_name . '</a>
-						<input type="hidden" name="' . $field['id'] . '" value="' . $current_val . '">
-					</div>';
-                }
-
-                echo '<div class="button tkgp_btn tkgp_user_add">
-					<a id="tkgp_user_add">' . _x('Add', 'Project Settings', 'tkgp') . '</a>
-					</div>';
+				
+				tkgp_display_options_field($field, $current_val);
                 break;
 
             case 'select_group':
-                if (!defined('BP_PLUGIN_DIR')) //зависимость от BuddyPress
-                {
-                    echo _x('Groups are not supported.', 'Project Settings', 'tkgp');
-                } else {
-                    $current_val = get_post_meta($post->ID, $field['id'], true);
-                    //$current_val = 1;
-
-                    if (is_array($current_val) == true) {
-
-                    } /*elseif($current_val == '') {
-						echo '<input type="text" value="'.$current_val.'">';
-					}*/
-                    elseif ($current_val != '') {
-                        echo '<div class="tkgp_group button">
-							<a id="tkgp_group" data-permalink="">' . groups_get_group(array('group_id' => $current_val))->name . '</a>
-							<input type="hidden" name="' . $field['id'] . '" value="' . $current_val . '">
-						</div>';
-                    }
-                }
-
-                echo '<div class="tkgp_btn tkgp_group_add button">
-						<a id="tkgp_group_add">' . _x('Add', 'Project Settings', 'tkgp') . '</a>
-						</div>';
-
+                tkgp_display_options_field($field, $current_val);
                 break;
 
             default:
@@ -318,43 +185,21 @@ function tkgp_show_metabox_votes()
                     <?php
                     switch ($field['type']) {
                         case 'radio':
-                            echo '<ul class="tkgp_radio">';
                             $current_val = $current_val == '' ? '1' : $current_val;
-
-                            foreach ($field['options'] as $option) {
-                                echo '<li><input type="radio" name="' . $field['id'] . '" ' . ($current_val == $option['value'] ? 'checked="true"' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</li>';
-                            }
-
-                            echo '</ul>';
+							tkgp_display_options_field($field, $current_val);
                             break;
+							 
                         case 'number':
-                            echo '<input type="number" name="' . $field['id'] . '" value="' . (empty($current_val) ? $field['value'] : $current_val) . '"';
-                            $options = '';
-
-                            if (!empty($field['options'])) {
-                                foreach ($field['options'] as $key => $val) {
-                                    echo ' ' . $key . '="' . $val . '"';
-                                }
-                            }
-
-                            echo '/>';
+                            tkgp_display_options_field($field, $current_val);
                             break;
-                        case 'date':
-                            $opts = '';
-							if(!empty($field['options']))
-							{
-	                            foreach ($field['options'] as $option) {
-	                                $opts = $opts . ' ' . $option;
-	                            }
-                            }
 							
+                        case 'date':
 							$current_val = !empty($current_val) ? $current_val = date('d-m-Y',strtotime($current_val)) : $current_val;	
-                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '" value="' . $current_val . '" ' . $opts . ' class="tkgp_datepicker" />';
-                            break;
+                            tkgp_display_options_field($field, $current_val);
+							break;
 
                         default:
-							$opt = empty($current_val) ? '' : 'checked'; 
-                            echo '<input type="' . $field['type'] . '" name="' . $field['id'] . '" value="' . $field['value'] . '" ' . $opt . ' />';
+                            tkgp_display_options_field($field, $current_val);
                             break;
                     }
                     ?>
@@ -380,7 +225,7 @@ function tkgp_save_post_meta($post_id)
     }
 
 	$vote_updates = array();
-	$fields = array_merge(tkgp_get_settings_fields(), TK_GVote::getVotesFields());
+	$fields = array_merge(TK_GProject::getProjectFields(), TK_GVote::getVotesFields());
 	
     foreach ($fields as $field) {
         if (!isset($_POST[$field['id']]) && $field['exclude'] != 1) {
@@ -434,12 +279,15 @@ function tkgp_save_post_meta($post_id)
 			case 'tkgp_vote_enabled':
 				$vote_updates['enabled'] = intval($_POST[$field['id']]);
 				break;
+			
 			case 'tkgp_vote_target_votes':
 				$vote_updates['target_votes'] = intval($_POST[$field['id']]);
 				break;
+			
 			case 'tkgp_vote_start_date':
 				$vote_updates['start_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
 				break;
+			
 			case 'tkgp_vote_end_date':
 				if(empty($_POST[$field['id']])) { 
 					$vote_updates['end_date'] = null;
@@ -447,6 +295,7 @@ function tkgp_save_post_meta($post_id)
 					$vote_updates['end_date'] = DateTime::createFromFormat('d-m-Y H:i:s',$_POST[$field['id']].' 00:00:00')->format('YmdHis');
 				}
 				break;
+				
 			case 'tkgp_vote_allow_revote':
 				$vote_updates['allow_revote'] = (empty($_POST['tkgp_vote_allow_revote']) ? null : 1);
 				break;
@@ -486,22 +335,159 @@ function tkgp_save_post_meta($post_id)
     return $post_id;
 }
 
+
+function tkgp_create_plugin_options()
+{
+	add_options_page(_x('TK Projects', 'tk_project', 'tkgp'), 
+					 _x('TK Projects Settings', 'tk_project', 'tkgp'), 
+						8, 
+						__FILE__, 
+						'tkgp_option_page');
+}
+
+function tkgp_option_page()
+{
+	add_settings_section('tkgp_opt_section_1','Section 1', '', 'tkgp_global');
+		
+	add_settings_section('tkgp_opt_section_2','Section 2', '', 'tkgp_global');
+}
+
+/**
+ * Displays input field of plugin settings.
+ * 
+ * @param array $args
+ * @param mixed $default_val
+ */
+function tkgp_display_options_field($args, $default_val = '')
+{
+	echo tkgp_field_html($args, $default_val);
+}
+
+/**
+ * Return HTML code of input fields for web-forms.
+ * 
+ * @param array $args
+ * @param mixed|array $default_val
+ */
+function tkgp_field_html($args, $default_val = '')
+{
+	$html = '';
+	
+	$properties = '';
+	
+	if(!empty($args['properties'])) {
+		foreach ($args['properties'] as $prop => $val) {
+			$properties .=  ' ' . $prop . (isset($val) ? ('="' . $val . '"') : '');
+		}
+	}
+		
+	switch ($args['type']) {
+		case 'radio':
+			$html .= '<ul class="tkgp_radio">';
+			
+			foreach ($args['options'] as $option) {
+				$html .= '<li><input type="radio" name="' . $args['id'] . '" ' . ($option['value'] == $default_val ? 'checked="true"' : '') 
+						 . ' value="' . $option['value'] . $properties . '">' . $option['label'] . '</li>';
+			}
+
+			$html .= '</ul>';
+			break;
+		
+		case 'number':
+			$html .= '<input type="number" name="' . $args['id'] . '" value="' . (empty($default_val) ? $args['value'] : $default_val) . '"' . $properties . '/>';			
+			break;
+		
+		case 'select':
+			$html .= '<select class="tkgp_select tkgp_group_select" name="' . $args['id'] . '"' . $properties . '>';
+			
+			foreach ($args['options'] as $option) {
+				if (is_array($default_val) == true) {
+					$html .= '<option ' . (array_search($option['value'], $default_val) != false ? 'selected' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</option>';
+				} else {
+					$html .= '<option ' . ($default_val == $option['value'] ? 'selected' : '') . ' value="' . $option['value'] . '">' . $option['label'] . '</option>';
+				}
+			}
+			$html .= '</select>';
+			break;
+			
+		case 'select_user':
+			if (is_array($default_val) == true && !empty($default_val)) { //если несколько менеджеров
+				$html .= '<input name="mgr_cnt" value="' . count($default_val) . '" type="hidden">';
+				$uidx = 0;
+			
+				foreach ($default_val as $user) {
+					$html .= '<div class="button tkgp_user">
+					<a id="tkgp_user">' . get_user_by('ID', $user)->display_name . '</a>
+					<input type="hidden" name="' . $args['id'] . ($uidx == 0 ? '' : $uidx) . '" value="' . $user . '">
+					</div>';
+					++$uidx;
+				}
+			}
+			elseif ($default_val != '') {
+				$html .= '<div class="button tkgp_user">
+				<a id="tkgp_user">' . get_user_by('ID', $default_val)->display_name . '</a>
+				<input type="hidden" name="' . $args['id'] . '" value="' . $default_val . '">
+				</div>';
+			}
+
+			$html .= '<div class="button tkgp_btn tkgp_user_add">
+			<a id="tkgp_user_add">' . _x('Add', 'Project Settings', 'tkgp') . '</a>
+			</div>';
+			break;
+			
+		case 'select_group':
+			if (!defined('BP_PLUGIN_DIR')) //зависимость от BuddyPress
+			{
+				$html .= _x('Groups are not supported.', 'Project Settings', 'tkgp');
+			} else {
+				if (is_array($default_val) == true) {
+	
+				} elseif ($default_val != '') {
+					$html .= '<div class="tkgp_group button">
+					<a id="tkgp_group" data-permalink="">' . groups_get_group(array('group_id' => $default_val))->name . '</a>
+					<input type="hidden" name="' . $args['id'] . '" value="' . $default_val . '">
+					</div>';
+				}
+			}
+
+			$html .= '<div class="tkgp_btn tkgp_group_add button">
+			<a id="tkgp_group_add">' . _x('Add', 'Project Settings', 'tkgp') . '</a>
+			</div>';
+			break;
+		
+		case 'date':
+			$html .= '<input type="text' /*. $args['type']*/ . '" name="' . $args['id'] . '" value="' . $default_val . '" ' . $properties . ' class="tkgp_datepicker" />';
+			break;
+		
+		case 'checkbox':
+			$properties .= empty($default_val) && strpos($properties, 'checked') === false ? '' : 'checked';
+			$html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '" value="' . $args['value'] . '" ' . $properties . ' />';
+			break;
+		
+		default:
+			$html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '"' . $properties . ' value="' . $default_val . '">';
+			break;
+	}
+		
+	return $html; 
+}
+
+
 function tkgp_content($data)
 {
     global $post;
 
-    if ($post->post_type == 'tk_project' && TK_GVote::exists($post->ID)) {
-        $vote = new TK_GVote($post->ID);
+    if ($post->post_type == 'tk_project') {
+    	$project = new TK_GProject($post->ID);
 		
-		$can_vote = $vote->userCanVote(get_current_user_id());
-		$show_vote_buttons = is_user_logged_in();/*тут нужно еще проверка на право голосовать исходя из типа проекта*/
-        $data .= $vote->getResultVoteHtml($show_vote_buttons, !is_single($post->ID), $can_vote);
+		$data = $project->getProjectContent();
     }
     return $data;
 }
 
 add_action('init', 'tkgp_create_type');
 add_action('init', 'tkgp_create_taxonomy');
+add_action('admin_menu', 'tkgp_create_plugin_options');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
 add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);

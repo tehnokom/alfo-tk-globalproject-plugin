@@ -48,7 +48,7 @@ function tkgp_js_registry() {
 	wp_localize_script( 'tkgp_js_general', 'tkgp_js_vars',
             array( 'ajax_url' => admin_url( 'admin-ajax.php' ),
 				   'plug_url' => TKGP_URL,
-				   'images' => array('load.png','ok_status.gif','err_status.gif')));
+				   'images' => array('load.gif','ok_status.png','err_status.png')));
 				   
 	wp_localize_script( 'tkgp_js_general', 'tkgp_i18n',
             array( 'loading' => __('Loading...','tkgp')));
