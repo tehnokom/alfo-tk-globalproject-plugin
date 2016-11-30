@@ -100,7 +100,7 @@ function tkgp_handler_search(e) {
 
 function tkgp_handler_add_selected() {
 	var selected = $j('#tkgp_modal_user input[type="checkbox"]:checked');
-	var offset = $j('#tkgp_user').length;
+	var offset = $j('.tkgp_user').length;
 	
 	for(var i = 0; i < selected.length; i++) {
 		var cur = selected[i];
