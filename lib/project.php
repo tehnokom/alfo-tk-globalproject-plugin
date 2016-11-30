@@ -158,8 +158,8 @@ class TK_GProject
 				$caps = array('read','edit','work','vote','revote');
 			}
 			
-			$p_type = intval(get_post_meta($this->project_id, 'ptype'));
-			$p_visiblity = intval(get_post_meta($this->project_id, 'visiblity'));
+			$p_type = intval(get_post_meta($this->project_id, 'ptype', true));
+			$p_visiblity = intval(get_post_meta($this->project_id, 'visiblity', true));
 			
 			foreach ($caps as $cap) {
 				$access = false;
@@ -190,14 +190,16 @@ class TK_GProject
 						break;
 						
 					case 'vote':
-						if($p_type === 0) {
+						if($p_type === 0) { //Личный проект
 							$access = false;
-						} elseif ($p_type === 1) {
+						} elseif ($p_type === 3) { //Общественный проект
+							$access = (get_userdata($user_id) !== false) ? true : false;
+						} else { // Рабочий и Групповой проекты
 							$managers = $this->getManagers();
 							$members = $this->getMembers();
 							$all_members = !empty($members) ? array_merge($managers, $members) : $managers;
 							
-							$access = (array_search($user_id, $all_members) !== false) ? true : false;
+							$access = (array_search($user_id, $all_members) !== false) ? true : false;	
 						}
 						break;
 						
