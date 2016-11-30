@@ -154,16 +154,17 @@ function tkgp_ajax_get_vote_status() {
 		}
 		
 		$vote = new TK_GVote($_POST['post_id']);
+		$project = new TK_GProject($_POST['post_id']);
+		
 		if(!$vote->voteExists() || $vote->getVoteId() != $_POST['vote_id']) {
 			//не существует такого голосования
 			wp_die();
 		}
 		
-		$res = $vote->deleteUserVote($user_id);
-		$can_vote = $vote->userCanVote(get_current_user_id());
-		$show_vote_buttons = is_user_logged_in();/*тут нужно еще проверка на право голосовать исходя из типа проекта*/		
-		echo json_encode(array('status' => true, 
-								'new_content' => $vote->getResultVoteHtml($show_vote_buttons, false, $can_vote)
+		$user_id = get_current_user_id();
+		$user_caps = $project->userCan($user_id, array('vote','revote'));
+		echo json_encode(array('status' => true,
+								'new_content' => $vote->getResultVoteHtml($user_caps['vote'], false, !$user_caps['revote'])
 							  )
 						);
 		wp_die();
