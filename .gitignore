@@ -68,3 +68,5 @@ wp-content/plugins/hello.php
 *.pot~
 *.mo~
 
+#Aptana Studio project-file
+.project
