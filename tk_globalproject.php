@@ -67,7 +67,11 @@ function tkgp_admin_js_registry() {
 	wp_enqueue_script('jquery-ui-datepicker');
 	wp_enqueue_script('tkgp_js_admin');
 	wp_localize_script( 'tkgp_js_admin', 'tkgp_i18n',
-            array( 'vote_reset' => __('You want to definitely reset the voting results?','tkgp')));
+            array( 'vote_reset' => __('You want to definitely reset the voting results?','tkgp'),
+					'delete_manager' => __('You want to delete the manager?','tkgp'),
+					'delete_single_manager' => __('You can not drop a single manager.','tkgp')
+				 )
+			);
 }
 
 add_action('plugins_loaded', 'tkgp_localize_plugin');

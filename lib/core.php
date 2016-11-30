@@ -238,36 +238,19 @@ function tkgp_save_post_meta($post_id)
 
         switch ($field['id']) {
             case 'manager':
-                $m_type = 'manager';
-                $cnt_idx = 'mgr_cnt';
             case 'group':
-                if (!isset($m_type)) {
-                    $m_type = 'group';
-                    $cnt_idx = 'grp_cnt';
-                }
+				$pattern = '/^(' . $field['id'] .'){1}[0-9]*$/';
+				$list = tkgp_array_search($pattern, $_POST);
+				
+                foreach($list as $key => $val) {
+					if (is_numeric($val)) {
+                    	$new[] = $val;
 
-                if (!empty($_POST[$cnt_idx]) && is_numeric($_POST[$cnt_idx])) {
-                    $cnt = $_POST[$cnt_idx];
-
-                    for ($i = 0; $i < $cnt; $i++) {
-                        $idx = $m_type . ($i > 0 ? $i : '');
-
-                        if (!empty($_POST[$idx]) && is_numeric($_POST[$idx])) {
-                            array_push($new, $_POST[$idx]);
-
-                            if ($field['id'] == 'manager') {
-                                //тут же добавляем текущий проект к выбранному пользователю
-                                update_user_meta($_POST[$idx], 'tkgp_projects', $post_id);
-
-                            }
-                        }
-                    }
-                } else {
-                    $new[] = $_POST[$field['id']];
-                    if ($field['id'] == 'manager') {
-                        //тут же добавляем текущий проект к выбранному пользователю
-                        update_user_meta($_POST[$field['id']], 'tkgp_projects', $post_id);
-                    }
+						if ($field['id'] == 'manager') {
+							//тут же добавляем текущий проект к выбранному пользователю
+							update_user_meta($_POST[$idx], 'tkgp_projects', $post_id);
+						}
+					}
                 }
 
                 if ($old != $new) {
@@ -335,7 +318,27 @@ function tkgp_save_post_meta($post_id)
     return $post_id;
 }
 
+/**
+ * Looking at all the keys in the array pattern returns an array with the pairs 'key' => 'value' of all the found keys.
+ * 
+ * @param string Template string
+ * @param array $target_array Array for search
+ */
+function tkgp_array_search($key_template, $target_array) {
+	$out = array();
+	
+	foreach ($target_array as $key => $value) {
+		if(preg_match($key_template, $key)) {
+			$out[$key] = $value;
+		}
+	}
+	
+	return $out;
+}
 
+/**
+ * Create plugin options page on admin panel
+ */
 function tkgp_create_plugin_options()
 {
 	add_options_page(_x('TK Projects', 'tk_project', 'tkgp'), 
@@ -411,8 +414,7 @@ function tkgp_field_html($args, $default_val = '')
 			break;
 			
 		case 'select_user':
-			if (is_array($default_val) == true && !empty($default_val)) { //если несколько менеджеров
-				$html .= '<input name="mgr_cnt" value="' . count($default_val) . '" type="hidden">';
+			if (count($default_val)) {
 				$uidx = 0;
 			
 				foreach ($default_val as $user) {
@@ -422,12 +424,6 @@ function tkgp_field_html($args, $default_val = '')
 					</div>';
 					++$uidx;
 				}
-			}
-			elseif ($default_val != '') {
-				$html .= '<div class="button tkgp_user">
-				<a id="tkgp_user">' . get_user_by('ID', $default_val)->display_name . '</a>
-				<input type="hidden" name="' . $args['id'] . '" value="' . $default_val . '">
-				</div>';
 			}
 
 			$html .= '<div class="button tkgp_btn tkgp_user_add">

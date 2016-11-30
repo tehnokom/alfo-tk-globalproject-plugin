@@ -19,7 +19,8 @@ $j(document).ready(function ($j) {
             .on('click',tkgp_handler_select_radio); 
 
         $j(".tkgp_user_add").on('click',tkgp_handler_add_user);
-
+		$j(".tkgp_user").on('click',tkgp_handler_del_user);
+		
         if ($j(".tkgp_radio li input[type='radio'][name='ptype']:checked").length == 0) {
             $j(".tkgp_radio li input[type='radio'][name='ptype'][checked='true']")
                 .addClass('tkgp_radio_checked')
@@ -99,12 +100,7 @@ function tkgp_handler_search(e) {
 
 function tkgp_handler_add_selected() {
 	var selected = $j('#tkgp_modal_user input[type="checkbox"]:checked');
-	
-	if($j('input[name="mgr_cnt"]').length == 0) {
-		$j('.tkgp_user_add').before('<input name="mgr_cnt" value="1" type="hidden">');	
-	}
-	
-	var offset = parseInt($j('input[name="mgr_cnt"]').val(),10);
+	var offset = $j('#tkgp_user').length;
 	
 	for(var i = 0; i < selected.length; i++) {
 		var cur = selected[i];
@@ -112,9 +108,10 @@ function tkgp_handler_add_selected() {
 		var output = '<div class="button tkgp_user"><a id="tkgp_user">' + display_name + '</a><input type="hidden" name="manager' + (i + offset) + '" value="' + cur.value + '"></div>';
 		$j('.tkgp_user_add').before(output);
 	}
-	
-	$j('input[name="mgr_cnt"]').val(offset + selected.length);
+	$j(".tkgp_user").off('click',tkgp_handler_del_user);
+	$j(".tkgp_user").on('click',tkgp_handler_del_user);
 	tkgp_hide_user_modal();
+	
 }
 
 function tkgp_show_search_result(resp) {
@@ -149,4 +146,40 @@ function tkgp_handler_add_user() {
     } else {
         tkgp_show_user_modal();
     }
+}
+
+function tkgp_handler_del_user() {
+	var select_name = $j(this).find('input[name^="manager"]').attr('name');
+	var parent = $j(this).parents('td');
+	var mgr_cnt = parseInt($j(parent).find('input[name^="manager"]').length);
+	
+	if(mgr_cnt > 1) {
+		if(!confirm(tkgp_i18n.delete_manager)) {
+			return;
+		}
+		
+		var select_idx = parseInt(select_name.replace('manager',''));
+		
+		if(isNaN(select_idx)) {
+			select_idx = 0;
+		}
+		
+		$j(this).remove();
+		
+		for(var i = select_idx + 1; i < mgr_cnt; ++i) {
+			$j(parent).find('input[name="manager' + i + '"]').attr('name','manager' + (i-1 ? i - 1 : ''));
+		}
+		
+		if(mgr_cnt - 1 > 1) {
+			$j(parent).find('input[name="mgr_cnt"]').val(mgr_cnt - 1);
+		} else {
+			$j(parent).find('input[name="mgr_cnt"]').remove();
+		}
+	} else { //нельзя удалять единственного
+		alert(tkgp_i18n.delete_single_manager);
+		return;
+	}
+	
+	//$j(parent).remove('#manager-1');
+	
 }
