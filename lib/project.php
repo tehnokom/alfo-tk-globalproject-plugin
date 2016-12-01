@@ -9,7 +9,23 @@ class TK_GProject
      * @var integer|null
      */
     protected $project_id;
-
+	
+	/**
+	 * @var bool
+	 */
+	protected $is_project = false;
+	
+	/**
+	 * @var int
+	 */
+	protected $project_type;
+	
+	/**
+	 * @var int
+	 */
+	 protected $project_visibility;
+	 
+	
     /**
      * TK_GProject constructor.
      * @param null $post_id
@@ -21,6 +37,12 @@ class TK_GProject
 
             if (is_object($res)) {
                 $this->project_id = $res->ID;
+				$this->is_project = $res->post_type == 'tk_project' ? true : false;
+				
+				if($this->is_project) {
+					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
+					$this->project_visibility = intval(get_post_meta($this->project_id, 'visiblity', true));
+				}
             }
         } else {
             $this->project_id = null;
@@ -41,7 +63,7 @@ class TK_GProject
      */
     public function getManagers($show_display_name = false)
     {
-        if (get_post_type($this->project_id) != 'tk_project') {
+        if (!$this->is_project) {
             return null;
         }
 
@@ -69,7 +91,7 @@ class TK_GProject
      * @return array|null
      */
 	public function getMembers($show_display_name = false) {
-		if (get_post_type($this->project_id) != 'tk_project') {
+		if (!$this->is_project) {
             return null;
         }
 		
@@ -158,57 +180,31 @@ class TK_GProject
 				$caps = array('read','edit','work','vote','revote');
 			}
 			
-			$p_type = intval(get_post_meta($this->project_id, 'ptype', true));
-			$p_visiblity = intval(get_post_meta($this->project_id, 'visiblity', true));
+			/*$p_type = intval(get_post_meta($this->project_id, 'ptype', true));
+			$p_visiblity = intval(get_post_meta($this->project_id, 'visiblity', true));*/
 			
 			foreach ($caps as $cap) {
 				$access = false;
 				
 				switch ($cap) {
 					case 'read':
-						if($p_visiblity === 0) { //Public
-							$access = true;
-						} elseif ($p_visiblity === 1) { //Registered
-							$access = (wp_get_current_user()->ID === $user_id);
-						} elseif ($p_visiblity === 2 || $p_visiblity === 3) { //Members only and Privete
-							$members = $this->getManagers();
-							$access = array_search($user_id, $members, true) === false ? false : true;
-						} else { $access = false; }
+						$access = $this->userCanRead($user_id);
 						break;
 						
 					case 'edit':
-						$post = get_post($this->project_id);
-						$access = (array_search($user_id, $members, true) !== false 
-									|| $user_id === $post->post_author
-									|| is_super_admin($user_id)) ? true : false;
+						$access = $this->userCanEdit($user_id);
 						break;
 					
 					case 'work':
-						$can_edit = $this->userCan($user_id, array('edit'));
-						$can_edit = $can_edit['edit'];
-						$access = $can_edit || array_search($user_id, $this->getMembers()) !== false ? true : false;
+						$access = $this->userCanWork($user_id);
 						break;
 						
 					case 'vote':
-						if($p_type === 0) { //Личный проект
-							$access = false;
-						} elseif ($p_type === 3) { //Общественный проект
-							$access = (get_userdata($user_id) !== false) ? true : false;
-						} else { // Рабочий и Групповой проекты
-							$managers = $this->getManagers();
-							$members = $this->getMembers();
-							$all_members = !empty($members) ? array_merge($managers, $members) : $managers;
-							
-							$access = (array_search($user_id, $all_members) !== false) ? true : false;	
-						}
+						$access = $this->userCanVote($user_id);
 						break;
 						
 					case 'revote':
-						$can_vote = $this->userCan($user_id, array('vote'));
-						$can_vote = $can_vote['vote'];
-						$vote = new TK_GVote($this->project_id);
-						
-						$access = ($can_vote && !$vote->userCanVote($user_id)) ? true : false;
+						$access = $this->userCanRevote($user_id);
 						break;
 						
 					default:
@@ -220,6 +216,93 @@ class TK_GProject
 		}
 		
 		return $out_caps;
+	}
+	
+	/**
+	 * Return TRUE when user can read project else FALSE
+	 * 
+	 * @param int $user_id
+	 */
+	public function userCanRead($user_id) {
+		$access = false;
+		
+		if($this->project_visibility === 0) { //Public
+			$access = true;
+		} elseif ($this->project_visibility === 1) { //Registered
+			$access = (wp_get_current_user()->ID === $user_id);
+		} elseif ($this->project_visibility === 2 || $this->project_visibility === 3) { //Members only and Privete
+			$members = $this->getManagers();
+			$access = array_search($user_id, $members, true) === false ? false : true;
+		} else { $access = false; }
+		
+		return $access;
+	}
+	
+	/**
+	 * Return TRUE when user can edit project else FALSE
+	 * 
+	 * @param int $user_id
+	 */
+	public function userCanEdit($user_id) {
+		$access = false;
+		$post = get_post($this->project_id);
+		
+		$access = (array_search($user_id, $this->getManagers(), true) !== false 
+					|| $user_id === $post->post_author
+					|| is_super_admin($user_id)) ? true : false;
+		
+		return $access;
+	}
+	
+	/**
+	 * Return TRUE when user can work project esle FALSE
+	 * 
+	 * @param int $user_id
+	 */
+	public function userCanWork($user_id) {
+		$access = false;
+		$can_edit = $this->userCanEdit($user_id);
+		
+		$access = $can_edit || array_search($user_id, $this->getMembers()) !== false ? true : false;
+		
+		return $access;
+	}
+	
+	/**
+	 * Return TRUE when user can vote project ELSE
+	 * 
+	 * @param int $user_id
+	 */
+	public function userCanVote($user_id) {
+		$access = false;
+		
+		if($this->project_type === 0) { //Личный проект
+			$access = false;
+		} elseif ($this->project_type === 3) { //Общественный проект
+			$access = (get_userdata($user_id) !== false) ? true : false;
+		} else { // Рабочий и Групповой проекты
+			$managers = $this->getManagers();
+			$members = $this->getMembers();
+			$all_members = !empty($members) ? array_merge($managers, $members) : $managers;
+							
+			$access = (array_search($user_id, $all_members) !== false) ? true : false;	
+		}
+		
+		return $access;
+	}
+	
+	/**
+	 * Return TRUE when user can revote project
+	 * 
+	 * @param int $user_id
+	 */
+	public function userCanRevote($user_id) {
+		$can_vote = $this->userCanVote($user_id);
+		$vote = new TK_GVote($this->project_id);
+					
+		$access = ($can_vote && !$vote->userCanVote($user_id)) ? true : false;
+		
+		return $access;
 	}
 	
 	/**
