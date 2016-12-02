@@ -37,7 +37,7 @@ class TK_GProject
 
             if (is_object($res)) {
                 $this->project_id = $res->ID;
-				$this->is_project = $res->post_type == 'tk_project' ? true : false;
+				$this->is_project = $res->post_type == $this->slug() ? true : false;
 				
 				if($this->is_project) {
 					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
@@ -56,7 +56,11 @@ class TK_GProject
     {
 
     }
-
+	
+	public static function slug() {
+		return 'tk_project';
+	}
+	
     /**
      * @param bool $show_display_name
      * @return array|null
@@ -70,15 +74,19 @@ class TK_GProject
         $post = get_post($this->project_id);
         $managers = get_post_meta($this->project_id, 'manager', true);
 		
-        if (count($managers) == 0) {
-            $managers[] = $post->post_author;
-        }
+		if(empty($managers)) {
+			$managers[] = $post->post_author;
+		}
+		
+		if(!is_array($managers)) {
+			$managers[] = $managers;
+		}
 
         if ($show_display_name) {
             for ($i = 0; $i < count($managers); ++$i) {
                 $managers[$i] = array(
                     'id' => $managers[$i],
-                    'display_name' => get_user_by('ID', $current_val)->display_name
+                    'display_name' => get_user_by('ID', $managers[$i])->display_name
                 );
             }
         }
@@ -99,11 +107,15 @@ class TK_GProject
 		
 		$members = get_post_meta($this->project_id, 'member', true);
 		
+		if(!is_array($members)) {
+			$members[] = $members;
+		}
+		
 		if ($show_display_name) {
             for ($i = 0; $i < count($members); ++$i) {
                 $members[$i] = array(
                     'id' => $members[$i],
-                    'display_name' => get_user_by('ID', $current_val)->display_name
+                    'display_name' => get_user_by('ID', $members[$i])->display_name
                 );
             }
         }
@@ -219,6 +231,25 @@ class TK_GProject
 	}
 	
 	/**
+	 * Return TRUE when User by $user_id has Administrator, else FALSE.
+	 * 
+	 * @param int $user_id
+	 * @return bool
+	 */
+	protected static function userIsAdmin($user_id) {
+		$res = false;
+		
+		$user_data = get_user_by('ID',$user_id);
+		
+		if($user_data) {
+			$roles_caps = $user_data->get_role_caps();
+			$res = array_key_exists('administrator', $roles_caps) ? (boolean)$roles_caps['administrator'] : false;
+		}
+		
+		return $res;
+	}
+	
+	/**
 	 * Return TRUE when user can read project else FALSE
 	 * 
 	 * @param int $user_id
@@ -229,10 +260,11 @@ class TK_GProject
 		if($this->project_visibility === 0) { //Public
 			$access = true;
 		} elseif ($this->project_visibility === 1) { //Registered
-			$access = (wp_get_current_user()->ID === $user_id);
+			$user_data = get_user_by('ID',$user_id);
+			$access = $user_data === false ? false : true;
 		} elseif ($this->project_visibility === 2 || $this->project_visibility === 3) { //Members only and Privete
 			$members = $this->getManagers();
-			$access = array_search($user_id, $members, true) === false ? false : true;
+			$access = array_search($user_id, $members) === false && !$this->userIsAdmin($user_id) ? false : true;
 		} else { $access = false; }
 		
 		return $access;

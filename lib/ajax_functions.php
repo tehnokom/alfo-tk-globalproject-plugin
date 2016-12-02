@@ -156,29 +156,35 @@ function tkgp_ajax_reset_user_vote() {
 }
 
 function tkgp_ajax_get_vote_status() {
+	$html = '';
+	
 	if(empty($_POST['post_id']) 
 		|| empty($_POST['vote_id'])
 		|| (!wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote') && !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote') )
 		|| !is_user_logged_in()
 		) {
 			//проблемы безопасности
-			wp_die();	
+			$html = '<p><center><h3>' . _x('Operation is not allowed', 'Project Vote', 'tkgp') . '</h3></center></p>';
+		} else {
+			$vote = new TK_GVote($_POST['post_id']);
+			$project = new TK_GProject($_POST['post_id']);
+			$user_id = get_current_user_id();
+					
+			if(!$vote->voteExists() || $vote->getVoteId() != $_POST['vote_id']) {
+				//не существует такого голосования
+				$html = '<p><center><h3>' . _x('Voting does not exist or is hidden', 'Project Vote', 'tkgp') . '</h3></center></p>';
+			} elseif(!$project->userCanRead($user_id)) {
+				//нет доступа к проекту
+				$html = '<p><center><h3>' . _x('You do not have access to the data of voting', 'Project Vote', 'tkgp') . '<h3/></center></p>';
+			} else {
+				$html = $vote->getResultVoteHtml($project->userCanVote($user_id), false, !$project->userCanRevote($user_id));
+			}
 		}
 		
-		$vote = new TK_GVote($_POST['post_id']);
-		$project = new TK_GProject($_POST['post_id']);
-		
-		if(!$vote->voteExists() || $vote->getVoteId() != $_POST['vote_id']) {
-			//не существует такого голосования
-			wp_die();
-		}
-		
-		$user_id = get_current_user_id();
-		$user_caps = $project->userCan($user_id, array('vote','revote'));
 		echo json_encode(array('status' => true,
-								'new_content' => $vote->getResultVoteHtml($user_caps['vote'], false, !$user_caps['revote'])
-							  )
-						);
+								'new_content' => $html
+							  ));
+							  
 		wp_die();
 }
 
