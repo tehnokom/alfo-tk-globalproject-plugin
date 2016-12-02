@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TehnoKom Global Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-15 09:21+0000\n"
-"PO-Revision-Date: 2016-11-15 09:28+0000\n"
+"POT-Creation-Date: 2016-12-02 05:44+0000\n"
+"PO-Revision-Date: 2016-12-02 05:48+0000\n"
 "Last-Translator: Александр Петров <580-39-39@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
@@ -14,50 +14,60 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: tk_globalproject.php:55
-msgid "Loading..."
-msgstr "Загрузка..."
-
 #: tk_globalproject.php:71
-msgid "You want to definitely reset the voting results?"
-msgstr "Вы точно желаете сбросить результаты голосования?"
+msgid "You want to delete the manager?"
+msgstr "Вы хотите удалить менеджера?"
 
-#: lib/ajax_functions.php:42
-msgctxt "Project Settings"
-msgid "Search..."
-msgstr "Поиск..."
+#: tk_globalproject.php:72
+msgid "You can not drop a single manager."
+msgstr "Вы не можете исключить единственного менеджера."
 
-#: lib/ajax_functions.php:47
-msgctxt "Project Settings"
-msgid "Users"
-msgstr "Пользователи"
+#: lib/core.php:345
+msgctxt "tk_project"
+msgid "TK Projects Settings"
+msgstr "ТК Проекты Настройки"
 
-#: lib/ajax_functions.php:54 lib/core.php:248 lib/core.php:274
-msgctxt "Project Settings"
-msgid "Add"
-msgstr "Добавить"
-
-#: lib/ajax_functions.php:103
+#: lib/ajax_functions.php:93 lib/ajax_functions.php:129
+#: lib/ajax_functions.php:167
 msgctxt "Project Vote"
-msgid "Your vote has been counted"
-msgstr "Ваш голос был учтен"
+msgid "Operation is not allowed"
+msgstr "Операция не допустима"
+
+#: lib/ajax_functions.php:101 lib/ajax_functions.php:137
+#: lib/ajax_functions.php:175
+msgctxt "Project Vote"
+msgid "Voting does not exist or is hidden"
+msgstr "Голосование не существует или оно скрыто"
 
 #: lib/ajax_functions.php:104
 msgctxt "Project Vote"
-msgid "Your vote was not counted"
-msgstr "Ваш голос не был учтен"
+msgid "You have no rights to vote"
+msgstr "У Вас нет права на голосование"
 
-#: lib/ajax_functions.php:137
+#: lib/ajax_functions.php:140
 msgctxt "Project Vote"
-msgid "Your vote has been reset"
-msgstr "Ваш голос был сброшен"
+msgid "You can not cancel your vote"
+msgstr "Вы не можете отменить свой голос"
 
-#: lib/ajax_functions.php:138
+#: lib/ajax_functions.php:143
 msgctxt "Project Vote"
-msgid "Your vote was not reset"
-msgstr "Ваш голос не был сброшен"
+msgid "You may not vote"
+msgstr "Вы не голосовали"
 
-#: lib/core.php:17
+#: lib/ajax_functions.php:178
+msgctxt "Project Vote"
+msgid "You do not have access to the data of voting"
+msgstr "У Вас нет доступа к данным голосования"
+
+#: tk_globalproject.php:54
+msgid "Loading..."
+msgstr "Загрузка..."
+
+#: tk_globalproject.php:70
+msgid "You want to definitely reset the voting results?"
+msgstr "Вы точно желаете сбросить результаты голосования?"
+
+#: lib/core.php:17 lib/core.php:344
 msgctxt "tk_project"
 msgid "TK Projects"
 msgstr "ТК Проекты"
@@ -137,85 +147,45 @@ msgctxt "tk_meta"
 msgid "Votes"
 msgstr "Голосование"
 
-#: lib/core.php:114
+#: lib/core.php:430 lib/core.php:450 lib/ajax_functions.php:54
 msgctxt "Project Settings"
-msgid "Type"
-msgstr "Тип"
+msgid "Add"
+msgstr "Добавить"
 
-#: lib/core.php:115
-msgctxt "Project Settings"
-msgid "Type of this project."
-msgstr "Тип данного проекта."
-
-#: lib/core.php:120 lib/core.php:170
-msgctxt "Project Settings"
-msgid "Private"
-msgstr "Личный"
-
-#: lib/core.php:124
-msgctxt "Project Settings Type"
-msgid "Working"
-msgstr "Рабочий"
-
-#: lib/core.php:128
-msgctxt "Project Settings Type"
-msgid "Members only"
-msgstr "Групповой"
-
-#: lib/core.php:132
-msgctxt "Project Settings Type"
-msgid "Public"
-msgstr "Публичный"
-
-#: lib/core.php:138
-msgctxt "Project Settings"
-msgid "Project Manager"
-msgstr "Управляющие проектом"
-
-#: lib/core.php:139
-msgctxt "Project Settings"
-msgid "Manager with full access to settings this Project."
-msgstr "Управляющие с полным доступом к настройкам этого проекта."
-
-#: lib/core.php:145
-msgctxt "Project Settings"
-msgid "Working group"
-msgstr "Рабочая группа"
-
-#: lib/core.php:146
-msgctxt "Project Settings"
-msgid "Group to which the project was created."
-msgstr "Группа, для которой был создан данный проект."
-
-#: lib/core.php:152
-msgctxt "Project Settings"
-msgid "Visibility"
-msgstr "Видимость"
-
-#: lib/core.php:153
-msgctxt "Project Settings"
-msgid "Visibility for the categories of users."
-msgstr "Видимость для категорий пользователей."
-
-#: lib/core.php:158
-msgctxt "Project Settings"
-msgid "Public"
-msgstr "Общий"
-
-#: lib/core.php:162
-msgctxt "Project Settings"
-msgid "Registered"
-msgstr "Зарегистрированные"
-
-#: lib/core.php:166
-msgctxt "Project Settings"
-msgid "Members only"
-msgstr "Только для участников"
-
-#: lib/core.php:255
+#: lib/core.php:437
 msgctxt "Project Settings"
 msgid "Groups are not supported."
 msgstr "Группы не поддерживаются."
+
+#: lib/ajax_functions.php:42
+msgctxt "Project Settings"
+msgid "Search..."
+msgstr "Поиск..."
+
+#: lib/ajax_functions.php:47
+msgctxt "Project Settings"
+msgid "Users"
+msgstr "Пользователи"
+
+#: lib/ajax_functions.php:107
+msgctxt "Project Vote"
+msgid "Your vote has been counted"
+msgstr "Ваш голос был учтен"
+
+#: lib/ajax_functions.php:108
+msgctxt "Project Vote"
+msgid "Your vote was not counted"
+msgstr "Ваш голос не был учтен"
+
+#: lib/ajax_functions.php:146
+msgctxt "Project Vote"
+msgid "Your vote has been reset"
+msgstr "Ваш голос был сброшен"
+
+#: lib/ajax_functions.php:147
+msgctxt "Project Vote"
+msgid "Your vote was not reset"
+msgstr "Ваш голос не был сброшен"
 
 #: lib/vote.php:111
 msgctxt "Project Settings"
@@ -333,6 +303,81 @@ msgstr "Я не поддерживаю"
 msgctxt "Project Vote"
 msgid "Reset my vote"
 msgstr "Сбросить мой голос"
+
+#: lib/project.php:339
+msgctxt "Project Settings"
+msgid "Type"
+msgstr "Тип"
+
+#: lib/project.php:340
+msgctxt "Project Settings"
+msgid "Type of this project."
+msgstr "Тип данного проекта."
+
+#: lib/project.php:345 lib/project.php:396
+msgctxt "Project Settings"
+msgid "Private"
+msgstr "Личный"
+
+#: lib/project.php:349
+msgctxt "Project Settings Type"
+msgid "Working"
+msgstr "Рабочий"
+
+#: lib/project.php:353
+msgctxt "Project Settings Type"
+msgid "Members only"
+msgstr "Групповой"
+
+#: lib/project.php:357
+msgctxt "Project Settings Type"
+msgid "Public"
+msgstr "Публичный"
+
+#: lib/project.php:363
+msgctxt "Project Settings"
+msgid "Project Manager"
+msgstr "Управляющие проектом"
+
+#: lib/project.php:364
+msgctxt "Project Settings"
+msgid "Manager with full access to settings this Project."
+msgstr "Управляющие с полным доступом к настройкам этого проекта."
+
+#: lib/project.php:370
+msgctxt "Project Settings"
+msgid "Working group"
+msgstr "Рабочая группа"
+
+#: lib/project.php:371
+msgctxt "Project Settings"
+msgid "Group to which the project was created."
+msgstr "Группа, для которой был создан данный проект."
+
+#: lib/project.php:377
+msgctxt "Project Settings"
+msgid "Visibility"
+msgstr "Видимость"
+
+#: lib/project.php:378
+msgctxt "Project Settings"
+msgid "Visibility for the categories of users."
+msgstr "Видимость для категорий пользователей."
+
+#: lib/project.php:384
+msgctxt "Project Settings"
+msgid "Public"
+msgstr "Общий"
+
+#: lib/project.php:388
+msgctxt "Project Settings"
+msgid "Registered"
+msgstr "Зарегистрированные"
+
+#: lib/project.php:392
+msgctxt "Project Settings"
+msgid "Members only"
+msgstr "Только для участников"
 
 #. Name of the plugin
 msgid "TehnoKom Global Project"
