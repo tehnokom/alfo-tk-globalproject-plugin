@@ -11,7 +11,7 @@ require_once(TKGP_ROOT . 'lib/vote.php');
  */
 function tkgp_create_type()
 {
-    register_post_type(TK_GProject::slug(),
+    register_post_type(TK_GProject::slug,
         array(
             'labels' => array(
                 'name' => _x('TK Projects', 'tk_project', 'tkgp'),
@@ -43,7 +43,7 @@ function tkgp_create_type()
 function tkgp_create_taxonomy()
 {
     register_taxonomy('tkgp_tax',
-        array(TK_GProject::slug()),
+        array(TK_GProject::slug),
         array(
             'labels' => array(
                 'name' => _x('Categories of Projects', 'Taxonomy General Name', 'tkgp'),
@@ -76,7 +76,7 @@ function tkgp_create_meta_box()
 {
     global $post;
 
-    if ($post->post_type != TK_GProject::slug()) {
+    if ($post->post_type != TK_GProject::slug) {
         return;
     }
 
@@ -106,7 +106,7 @@ function tkgp_show_metabox_settings()
 {
     global $post;
 
-    if ($post->post_type != TK_GProject::slug()) {
+    if ($post->post_type != TK_GProject::slug) {
         return;
     }
 
@@ -217,7 +217,7 @@ function tkgp_save_post_meta($post_id)
 {
     if (!wp_verify_nonce($_POST['tkgp_meta_settings_nonce'], basename(__FILE__) . '_settings')
         || !wp_verify_nonce($_POST['tkgp_meta_steps_nonce'], basename(__FILE__) . '_steps')
-        || $_POST['post_type'] != TK_GProject::slug()
+        || $_POST['post_type'] != TK_GProject::slug
         || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
         || !current_user_can('edit_page', $post_id) //проверка на доступ пользователя, потом нужно будет доработать
     ) {
@@ -473,7 +473,7 @@ function tkgp_content($data)
 {
     global $post;
 
-    if ($post->post_type == TK_GProject::slug()) {
+    if ($post->post_type == TK_GProject::slug) {
     	$project = new TK_GProject($post->ID);
 		
 		$data = $project->getProjectContent();

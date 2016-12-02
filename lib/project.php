@@ -26,6 +26,11 @@ class TK_GProject
 	 protected $project_visibility;
 	 
 	
+	/**
+	 * @const string slug
+	 */
+	const slug = 'tk_project';
+	
     /**
      * TK_GProject constructor.
      * @param null $post_id
@@ -37,7 +42,7 @@ class TK_GProject
 
             if (is_object($res)) {
                 $this->project_id = $res->ID;
-				$this->is_project = $res->post_type == $this->slug() ? true : false;
+				$this->is_project = $res->post_type == TK_GProject::slug ? true : false;
 				
 				if($this->is_project) {
 					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
@@ -56,10 +61,6 @@ class TK_GProject
     {
 
     }
-	
-	public static function slug() {
-		return 'tk_project';
-	}
 	
     /**
      * @param bool $show_display_name
