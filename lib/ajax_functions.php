@@ -88,6 +88,7 @@ function tkgp_ajax_policy(&$message) {
 		|| !is_user_logged_in()
 		) {
 		//проблемы безопасности
+		$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
 		return $res;
 	}
 
@@ -109,11 +110,8 @@ function tkgp_ajax_user_vote() {
 	$res = false;
 	$message = '';
 	
-	if(!tkgp_ajax_policy($message)
-		|| !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')) {
-		//запрос не прошел проверку безопасности
-		$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
-	} else {
+	if(tkgp_ajax_policy($message)
+		&& wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')) {
 		$project = new TK_GProject(intval($_POST['post_id']));
 		$vote = new TK_GVote(intval($_POST['post_id']));
 		$user_id = get_current_user_id();
@@ -139,11 +137,8 @@ function tkgp_ajax_reset_user_vote() {
 	$res = false;
 	$message = '';
 	
-	if(!tkgp_ajax_policy($message)
-		|| !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote')) {
-		//проблемы безопасности
-		$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
-	} else {
+	if(tkgp_ajax_policy($message)
+		&& wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote')) {
 		$project = new TK_GProject(intval($_POST['post_id']));
 		$vote = new TK_GVote(intval($_POST['post_id']));
 		$user_id = get_current_user_id();
@@ -172,12 +167,10 @@ function tkgp_ajax_get_vote_status() {
 	$html = '';
 	$res = false;
 	
-	if(!tkgp_ajax_policy($html) 
-		|| (!wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote') && !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote') )
+	if(tkgp_ajax_policy($html) 
+		&& (wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote') 
+		|| wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote'))
 	) {
-		//проблемы безопасности
-		$html = _x('Operation is not allowed', 'Project Vote', 'tkgp');
-	} else {
 		$vote = new TK_GVote($_POST['post_id']);
 		$project = new TK_GProject($_POST['post_id']);
 		$user_id = get_current_user_id();
