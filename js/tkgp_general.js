@@ -7,7 +7,7 @@ $j(document).ready(function ($j) {
 
 function tkgp_image_preload() {
 	tkgp_js_vars.images.forEach(function (item) {
-		(new Image()).src = tkgp_js_vars.plug_url+'/images/' + item;
+		(new Image()).src = tkgp_js_vars.plug_url + '/images/' + item;
 	});
 }
 

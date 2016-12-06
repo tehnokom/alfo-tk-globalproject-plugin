@@ -1,0 +1,398 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-12-02 05:44+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#: tk_globalproject.php:54
+msgid "Loading..."
+msgstr ""
+
+#: tk_globalproject.php:70
+msgid "You want to definitely reset the voting results?"
+msgstr ""
+
+#: tk_globalproject.php:71
+msgid "You want to delete the manager?"
+msgstr ""
+
+#: tk_globalproject.php:72
+msgid "You can not drop a single manager."
+msgstr ""
+
+#: lib/core.php:17 lib/core.php:344
+msgctxt "tk_project"
+msgid "TK Projects"
+msgstr ""
+
+#: lib/core.php:18
+msgctxt "tk_project_singular"
+msgid "TK Projects"
+msgstr ""
+
+#: lib/core.php:19
+msgctxt "tk_project"
+msgid "Create new"
+msgstr ""
+
+#: lib/core.php:20
+msgctxt "tk_project"
+msgid "Create new project"
+msgstr ""
+
+#: lib/core.php:21
+msgctxt "tk_project"
+msgid "Edit project"
+msgstr ""
+
+#: lib/core.php:22
+msgctxt "tk_project"
+msgid "New project"
+msgstr ""
+
+#: lib/core.php:23
+msgctxt "tk_project"
+msgid "View project"
+msgstr ""
+
+#: lib/core.php:24
+msgctxt "tk_project"
+msgid "Search project"
+msgstr ""
+
+#: lib/core.php:25
+msgctxt "tk_project"
+msgid "Project not found"
+msgstr ""
+
+#: lib/core.php:26
+msgctxt "tk_project"
+msgid "Project not found in Trash"
+msgstr ""
+
+#: lib/core.php:28
+msgctxt "tk_project"
+msgid "TehnoKom Global Project system type"
+msgstr ""
+
+#: lib/core.php:49
+msgctxt "Taxonomy General Name"
+msgid "Categories of Projects"
+msgstr ""
+
+#: lib/core.php:50
+msgctxt "Taxonomy Singular Name"
+msgid "Categories of Projects"
+msgstr ""
+
+#: lib/core.php:84
+msgctxt "tk_meta"
+msgid "Settings of Project"
+msgstr ""
+
+#: lib/core.php:91
+msgctxt "tk_meta"
+msgid "Plane of Project"
+msgstr ""
+
+#: lib/core.php:98
+msgctxt "tk_meta"
+msgid "Votes"
+msgstr ""
+
+#: lib/core.php:345
+msgctxt "tk_project"
+msgid "TK Projects Settings"
+msgstr ""
+
+#: lib/core.php:430 lib/core.php:450 lib/ajax_functions.php:54
+msgctxt "Project Settings"
+msgid "Add"
+msgstr ""
+
+#: lib/core.php:437
+msgctxt "Project Settings"
+msgid "Groups are not supported."
+msgstr ""
+
+#: lib/ajax_functions.php:42
+msgctxt "Project Settings"
+msgid "Search..."
+msgstr ""
+
+#: lib/ajax_functions.php:47
+msgctxt "Project Settings"
+msgid "Users"
+msgstr ""
+
+#: lib/ajax_functions.php:93 lib/ajax_functions.php:129
+#: lib/ajax_functions.php:167
+msgctxt "Project Vote"
+msgid "Operation is not allowed"
+msgstr ""
+
+#: lib/ajax_functions.php:101 lib/ajax_functions.php:137
+#: lib/ajax_functions.php:175
+msgctxt "Project Vote"
+msgid "Voting does not exist or is hidden"
+msgstr ""
+
+#: lib/ajax_functions.php:104
+msgctxt "Project Vote"
+msgid "You have no rights to vote"
+msgstr ""
+
+#: lib/ajax_functions.php:107
+msgctxt "Project Vote"
+msgid "Your vote has been counted"
+msgstr ""
+
+#: lib/ajax_functions.php:108
+msgctxt "Project Vote"
+msgid "Your vote was not counted"
+msgstr ""
+
+#: lib/ajax_functions.php:140
+msgctxt "Project Vote"
+msgid "You can not cancel your vote"
+msgstr ""
+
+#: lib/ajax_functions.php:143
+msgctxt "Project Vote"
+msgid "You may not vote"
+msgstr ""
+
+#: lib/ajax_functions.php:146
+msgctxt "Project Vote"
+msgid "Your vote has been reset"
+msgstr ""
+
+#: lib/ajax_functions.php:147
+msgctxt "Project Vote"
+msgid "Your vote was not reset"
+msgstr ""
+
+#: lib/ajax_functions.php:178
+msgctxt "Project Vote"
+msgid "You do not have access to the data of voting"
+msgstr ""
+
+#: lib/vote.php:111
+msgctxt "Project Settings"
+msgid "Enable Vote"
+msgstr ""
+
+#: lib/vote.php:112
+msgctxt "Project Settings"
+msgid "Enable/Disable vote for this project."
+msgstr ""
+
+#: lib/vote.php:117
+msgctxt "Project Settings"
+msgid "Enable"
+msgstr ""
+
+#: lib/vote.php:121
+msgctxt "Project Settings Type"
+msgid "Disable"
+msgstr ""
+
+#: lib/vote.php:127
+msgctxt "Project Settings"
+msgid "Vote for approval"
+msgstr ""
+
+#: lib/vote.php:128
+msgctxt "Project Settings"
+msgid "Number of votes in which the project is considered approved."
+msgstr ""
+
+#: lib/vote.php:140
+msgctxt "Project Settings"
+msgid "Start date"
+msgstr ""
+
+#: lib/vote.php:141
+msgctxt "Project Settings"
+msgid "The date of commencement of voting."
+msgstr ""
+
+#: lib/vote.php:147
+msgctxt "Project Settings"
+msgid "End date"
+msgstr ""
+
+#: lib/vote.php:148
+msgctxt "Project Settings"
+msgid "The data of the end of voting."
+msgstr ""
+
+#: lib/vote.php:153
+msgctxt "Project Settings"
+msgid "Allow re-vote"
+msgstr ""
+
+#: lib/vote.php:154
+msgctxt "Project Settings"
+msgid "Users can reset their vote and vote again, or not to vote :)"
+msgstr ""
+
+#: lib/vote.php:161
+msgctxt "Project Settings"
+msgid "Reset voting results"
+msgstr ""
+
+#: lib/vote.php:162
+msgctxt "Project Settings"
+msgid "Reset voting results."
+msgstr ""
+
+#: lib/vote.php:537
+msgctxt "Project Vote"
+msgid "Voting status"
+msgstr ""
+
+#: lib/vote.php:585
+msgctxt "Project Vote"
+msgid "Progress of the approval"
+msgstr ""
+
+#: lib/vote.php:592
+msgctxt "Project Vote"
+msgid "APPROVED!"
+msgstr ""
+
+#: lib/vote.php:596
+msgctxt "Project Vote"
+msgid "Supported"
+msgstr ""
+
+#: lib/vote.php:597
+msgctxt "Project Vote"
+msgid "Not Supported"
+msgstr ""
+
+#: lib/vote.php:644
+msgctxt "Project Vote"
+msgid "Vote"
+msgstr ""
+
+#: lib/vote.php:649
+msgctxt "Project Vote"
+msgid "I support"
+msgstr ""
+
+#: lib/vote.php:655
+msgctxt "Project Vote"
+msgid "I do't support"
+msgstr ""
+
+#: lib/vote.php:676
+msgctxt "Project Vote"
+msgid "Reset my vote"
+msgstr ""
+
+#: lib/project.php:339
+msgctxt "Project Settings"
+msgid "Type"
+msgstr ""
+
+#: lib/project.php:340
+msgctxt "Project Settings"
+msgid "Type of this project."
+msgstr ""
+
+#: lib/project.php:345 lib/project.php:396
+msgctxt "Project Settings"
+msgid "Private"
+msgstr ""
+
+#: lib/project.php:349
+msgctxt "Project Settings Type"
+msgid "Working"
+msgstr ""
+
+#: lib/project.php:353
+msgctxt "Project Settings Type"
+msgid "Members only"
+msgstr ""
+
+#: lib/project.php:357
+msgctxt "Project Settings Type"
+msgid "Public"
+msgstr ""
+
+#: lib/project.php:363
+msgctxt "Project Settings"
+msgid "Project Manager"
+msgstr ""
+
+#: lib/project.php:364
+msgctxt "Project Settings"
+msgid "Manager with full access to settings this Project."
+msgstr ""
+
+#: lib/project.php:370
+msgctxt "Project Settings"
+msgid "Working group"
+msgstr ""
+
+#: lib/project.php:371
+msgctxt "Project Settings"
+msgid "Group to which the project was created."
+msgstr ""
+
+#: lib/project.php:377
+msgctxt "Project Settings"
+msgid "Visibility"
+msgstr ""
+
+#: lib/project.php:378
+msgctxt "Project Settings"
+msgid "Visibility for the categories of users."
+msgstr ""
+
+#: lib/project.php:384
+msgctxt "Project Settings"
+msgid "Public"
+msgstr ""
+
+#: lib/project.php:388
+msgctxt "Project Settings"
+msgid "Registered"
+msgstr ""
+
+#: lib/project.php:392
+msgctxt "Project Settings"
+msgid "Members only"
+msgstr ""
+
+#. Name of the plugin
+msgid "TehnoKom Global Project"
+msgstr ""
+
+#. Description of the plugin
+msgid "Allows you to group projects with the possibility of voting."
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/tehnokom/alfo-tk-globalproject-plugin"
+msgstr ""
+
+#. Author of the plugin
+msgid "Ravil Sarvaritdinov <ra9oaj@gmail.com>"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://github.com/RA9OAJ/"
+msgstr ""

@@ -130,10 +130,10 @@ class TK_GVote
                 'id' => 'tkgp_vote_target_votes',
                 'type' => 'number',
                 'value' => 100,
-                'options' => array(
+                'properties' => array(
                     'min' => 1,
                     'step' => 1,
-                    'required' => 'true'
+                    'required' => null
                 )
             ),
             array(
@@ -141,7 +141,7 @@ class TK_GVote
                 'desc' => _x('The date of commencement of voting.', 'Project Settings', 'tkgp'),
                 'id' => 'tkgp_vote_start_date',
                 'type' => 'date',
-                'options' => array('required')
+                'properties' => array('required' => null)
             ),
             array(
                 'label' => _x('End date', 'Project Settings', 'tkgp'),
