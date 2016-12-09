@@ -70,3 +70,4 @@ wp-content/plugins/hello.php
 
 #Aptana Studio project-file
 .project
+.settings
