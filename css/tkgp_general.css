@@ -41,7 +41,7 @@
 	width: 50%;
 }
 
-.tkgp_button, .tkgp_button_reset {
+.tkgp_button, .tkgp_button_reset, .tkgp_edit_button {
 	display: inline-block !important;
 	margin: 0 auto !important;
 	border: 1px solid #ccc;
@@ -52,12 +52,12 @@
 	padding: 4px 8px;
 }
 
-.tkgp_button:hover, .tkgp_button_reset:hover {
+.tkgp_button:hover, .tkgp_button_reset:hover, .tkgp_edit_button:hover {
 	cursor: pointer;
 	border-color: #999;
 }
 
-.tkgp_button:active, .tkgp_button_reset:active {
+.tkgp_button:active, .tkgp_button_reset:active, .tkgp_edit_button:active {
 	box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.5);
 	background-color: #eee;
 }

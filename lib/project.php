@@ -153,6 +153,18 @@ class TK_GProject
 		return $html;
 	}
 	
+	protected static function getEditPostHtml()
+	{
+		$html = '<p style="text-align:right;">
+		<span class="tkgp_edit_button">';
+		
+		$html .= _x('Edit Project','Project Edit', 'tkgp');
+		$html .= '</span>
+		</p>';
+		
+		return $html;	
+	}
+	
 	/**
 	 * Return HTML code of Project Post
 	 * 
@@ -164,12 +176,16 @@ class TK_GProject
 		
 		if($this->isValid()) {
 			$post = get_post($this->project_id);
-			$html .= $post->post_content;
+			$html .= wpautop($post->post_content);
+			$user_id = get_current_user_id();
+						
+			if(is_user_logged_in() && $this->userCanEdit($user_id)) {
+				// код кнопки редактирования
+				$html = self::getEditPostHtml() . $html;
+			}
 			
 			if(TK_GVote::exists($post->ID)) {
 				$vote = new TK_GVote($post->ID);
-			
-				$user_id = get_current_user_id();
 				$caps = $this->userCan($user_id);
 				$html .= $vote->getResultVoteHtml($caps['vote'], !is_single($post->ID), !$caps['revote']);	
 			}
@@ -192,10 +208,7 @@ class TK_GProject
 			if(empty($caps)) {
 				$caps = array('read','edit','work','vote','revote');
 			}
-			
-			/*$p_type = intval(get_post_meta($this->project_id, 'ptype', true));
-			$p_visiblity = intval(get_post_meta($this->project_id, 'visiblity', true));*/
-			
+						
 			foreach ($caps as $cap) {
 				$access = false;
 				
@@ -280,7 +293,7 @@ class TK_GProject
 		$access = false;
 		$post = get_post($this->project_id);
 		
-		$access = (array_search($user_id, $this->getManagers(), true) !== false 
+		$access = (array_search($user_id, $this->getManagers()) !== false 
 					|| $user_id === $post->post_author
 					|| is_super_admin($user_id)) ? true : false;
 		
