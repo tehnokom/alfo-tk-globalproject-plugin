@@ -88,6 +88,7 @@ function tkgp_ajax_policy(&$message) {
 		|| !is_user_logged_in()
 		) {
 		//проблемы безопасности
+		$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
 		return $res;
 	}
 
@@ -109,11 +110,8 @@ function tkgp_ajax_user_vote() {
 	$res = false;
 	$message = '';
 	
-	if(!tkgp_ajax_policy($message)
-		|| !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')) {
-		//запрос не прошел проверку безопасности
-		$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
-	} else {
+	if(tkgp_ajax_policy($message)
+		&& wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')) {
 		$project = new TK_GProject(intval($_POST['post_id']));
 		$vote = new TK_GVote(intval($_POST['post_id']));
 		$user_id = get_current_user_id();
@@ -139,11 +137,8 @@ function tkgp_ajax_reset_user_vote() {
 	$res = false;
 	$message = '';
 	
-	if(!tkgp_ajax_policy($message)
-		|| !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote')) {
-		//проблемы безопасности
-		$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
-	} else {
+	if(tkgp_ajax_policy($message)
+		&& wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote')) {
 		$project = new TK_GProject(intval($_POST['post_id']));
 		$vote = new TK_GVote(intval($_POST['post_id']));
 		$user_id = get_current_user_id();
@@ -172,12 +167,10 @@ function tkgp_ajax_get_vote_status() {
 	$html = '';
 	$res = false;
 	
-	if(!tkgp_ajax_policy($html) 
-		|| (!wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote') && !wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote') )
+	if(tkgp_ajax_policy($html) 
+		&& (wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote') 
+		|| wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote'))
 	) {
-		//проблемы безопасности
-		$html = _x('Operation is not allowed', 'Project Vote', 'tkgp');
-	} else {
 		$vote = new TK_GVote($_POST['post_id']);
 		$project = new TK_GProject($_POST['post_id']);
 		$user_id = get_current_user_id();
@@ -203,9 +196,33 @@ function tkgp_ajax_get_vote_status() {
 	wp_die();
 }
 
+function tkgp_ajax_get_project_editor() {
+	$message = '';
+
+	if(tkgp_ajax_policy($message)
+		&& wp_verify_nonce($_POST['tkgp_access_nonce'], 'tkgp_edit_project')
+	) {
+		$project = new TK_GProject($_POST['post_id']);
+		$user_id = get_current_user_id();
+		
+		if(!$project->userCanEdit($user_id)) { //есть права на редактирование проета
+			$post = get_post( $post_id, OBJECT, 'edit' );
+			wp_editor($post->post_content, 'editpost'); //выводим форму редактора
+		} else {
+			$message = _x('You do not have permission to edit project', 'Project Edit','tkgp');
+		}
+		
+	} else {
+		echo json_encode(array('status' => false, 'message' => $message));
+	}
+	
+	wp_die();
+}
+
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');
 add_action('wp_ajax_tkgp_user_vote', 'tkgp_ajax_user_vote');
 add_action('wp_ajax_tkgp_get_vote_status', 'tkgp_ajax_get_vote_status');
 add_action('wp_ajax_tkgp_reset_user_vote', 'tkgp_ajax_reset_user_vote');
+add_action('wp_ajax_tkgp_get_project_editor', 'tkgp_ajax_get_project_editor');
 
 ?>

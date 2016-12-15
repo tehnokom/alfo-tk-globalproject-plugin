@@ -16,6 +16,15 @@ function tkgp_js_init() {
 	$j('div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
 }
 
+function tkgp_is_JSON(str) {
+	try {
+		$j.parseJSON(str);
+	} catch (e) {
+		return false;
+	}
+	return true;
+}
+
 function tkgp_handler_vote() {
 	var vote = $j(this).children('input[name="user_vote"]').val();
 	var vote_id = $j(this).parents().find('input[name="tkgp_vote_id"]').val();
@@ -120,4 +129,50 @@ function tkgp_wait_animate(obj) {
 						+ '</dev>'
 						);
 	}
+}
+
+function tkgp_handler_edit_project() {
+	var edit_nonce = $j(this).parents().find('input[name="tkgp_access_nonce"]').val();
+	var post_id = $j(this).parents().find('input[name="tkgp_post_id"]').val();
+	var wait_obj = $j(this).parents().find('.post-content').children('.entry');
+	tkgp_wait_animate(wait_obj);
+	
+	$j.ajax({
+                url: tkgp_js_vars.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'tkgp_get_project_editor',
+                    post_id: post_id,
+                    vote_nonce: edit_nonce
+                }
+            })
+            .done(function (data) {
+                tkgp_show_project_editor(data);
+            })
+            .fail(function (jqXHR, textStatus) {
+                console.log("Request failed: " + textStatus);
+            });
+}
+
+function tkgp_show_project_editor(data) {
+	if(tkgp_is_JSON(data)) { //если результат JSON, значит проблемы с доступом
+		var res = $j.parseJSON(data);
+		var modal_box = $j('#tkgp_modal_box');
+		
+		$j(modal_box).find('#tkgp_icon').attr('src', tkgp_js_vars.plug_url + '/images/' + 'err_status.png');
+		$j(modal_box).find('#tkgp_message').test(res.message)
+										   .css('color','#f00');
+										   		
+		setTimeout(tkgp_hide_wait_animate, 2000);
+	} else { //иначе выводим полученную форму
+		
+	}
+}
+
+function tkgp_handler_save_project_data() {
+	
+}
+
+function tkgp_hide_wait_animate() {
+	$j('#tkgp_modal_box').remove();
 }
