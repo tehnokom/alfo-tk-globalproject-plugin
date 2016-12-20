@@ -168,15 +168,16 @@ class TK_GProject
 	/**
 	 * Return HTML code of Project Post
 	 * 
+	 * @param string $data
 	 * @return string
 	 */
-	public function getProjectContent()
+	public function getProjectContent($data = '')
 	{
-		$html = '';
+		$html = $data;
 		
 		if($this->isValid()) {
 			$post = get_post($this->project_id);
-			$html .= wpautop($post->post_content);
+			$html = empty($html) ? wpautop($post->post_content) : $html;
 			$user_id = get_current_user_id();
 						
 			if(is_user_logged_in() && $this->userCanEdit($user_id)) {

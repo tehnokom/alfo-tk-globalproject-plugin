@@ -476,7 +476,7 @@ function tkgp_content($data)
     if ($post->post_type == TK_GProject::slug) {
     	$project = new TK_GProject($post->ID);
 		
-		$data = $project->getProjectContent();
+		$data = $project->getProjectContent($data);
     }
     return $data;
 }
