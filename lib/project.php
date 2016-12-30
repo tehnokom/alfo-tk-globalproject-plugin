@@ -153,13 +153,15 @@ class TK_GProject
 		return $html;
 	}
 	
-	protected static function getEditPostHtml()
+	protected function getEditPostHtml()
 	{
 		$html = '<p style="text-align:right;">
 		<span class="tkgp_edit_button">';
 		
 		$html .= _x('Edit Project','Project Edit', 'tkgp');
-		$html .= '</span>
+		$html .= '<input type="hidden" name="tkgp_access_nonce" value="' . wp_create_nonce('tkgp_project_access') . '"/>
+		<input type="hidden" name="tkgp_post_id" value="' . $this->project_id . '"/>
+		</span>
 		</p>';
 		
 		return $html;	
@@ -182,7 +184,7 @@ class TK_GProject
 						
 			if(is_user_logged_in() && $this->userCanEdit($user_id)) {
 				// код кнопки редактирования
-				$html = self::getEditPostHtml() . $html;
+				$html = $this->getEditPostHtml() . $html;
 			}
 			
 			if(TK_GVote::exists($post->ID)) {

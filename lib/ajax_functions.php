@@ -199,22 +199,23 @@ function tkgp_ajax_get_vote_status() {
 function tkgp_ajax_get_project_editor() {
 	$message = '';
 
-	if(tkgp_ajax_policy($message)
-		&& wp_verify_nonce($_POST['tkgp_access_nonce'], 'tkgp_edit_project')
+	if(!empty($_POST['post_id'])
+		&& wp_verify_nonce($_POST['access_nonce'], 'tkgp_project_access')
 	) {
 		$project = new TK_GProject($_POST['post_id']);
 		$user_id = get_current_user_id();
 		
-		if(!$project->userCanEdit($user_id)) { //есть права на редактирование проета
+		if($project->userCanEdit($user_id)) { //есть права на редактирование проета
 			$post = get_post( $post_id, OBJECT, 'edit' );
 			wp_editor($post->post_content, 'editpost'); //выводим форму редактора
-		} else {
-			$message = _x('You do not have permission to edit project', 'Project Edit','tkgp');
+			wp_die();
 		}
+
+		$message = _x('You do not have permission to edit project', 'Project Edit','tkgp');
 		
-	} else {
-		echo json_encode(array('status' => false, 'message' => $message));
 	}
+
+	echo json_encode(array('status' => false, 'message' => $message));
 	
 	wp_die();
 }
