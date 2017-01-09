@@ -22,7 +22,7 @@ function tkgp_ajax_get_user()
             }
         } else {
             //выводим форму
-            tkgp_print_form();
+            tkgp_print_form('users');
         }
     }
 
@@ -30,32 +30,52 @@ function tkgp_ajax_get_user()
 }
 
 /**
+ * @param string $type
  * @return string
  */
-function tkgp_print_form()
+function tkgp_print_form($type)
 {
-    ?>
-    <div id="tkgp_modal_user">
+	echo '<div id="tkgp_modal_user">
         <div id="tkgp_modal_header">
-            <span id="modal_close">x</span>
-            <input id="tkgp_search" type="text"
-                   placeholder="<?php echo _x('Search...', 'Project Settings', 'tkgp'); ?>">
-        </div>
-        <div class="container">
-            <table>
-                <tr>
-                    <th> <?php echo _x('Users', 'Project Settings', 'tkgp'); ?></th>
-                    <th>v</th>
-                </tr>
-            </table>
-        </div>
-        <div id="tkgp_modal_footer">
-            <input type="button" id="tkgp_add_selected" class="button"
-                   value="<?php echo _x('Add', 'Project Settings', 'tkgp'); ?>">
-        </div>
-    </div>
-    <div id="tkgp_overlay"></div>
-    <?php
+            <span id="modal_close">x</span>';
+    
+	switch ($type) {
+		case 'users':
+			echo '<input id="tkgp_search" type="text"'
+				. 'placeholder="' . _x('Search...', 'Project Settings', 'tkgp') . '">'
+				. '</div>
+        		<div class="container">
+					<table>
+                		<tr>
+                    		<th>' . _x('Users', 'Project Settings', 'tkgp') . '</th>
+                    		<th>v</th>
+                		</tr>
+            		</table>
+        		</div>
+        	<div id="tkgp_modal_footer">
+        		<input type="button" id="tkgp_add_selected" class="button" value="' 
+        	. _x('Add', 'Project Settings', 'tkgp') . '">
+        	</div>';
+			break;
+		
+		case 'settings':
+			echo '</div>';
+			
+			$post = get_post( $_POST['post_id'], OBJECT, 'edit' );
+			
+			wp_editor($post->post_content, 'editpost');
+			\_WP_Editors::enqueue_scripts();
+			print_footer_scripts();
+    		\_WP_Editors::editor_js();
+			break;
+			
+		default:
+			
+			break;
+	} 
+	
+    echo '</div>
+    <div id="tkgp_overlay"></div>';
 }
 
 /**
@@ -206,8 +226,7 @@ function tkgp_ajax_get_project_editor() {
 		$user_id = get_current_user_id();
 		
 		if($project->userCanEdit($user_id)) { //есть права на редактирование проета
-			$post = get_post( $post_id, OBJECT, 'edit' );
-			wp_editor($post->post_content, 'editpost'); //выводим форму редактора
+			tkgp_print_form('settings'); //выводим форму редактора
 			wp_die();
 		}
 

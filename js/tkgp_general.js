@@ -136,7 +136,7 @@ function tkgp_handler_edit_project() {
 	var edit_nonce = $j(this).find('input[name="tkgp_access_nonce"]').val();
 	var post_id = $j(this).find('input[name="tkgp_post_id"]').val();
 	var wait_obj = $j('body');
-	tkgp_wait_animate(wait_obj);
+	//tkgp_wait_animate(wait_obj);
 	
 	$j.ajax({
                 url: tkgp_js_vars.ajax_url,
@@ -167,7 +167,8 @@ function tkgp_show_project_editor(data, button) {
 		setTimeout(tkgp_hide_wait_animate, 2000);
 	} else { //иначе выводим полученную форму
 		//tkgp_hide_wait_animate();
-
+		$j('body').append(data);
+		$j('#tkgp_modal_user, #tkgp_overlay').css('display', 'block');
 	}
 }
 

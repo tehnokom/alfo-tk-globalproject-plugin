@@ -45,6 +45,7 @@ function tkgp_css_registry() {
 function tkgp_js_registry() {
 	wp_register_script('tkgp_js_general', TKGP_URL.'js/tkgp_general.js');
 	wp_enqueue_script('tkgp_js_general');
+	wp_enqueue_media();
 	wp_localize_script( 'tkgp_js_general', 'tkgp_js_vars',
             array( 'ajax_url' => admin_url( 'admin-ajax.php' ),
 				   'plug_url' => TKGP_URL,
