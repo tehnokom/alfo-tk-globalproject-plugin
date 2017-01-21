@@ -42,7 +42,7 @@ class TK_GProject
 
             if (is_object($res)) {
                 $this->project_id = $res->ID;
-				$this->is_project = $res->post_type == TK_GProject::slug ? true : false;
+				$this->is_project = $res->post_type == TK_GProject::slug;
 				
 				if($this->is_project) {
 					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
@@ -54,14 +54,6 @@ class TK_GProject
         }
     }
 
-    /**
-     *
-     */
-    public function __destruct()
-    {
-
-    }
-	
     /**
      * @param bool $show_display_name
      * @return array|null
@@ -215,29 +207,9 @@ class TK_GProject
 			foreach ($caps as $cap) {
 				$access = false;
 				
-				switch ($cap) {
-					case 'read':
-						$access = $this->userCanRead($user_id);
-						break;
-						
-					case 'edit':
-						$access = $this->userCanEdit($user_id);
-						break;
-					
-					case 'work':
-						$access = $this->userCanWork($user_id);
-						break;
-						
-					case 'vote':
-						$access = $this->userCanVote($user_id);
-						break;
-						
-					case 'revote':
-						$access = $this->userCanRevote($user_id);
-						break;
-						
-					default:
-						break;
+				$method = 'userCan'.ucfirst($cap);
+				if (method_exists($this, $method)) {
+					$access = $this->$method($user_id);
 				}
 				
 				$out_caps[$cap] = $access;
@@ -260,7 +232,7 @@ class TK_GProject
 		
 		if($user_data) {
 			$roles_caps = $user_data->get_role_caps();
-			$res = array_key_exists('administrator', $roles_caps) ? (boolean)$roles_caps['administrator'] : false;
+			$res = isset($roles_caps['administrator']) ? (boolean)$roles_caps['administrator'] : false;
 		}
 		
 		return $res;
@@ -274,15 +246,26 @@ class TK_GProject
 	public function userCanRead($user_id) {
 		$access = false;
 		
-		if($this->project_visibility === 0) { //Public
-			$access = true;
-		} elseif ($this->project_visibility === 1) { //Registered
-			$user_data = get_user_by('ID',$user_id);
-			$access = $user_data === false ? false : true;
-		} elseif ($this->project_visibility === 2 || $this->project_visibility === 3) { //Members only and Privete
-			$members = $this->getManagers();
-			$access = array_search($user_id, $members) === false && !$this->userIsAdmin($user_id) ? false : true;
-		} else { $access = false; }
+		switch($this->project_visibility) {
+			case 0: //Public
+				$access = true;
+				break;
+			
+			case 1: //Registered
+				$user_data = get_user_by('ID',$user_id);
+				$access = $user_data === false ? false : true;
+				break;
+			
+			case 2: 
+			case 3: //Members only and Privete
+				$members = $this->getManagers();
+				$access = array_search($user_id, $members) === false && !$this->userIsAdmin($user_id) ? false : true;
+				break;
+			
+			default: 
+				$access = false;
+				break;
+		}
 		
 		return $access;
 	}

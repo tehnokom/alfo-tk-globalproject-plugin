@@ -217,7 +217,7 @@ function tkgp_ajax_get_vote_status() {
 }
 
 function tkgp_ajax_get_project_editor() {
-	$message = '';
+	$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
 
 	if(!empty($_POST['post_id'])
 		&& wp_verify_nonce($_POST['access_nonce'], 'tkgp_project_access')
