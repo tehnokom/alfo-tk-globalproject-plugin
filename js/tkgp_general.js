@@ -12,8 +12,18 @@ function tkgp_image_preload() {
 }
 
 function tkgp_js_init() {
-    $j('#tkgp_vote_buttons div.tkgp_button').on('click', tkgp_handler_vote);
-    $j('div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
+	$j('#tkgp_vote_buttons div.tkgp_button').on('click', tkgp_handler_vote);
+	$j('div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
+	$j('.tkgp_edit_button').on('click',tkgp_handler_edit_project);
+}
+
+function tkgp_is_JSON(str) {
+	try {
+		$j.parseJSON(str);
+	} catch (e) {
+		return false;
+	}
+	return true;
 }
 
 function tkgp_handler_vote() {
@@ -120,4 +130,52 @@ function tkgp_wait_animate(obj) {
             + '</dev>'
         );
     }
+}
+
+function tkgp_handler_edit_project() {
+	var edit_nonce = $j(this).find('input[name="tkgp_access_nonce"]').val();
+	var post_id = $j(this).find('input[name="tkgp_post_id"]').val();
+	var wait_obj = $j('body');
+	//tkgp_wait_animate(wait_obj);
+	
+	$j.ajax({
+                url: tkgp_js_vars.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'tkgp_get_project_editor',
+                    post_id: post_id,
+                    access_nonce: edit_nonce
+                }
+            })
+            .done(function (data) {
+                tkgp_show_project_editor(data, this);
+            })
+            .fail(function (jqXHR, textStatus) {
+                console.log("Request failed: " + textStatus);
+            });
+}
+
+function tkgp_show_project_editor(data, button) {
+	if(tkgp_is_JSON(data)) { //если результат JSON, значит проблемы с доступом
+		var res = $j.parseJSON(data);
+		var modal_box = $j('#tkgp_modal_box');
+		
+		$j(modal_box).find('#tkgp_icon').attr('src', tkgp_js_vars.plug_url + '/images/' + 'err_status.png');
+		$j(modal_box).find('#tkgp_message').text(res.message)
+										   .css('color','#f00');
+										   		
+		setTimeout(tkgp_hide_wait_animate, 2000);
+	} else { //иначе выводим полученную форму
+		//tkgp_hide_wait_animate();
+		$j('body').append(data);
+		$j('#tkgp_modal_user, #tkgp_overlay').css('display', 'block');
+	}
+}
+
+function tkgp_handler_save_project_data() {
+	
+}
+
+function tkgp_hide_wait_animate() {
+	$j('#tkgp_modal_box').remove();
 }

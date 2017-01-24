@@ -41,7 +41,7 @@
 	width: 50%;
 }
 
-.tkgp_button, .tkgp_button_reset {
+.tkgp_button, .tkgp_button_reset, .tkgp_edit_button {
 	display: inline-block !important;
 	margin: 0 auto !important;
 	border: 1px solid #ccc;
@@ -52,12 +52,110 @@
 	padding: 4px 8px;
 }
 
-.tkgp_button:hover, .tkgp_button_reset:hover {
+.tkgp_button:hover, .tkgp_button_reset:hover, .tkgp_edit_button:hover {
 	cursor: pointer;
 	border-color: #999;
 }
 
-.tkgp_button:active, .tkgp_button_reset:active {
+.tkgp_button:active, .tkgp_button_reset:active, .tkgp_edit_button:active {
 	box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.5);
 	background-color: #eee;
+}
+
+/*-----*/
+.screen-reader-text {
+	position: absolute;
+	margin: -1px;
+	padding: 0;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	border: 0;
+	word-wrap: normal !important;
+}
+
+#tkgp_modal_user {
+    width: 40%;
+    /*height: 40%;*/
+    min-height: 180px;
+    border: 1px #000 solid;
+    background: #fff;
+    position: fixed;
+    top: 40%;
+    left: 30%;
+    margin: -150px auto auto auto;
+    #margin-top: -150px;
+    #margin-left: -150px;
+    display: block;
+    opacity: 1.0;
+    z-index: 9999;
+    padding: 20px 10px;
+    box-sizing: border-box;
+}
+
+#tkgp_search {
+    width: 50%;
+}
+
+#tkgp_modal_user #modal_close {
+    width: 21px;
+    height: 21px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    display: block;
+}
+
+#tkgp_overlay {
+    z-index: 9998;
+    position: fixed;
+    background-color: #000;
+    opacity: 0.8;
+    -moz-opacity: 0.8;
+    filter: alpha(opacity=80);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    display: block;
+}
+
+#tkgp_modal_user table {
+    width: 100%;
+}
+
+#tkgp_modal_user .alt1 {
+    background: #dbf6d6;
+}
+
+#tkgp_modal_user .alt2 {
+    background: #f3f3f3;
+}
+
+#tkgp_modal_user .container {
+    overflow-y: auto;
+    overflow-x: auto;
+    height: 74%;
+    margin-bottom: 5px;
+}
+
+#tkgp_modal_footer, #tkgp_modal_header {
+	height: 12%;
+	margin-bottom: 5px;
+}
+
+#tkgp_add_selected {
+	float: right;
+}
+
+#tkgp_modal_user th {
+    margin-left: 3px;
+    background: #ffedce;
+}
+
+#tkgp_modal_user th:last-child {
+    width: 35px;
 }
