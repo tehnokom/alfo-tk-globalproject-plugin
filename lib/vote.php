@@ -108,6 +108,7 @@ class TK_GVote
                 'desc' => _x('The date of commencement of voting.', 'Project Settings', 'tkgp'),
                 'id' => 'tkgp_vote_start_date',
                 'type' => 'date',
+                'value' => current_time( 'd-m-Y' ),
                 'properties' => array('required' => null)
             ),
             array(

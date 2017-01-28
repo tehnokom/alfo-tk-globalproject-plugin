@@ -457,7 +457,7 @@ function tkgp_field_html($args, $default_val = '')
             break;
 
         case 'date':
-            $html .= '<input type="text' /*. $args['type']*/ . '" name="' . $args['id'] . '" value="' . $default_val . '" ' . $properties . ' class="tkgp_datepicker" />';
+            $html .= '<input type="text' /*. $args['type']*/ . '" name="' . $args['id'] . '" value="' . (!empty($default_val) ? $default_val : $args['value']) . '" ' . $properties . ' class="tkgp_datepicker" />';
             break;
 
         case 'checkbox':

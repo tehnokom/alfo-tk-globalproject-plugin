@@ -2,13 +2,12 @@ var $j = jQuery.noConflict();
 
 $j(document).ready(function ($j) {
         $j('.tkgp_datepicker[name="tkgp_vote_start_date"]').datepicker({
-            dateFormat: 'dd-mm-yy',
-            minDate: 'today'
+            dateFormat: 'dd-mm-yy'
         });
 
         $j('.tkgp_datepicker[name="tkgp_vote_end_date"]').datepicker({
             dateFormat: 'dd-mm-yy',
-            minDate: $j('.tkgp_datepicker[name="start_date"]').val()
+            minDate: 'today' //$j('.tkgp_datepicker[name="start_date"]').val()
         });
 
         $j('input[name="tkgp_vote_reset"]').on('click', tkgp_vote_reset);
