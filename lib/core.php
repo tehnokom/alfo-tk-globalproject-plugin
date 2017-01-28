@@ -281,13 +281,17 @@ function tkgp_save_post_meta($post_id)
                         $_POST[$field['id']] . ' 00:00:00')->format('YmdHis');
                 }
                 break;
-
+			
+			case 'tkgp_vote_allow_against':
+                $vote_updates['allow_against'] = (empty($_POST[$field['id']]) ? null : 1);
+                break;
+			
             case 'tkgp_vote_allow_revote':
-                $vote_updates['allow_revote'] = (empty($_POST['tkgp_vote_allow_revote']) ? null : 1);
+                $vote_updates['allow_revote'] = (empty($_POST[$field['id']]) ? null : 1);
                 break;
 
             case 'tkgp_vote_reset':
-                if (!empty($_POST['tkgp_vote_reset']) && $_POST['tkgp_vote_reset'] == 1) {
+                if (!empty($_POST[$field['id']]) && $_POST[$field['id']] == 1) {
                     $vote_updates['reset'] = true;
                 }
                 break;
@@ -314,7 +318,7 @@ function tkgp_save_post_meta($post_id)
             $vote->resetVote();
             unset($vote_updates['reset']);
         }
-
+		file_put_contents(__FILE__.'.log', serialize($vote_updates));
         $vote->updateVoteSettings($vote_updates);
     }
 
