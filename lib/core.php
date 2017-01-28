@@ -318,7 +318,7 @@ function tkgp_save_post_meta($post_id)
             $vote->resetVote();
             unset($vote_updates['reset']);
         }
-		file_put_contents(__FILE__.'.log', serialize($vote_updates));
+
         $vote->updateVoteSettings($vote_updates);
     }
 
