@@ -121,34 +121,26 @@ function tkgp_show_metabox_settings()
             case 'radio': //Переключатель
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? '1' : $current_val;
-
-                tkgp_display_options_field($field, $current_val);
                 break;
 
             case 'select': //Выпадающее меню
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? '1' : $current_val;
-
-                tkgp_display_options_field($field, $current_val);
                 break;
 
             case 'select_user':
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? wp_get_current_user()->ID : $current_val;
-
-                tkgp_display_options_field($field, $current_val);
                 break;
-
-            case 'select_group':
-                tkgp_display_options_field($field, $current_val);
-                break;
-
+			
             default:
-                echo '<input type="text">';
+				$current_val = get_post_meta($post->ID, $field['id'], true);
                 break;
 
-                echo '</td>';
+                
         }
+		tkgp_display_options_field($field, $current_val);
+		echo '</td>';
         echo '</tr>';
     }
 
@@ -298,7 +290,7 @@ function tkgp_save_post_meta($post_id)
 
             default:
                 $new = $_POST[$field['id']];
-
+				
                 if ($old != $new) {
                     update_post_meta($post_id, $field['id'], $new);
                 }
@@ -371,7 +363,14 @@ function tkgp_option_page()
  */
 function tkgp_display_options_field($args, $default_val = '')
 {
-    echo tkgp_field_html($args, $default_val);
+	if($args['type'] == 'editor') {
+		$settings = $args['properties'];
+		$value = empty($default_val) ? $args['value'] : $default_val;
+		
+		wp_editor($value, $args['id'], $settings);
+	} else {
+    	echo tkgp_field_html($args, $default_val);
+	}
 }
 
 /**
@@ -385,7 +384,7 @@ function tkgp_field_html($args, $default_val = '')
     $html = '';
 
     $properties = '';
-
+	
     if (!empty($args['properties'])) {
         foreach ($args['properties'] as $prop => $val) {
             $properties .= ' ' . $prop . (isset($val) ? ('="' . $val . '"') : '');
@@ -469,6 +468,10 @@ function tkgp_field_html($args, $default_val = '')
             $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '" value="' . $args['value'] . '" ' . $properties . ' />';
             break;
 
+		case 'textarea':
+			$html .= '<textarea name="'. $args['id'] . '" ' . $properties . '>' . $args['value'] . '</textarea>';
+			break;
+		
         default:
             $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '"' . $properties . ' value="' . $default_val . '">';
             break;

@@ -30,8 +30,22 @@ $j(document).ready(function ($j) {
                 .addClass('tkgp_radio_checked')
                 .trigger('click');
         }
+        
+        $j(".required_field").attr('required','required'); //обязательность поля "Цель проекта"
+        $j("input[type='submit']").on('mousedown',function(){tinyMCE.triggerSave();}); //сохранение изменени из визуального редактора в textarea
+        
+        tkgp_target_move();
     }
 );
+
+function tkgp_target_move() {
+	row = $j("label[for='ptarget']").parent("th").parent("tr");
+	$j("#wp-content-wrap").before('<h3 id="wp-ptarget-header"></h3>');
+	$j("label[for='ptarget']").append(':').detach().appendTo("#wp-ptarget-header");
+	$j("#wp-ptarget-wrap").detach().insertBefore("#wp-content-wrap");
+	row.detach();
+	row = null;
+}
 
 function tkgp_vote_reset() {
     if ($j(this).is(':checked') && confirm(tkgp_i18n.vote_reset)) {
