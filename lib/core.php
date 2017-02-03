@@ -275,11 +275,11 @@ function tkgp_save_post_meta($post_id)
                 break;
 			
 			case 'tkgp_vote_allow_against':
-                $vote_updates['allow_against'] = (empty($_POST[$field['id']]) ? null : 1);
+                $vote_updates['allow_against'] = (empty($_POST[$field['id']]) ? 0 : 1);
                 break;
 			
             case 'tkgp_vote_allow_revote':
-                $vote_updates['allow_revote'] = (empty($_POST[$field['id']]) ? null : 1);
+                $vote_updates['allow_revote'] = (empty($_POST[$field['id']]) ? 0 : 1);
                 break;
 
             case 'tkgp_vote_reset':
