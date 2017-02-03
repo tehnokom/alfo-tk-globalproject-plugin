@@ -108,6 +108,7 @@ class TK_GVote
                 'desc' => _x('The date of commencement of voting.', 'Project Settings', 'tkgp'),
                 'id' => 'tkgp_vote_start_date',
                 'type' => 'date',
+                'value' => current_time( 'd-m-Y' ),
                 'properties' => array('required' => null)
             ),
             array(
@@ -116,6 +117,14 @@ class TK_GVote
                 'id' => 'tkgp_vote_end_date',
                 'type' => 'date'
             ),
+            array(
+            	'label' => _x('Allow to vote against', 'Project Settings', 'tkgp'),
+                'desc' => _x('It allows users to vote against the project.', 'Project Settings', 'tkgp'),
+                'id' => 'tkgp_vote_allow_against',
+                'type' => 'checkbox',
+                'exclude' => 1,
+                'value' => 1
+			),
             array(
                 'label' => _x('Allow re-vote', 'Project Settings', 'tkgp'),
                 'desc' => _x('Users can reset their vote and vote again, or not to vote :)', 'Project Settings',
@@ -285,6 +294,7 @@ class TK_GVote
                     case 'end_date':
                     case 'target_votes':
                     case 'allow_revote':
+					case 'allow_against':
                         if ($columns === '*') {
                             $columns = $cur;
                         } else {
@@ -319,6 +329,7 @@ class TK_GVote
                     case 'enabled':
                     case 'target_votes':
                     case 'allow_revote':
+					case 'allow_against':
                         $cur_format = '%d';
                     case 'start_date':
                     case 'end_date':
@@ -538,6 +549,7 @@ class TK_GVote
             $settings = $this->getVoteSettings(array(
                 'target_votes',
                 'enabled',
+                'allow_against',
                 'allow_revote',
                 'start_date',
                 'end_date'
@@ -584,6 +596,7 @@ class TK_GVote
     {
         $target_votes = floatval($settings['target_votes']);
         $allow_revote = (bool)$settings['allow_revote'];
+		$allow_against = (bool)$settings['allow_against'];
         $votes = $this->getVoteState();
         $approval_votes = 0;
         $reproval_votes = 0;
@@ -624,11 +637,11 @@ class TK_GVote
         if (!$short) {
             $form .= '<tr><th>' . _x('Supported', 'Project Vote',
                     'tkgp') . '</th><td>' . intval($approval_votes) . ' (' . $approval_percent . '%)</td></tr>';
-            $form .= '<tr><th>' . _x('Not Supported', 'Project Vote',
-                    'tkgp') . '</th><td>' . intval($reproval_votes) . ' (' . $reproval_percent . '%)</td></tr>';
+            $form .= $allow_against ? '<tr><th>' . _x('Not Supported', 'Project Vote',
+                    'tkgp') . '</th><td>' . intval($reproval_votes) . ' (' . $reproval_percent . '%)</td></tr>' : '';
 
             if ($show_vote_button && ($user_can_vote || $allow_revote)) {
-                $form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml() : ($allow_revote ? $this->getVoteResetButtonHtml() : '')) . '</td></tr>';
+                $form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml($allow_against) : ($allow_revote ? $this->getVoteResetButtonHtml() : '')) . '</td></tr>';
             }
         }
         $form .= '</table>';
@@ -658,7 +671,7 @@ class TK_GVote
      * @param bool $variant_exists [optional]
      * @return string
      */
-    protected function getVoteButtonHtml($variant_exists = false)
+    protected function getVoteButtonHtml($allow_against = false,$variant_exists = false)
     {
         $html_code = '<div id="tkgp_vote_buttons">
 							<input type="hidden" name="tkgp_vote_nonce" value="' . wp_create_nonce('tkgp_user_vote') . '" />
@@ -682,13 +695,13 @@ class TK_GVote
 							<a>' . _x('I support', 'Project Vote', 'tkgp') . '</a>
 							<input type="hidden" name="user_vote" value="-1"/>
 						  	</div>
-						  </div>
-						  <div>
+						  </div>';
+			$html_code .= $allow_against ? '<div>
 						  	<div class="tkgp_button">
 						  		<a>' . _x('I do\'t support', 'Project Vote', 'tkgp') . '</a>
 						  		<input type="hidden" name="user_vote" value="-2"/>
 						  	</div>
-						  </div>';
+						  </div>' : '';
         }
 
         $html_code .= '</div>';

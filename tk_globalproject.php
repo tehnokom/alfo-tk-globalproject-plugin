@@ -31,7 +31,7 @@ require_once(TKGP_ROOT.'lib/plug_initial.php');
 require_once(TKGP_ROOT.'lib/core.php');
 require_once(TKGP_ROOT.'lib/ajax_functions.php');
 
-register_activation_hook(__FILE__, 'tkgp_db_install');
+register_activation_hook(__FILE__, 'tkgp_check_version');
 
 function tkgp_localize_plugin() {
 	load_plugin_textdomain( 'tkgp', false, dirname( plugin_basename( __FILE__ ) ) . '/locales/' );
@@ -75,6 +75,7 @@ function tkgp_admin_js_registry() {
 			);
 }
 
+add_action('plugins_loaded', 'tkgp_check_version');
 add_action('plugins_loaded', 'tkgp_localize_plugin');
 add_action('wp_enqueue_scripts', 'tkgp_css_registry');
 add_action('wp_enqueue_scripts', 'tkgp_js_registry');

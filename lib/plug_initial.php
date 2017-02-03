@@ -1,13 +1,42 @@
 <?php
-    function tkgp_db_install() {
-		$cur_version = '0.1a';
-
-		if(get_option('tkgp_db_version') && get_option('tkgp_db_version') !== $cur_version) {
-			tkgp_db_update();
-			return;
-		}		
+	function tkgp_check_version() {
+		$cur_version = '0.11';
+		$installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 		
-    	global $wpdb;
+		if(empty($installed_version)) {
+			tkgp_db_install($cur_version);
+		} elseif (floatval($cur_version) > floatval($installed_version)) {
+			tkgp_upgrade_log("Start upgrading DB from {$installed_version} to {$cur_version}");
+			tkgp_db_update($installed_version,$cur_version);
+		}
+	}
+	
+	function tkgp_prepare_version($ver) {
+		return (preg_replace('/([a-zA-Z]+)/', '', $ver));
+	}
+	
+	function tkgp_upgrade_log($msg, $type = 'i') {
+		$prefix = date("[Y-m-d H:i:s]:");
+		$type_str = 'Info';
+		
+		switch (variable) {
+			case 'w':
+				$type_str = 'Warning';
+				break;
+				
+			case 'e':
+				$type_str = 'Error';
+				break;
+				
+			default:
+				break;
+		}
+		
+		file_put_contents(TKGP_ROOT . 'upgrade.log', "{$prefix} {$type_str}: {$msg}\r\n", FILE_APPEND);
+	}
+	
+    function tkgp_db_install($cur_version) {
+		global $wpdb;
 		
 		$table_name = $wpdb->prefix . 'tkgp_votes';
 		$charset_collate = " DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate}";
@@ -21,6 +50,8 @@
 				  `end_date` datetime(6) DEFAULT NULL,
 				  `target_votes` bigint(20) unsigned NOT NULL,
 				  `allow_revote` bit(1) DEFAULT NULL,
+				  `allow_against` bit(1) DEFAULT NULL,
+				  `consider_against` bit(1) DEFAULT NULL,
 				  PRIMARY KEY (`id`),
 				  KEY `post_index` (`post_id`)
 				){$charset_collate};";
@@ -64,7 +95,7 @@
 				  PRIMARY KEY (`id`),
 				  INDEX `votes` (`vote_id`),
 				  INDEX `users` (`user_id`),
-				  UNIQUE KEY `user_vote_unique` (`vote_id`,`user_id`,`variant_id`)
+				  UNIQUE KEY `user_vote_unique` (`vote_id`,`user_id`)
 				){$charset_collate};";
 			
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -75,7 +106,64 @@
 		update_option('tkgp_db_version', $cur_version);
     }
     
-    function tkgp_db_update() {
-    	return;
+    function tkgp_db_update($installed_version, $cur_version) {
+    	global $wpdb;
+    		
+    	$patches = array(
+	    	'0.1' => array(
+	    					'sql' => array("ALTER TABLE `{$wpdb->prefix}tkgp_votes` 
+									ADD COLUMN `allow_against` BIT(1) NULL DEFAULT NULL AFTER `allow_revote`,
+									ADD COLUMN `consider_against` BIT(1) NULL DEFAULT NULL AFTER `allow_against`;",
+										   "ALTER TABLE `{$wpdb->prefix}tkgp_usersvotes` 
+									DROP INDEX `user_vote_unique` ,
+									ADD UNIQUE INDEX `user_vote_unique` (`vote_id` ASC, `user_id` ASC);"
+								 ),
+							'ver_after' => '0.11'
+						  )
+		);
+    	
+	 	if(!empty($patches[$installed_version])) {
+	 		tkgp_upgrade_log("	Patching DB {$installed_version} => {$patches[$installed_version]['ver_after']}");
+	 		
+	 		if($patches[$installed_version]['sql'] == 'none') {
+	 			update_option('tkgp_db_version', $patches[$installed_version]['ver_after']);
+	 		} else {
+	 			$result = false;
+
+		 		foreach ($patches[$installed_version]['sql'] as $path) {
+					tkgp_upgrade_log("		SQL: {$path}");
+					
+					$result = $wpdb->query($path);
+		 			
+		 			if(!$result) {
+						if(!empty($wpdb->last_error)) {
+							//ошибка - не прошел патч SQL
+							tkgp_upgrade_log("Error during patch installation!",'e');
+							tkgp_upgrade_log("SQL messages text: {$wpdb->last_error}", 'e');
+							return;	
+						}
+						
+						$result = true; //не критичная ошибка
+						tkgp_upgrade_log("The patch is not changed. Maybe there is nothing to fix or fixes have been made earlier.", 'w');
+		 			} else {
+		 				tkgp_upgrade_log("		SQL: ОК");
+		 			}
+		 		}
+		 		
+		 		if($result) {
+		 			tkgp_upgrade_log("	End patching DB {$installed_version} => {$cur_version}");
+		 			update_option('tkgp_db_version', $patches[$installed_version]['ver_after']); //обновились до следующей версии
+		 			$new_version = tkgp_prepare_version(get_option('tkgp_db_version'));
+					
+					if(floatval($new_version) < floatval($cur_version)) {
+						tkgp_db_update($new_version, $cur_version);
+					} else {
+						tkgp_upgrade_log("End upgrading DB from {$installed_version} to {$cur_version}");
+					}
+		 		}
+			}
+	 	} else {
+	 		tkgp_upgrade_log("You can not upgrade from version {$installed_version}!", 'e');
+	 	} 	
     }
 ?>

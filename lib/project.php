@@ -171,9 +171,10 @@ class TK_GProject
 		
 		if($this->isValid()) {
 			$post = get_post($this->project_id);
-			$html = empty($html) ? wpautop($post->post_content) : $html;
 			$user_id = get_current_user_id();
-						
+			$html = get_post_meta($this->project_id, 'ptarget', true);
+			$html = wpautop($html);
+			
 			if(is_user_logged_in() && $this->userCanEdit($user_id)) {
 				// код кнопки редактирования
 				$html = $this->getEditPostHtml() . $html;
@@ -182,7 +183,11 @@ class TK_GProject
 			if(TK_GVote::exists($post->ID)) {
 				$vote = new TK_GVote($post->ID);
 				$caps = $this->userCan($user_id);
-				$html .= $vote->getResultVoteHtml($caps['vote'], !is_single($post->ID), !$caps['revote']);	
+				$html .= $vote->getResultVoteHtml($caps['vote'], false, !$caps['revote']);	
+			}
+			
+			if(is_single($post->ID)) {
+				$html .= wpautop($data);
 			}
 		}
 		
@@ -379,6 +384,19 @@ class TK_GProject
                 )
             )
         ),
+        array(
+        	'label' => _x('Target of the project', 'Project Settings Type', 'tkgp'),
+        	'desc' => _x('Text description of the project target.', 'Project Settings Type', 'tkgp'),
+        	'id' => 'ptarget',
+        	'type' => 'editor',
+        	'properties' => array( 
+        						'editor_class'=>'requiredField', 
+        						'textarea_rows'=>'6',
+        						'media_buttons' => false,
+        						'teeny' => true,
+        						'editor_class' => 'required_field' //для пометки как требуемое поле
+								)
+		),
         array(
             'label' => _x('Project Manager', 'Project Settings', 'tkgp'),
             'desc' => _x('Manager with full access to settings this Project.', 'Project Settings', 'tkgp'),
