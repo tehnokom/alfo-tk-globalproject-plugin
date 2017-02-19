@@ -3,6 +3,7 @@ if (!defined('TKGP_ROOT') || !defined('TKGP_URL')) {
     exit;
 }
 
+require_once(TKGP_ROOT . 'lib/page.php');
 require_once(TKGP_ROOT . 'lib/project.php');
 require_once(TKGP_ROOT . 'lib/vote.php');
 
@@ -484,7 +485,10 @@ function tkgp_field_html($args, $default_val = '')
 function tkgp_content($data)
 {
     global $post;
-
+	
+	$pg = new TK_GPage();
+	$pg->createPage();
+	
     if ($post->post_type == TK_GProject::slug) {
     	$project = new TK_GProject($post->ID);
       

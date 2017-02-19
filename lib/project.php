@@ -23,8 +23,17 @@ class TK_GProject
 	/**
 	 * @var int
 	 */
-	 protected $project_visibility;
+	protected $project_visibility;
 	 
+	 /**
+	  * @var string
+	  */
+	public $target;
+	
+	/**
+	 * @var string
+	 */
+	public $guid;
 	
 	/**
 	 * @const string slug
@@ -45,6 +54,8 @@ class TK_GProject
 				$this->is_project = $res->post_type == TK_GProject::slug;
 				
 				if($this->is_project) {
+					$this->target = get_post_meta($this->project_id, 'ptarget', true);
+					$this->guid = $res->guid;
 					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
 					$this->project_visibility = intval(get_post_meta($this->project_id, 'visiblity', true));
 				}
