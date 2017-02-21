@@ -112,27 +112,27 @@ class TK_GPage {
 	 * @return string
 	 */
 	public function parsePostData($data) {
-		$data = str_replace('{tk_project_page}', $this->getPageHtml(), $data);
-		
+		$data = str_replace('{tk_project_page}', $this -> getPageHtml(), $data);
+
 		return $data;
 	}
-	
+
 	/**
 	 * Returns html code project page
 	 * @return string
 	 */
 	public function getPageHtml() {
 		$html = '';
-		
+
 		foreach ($this->projects as $project) {
 			$html .= "<div style='display: block; width:98%; border: 1px solid #000; margin: 0 auto 5px auto; padding: 3px;'>
-			<h3>{$project->target}</h3>
+			<h3><a href='{$project->permalink}'>{$project->title}</a></h3>
 			<div>{$project->target}</div>
-			<div><a href='{$project->guid}'>". _x('More','Project Page', 'tkgp') ."</a></div>
 			</div>";
 		}
-		
+
 		return $html;
 	}
+
 };
 ?>

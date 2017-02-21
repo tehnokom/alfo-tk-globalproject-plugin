@@ -4,12 +4,7 @@
  * Class TK_GProject
  */
 class TK_GProject
-{
-    /**
-     * @var integer|null
-     */
-    protected $project_id;
-	
+{	
 	/**
 	 * @var bool
 	 */
@@ -26,14 +21,9 @@ class TK_GProject
 	protected $project_visibility;
 	 
 	 /**
-	  * @var string
+	  * @var array
 	  */
-	public $target;
-	
-	/**
-	 * @var string
-	 */
-	public $guid;
+	protected $opts;
 	
 	/**
 	 * @const string slug
@@ -50,12 +40,14 @@ class TK_GProject
             $res = get_post($post_id);
 
             if (is_object($res)) {
-                $this->project_id = $res->ID;
+                $this->opts['project_id'] = $res->ID;
 				$this->is_project = $res->post_type == TK_GProject::slug;
 				
 				if($this->is_project) {
-					$this->target = get_post_meta($this->project_id, 'ptarget', true);
-					$this->guid = $res->guid;
+					$this->opts['target'] = get_post_meta($this->project_id, 'ptarget', true);
+					$this->opts['guid'] = $res->guid;
+					$this->opts['title'] = get_the_title($this->project_id);
+					$this->opts['permalink'] = get_permalink($this->project_id);
 					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
 					$this->project_visibility = intval(get_post_meta($this->project_id, 'visiblity', true));
 				}
@@ -65,6 +57,23 @@ class TK_GProject
         }
     }
 
+	/**
+	 * Magic method. It's Ma-a-a-gic :)
+	 * @param string $name
+	 * @return mixed | null
+	 */
+	public function __get($name) {
+		if(array_key_exists($name, $this->opts)) {
+			return $this->opts[$name];
+		}
+		
+		return null;
+	}
+	
+	public function __isset($name) {
+		return array_key_exists($name, $this->opts);
+	}
+	
     /**
      * @param bool $show_display_name
      * @return array|null
@@ -181,7 +190,6 @@ class TK_GProject
 		$html = $data;
 		
 		if($this->isValid()) {
-			$post = get_post($this->project_id);
 			$user_id = get_current_user_id();
 			$html = get_post_meta($this->project_id, 'ptarget', true);
 			$html = wpautop($html);
@@ -191,13 +199,13 @@ class TK_GProject
 				$html = $this->getEditPostHtml() . $html;
 			}
 			
-			if(TK_GVote::exists($post->ID)) {
-				$vote = new TK_GVote($post->ID);
+			if(TK_GVote::exists($this->project_id)) {
+				$vote = new TK_GVote($this->project_id);
 				$caps = $this->userCan($user_id);
 				$html .= $vote->getResultVoteHtml($caps['vote'], false, !$caps['revote']);	
 			}
 			
-			if(is_single($post->ID)) {
+			if(is_single($this->project_id)) {
 				$html .= wpautop($data);
 			}
 		}

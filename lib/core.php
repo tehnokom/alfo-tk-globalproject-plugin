@@ -490,13 +490,17 @@ function tkgp_content($data)
     	$project = new TK_GProject($post->ID);
       
 		  $data = $project->getProjectContent($data);
-    } else {
-    	$page = new TK_GPage();
-		$page->createPage();
-		
-		$data = $page->parsePostData($data);
     }
     return $data;
+}
+
+function tkgp_include_templates($template_path) {
+	if(get_post_type() == TK_GProject::slug) {
+		if(!is_single()) {
+			$template_path = TKGP_ROOT . 'styles/default/page.php';
+		}
+	}
+	return $template_path;
 }
 
 add_action('init', 'tkgp_create_type');
@@ -505,4 +509,5 @@ add_action('admin_menu', 'tkgp_create_plugin_options');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
 add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);
+add_action('template_include', 'tkgp_include_templates');
 ?>
