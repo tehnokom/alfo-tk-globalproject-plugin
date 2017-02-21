@@ -64,6 +64,7 @@ class TK_GPage {
 	public function createPage($page_num = 1, $ptype = 3) {
 		unset($this -> projects);
 		$offset = $this -> max_projects - $page_num * $this -> max_projects;
+		$slug = TK_GProject::slug;
 		$user_id = get_current_user_id();
 		$prefix = $this -> wpdb -> prefix;
 
@@ -79,7 +80,7 @@ class TK_GPage {
 				 `{$prefix}postmeta` pm2
 			WHERE pm1.post_id = p.id
 				AND pm2.post_id = p.id
-				AND p.`post_type` = 'tk_project'
+				AND p.`post_type` = '{$slug}'
 				AND pm1.meta_key = 'ptype'
 				AND pm1.meta_value = %d
 				AND pm2.meta_key = 'ptarget'
@@ -105,5 +106,33 @@ class TK_GPage {
 		}
 	}
 
+	/**
+	 * Parses the meta tag archive projects page
+	 * @param $data string
+	 * @return string
+	 */
+	public function parsePostData($data) {
+		$data = str_replace('{tk_project_page}', $this->getPageHtml(), $data);
+		
+		return $data;
+	}
+	
+	/**
+	 * Returns html code project page
+	 * @return string
+	 */
+	public function getPageHtml() {
+		$html = '';
+		
+		foreach ($this->projects as $project) {
+			$html .= "<div style='display: block; width:98%; border: 1px solid #000; margin: 0 auto 5px auto; padding: 3px;'>
+			<h3>{$project->target}</h3>
+			<div>{$project->target}</div>
+			<div><a href='{$project->guid}'>". _x('More','Project Page', 'tkgp') ."</a></div>
+			</div>";
+		}
+		
+		return $html;
+	}
 };
 ?>

@@ -1,6 +1,6 @@
 <?php
 	function tkgp_check_version() {
-		$cur_version = '0.11';
+		$cur_version = '0.12';
 		$installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 		
 		if(empty($installed_version)) {
@@ -119,7 +119,13 @@
 									ADD UNIQUE INDEX `user_vote_unique` (`vote_id` ASC, `user_id` ASC);"
 								 ),
 							'ver_after' => '0.11'
-						  )
+						  ),
+			'0.11' => array(
+							'sql' => array("UPDATE `{$wpdb->prefix}posts` SET `post_type` = 'project', 
+									`guid` = REPLACE(`guid`,'tk_project','project')
+									WHERE `post_type` = 'tk_project';",
+								 ),
+							'ver_after' => '0.12')
 		);
     	
 	 	if(!empty($patches[$installed_version])) {

@@ -485,14 +485,16 @@ function tkgp_field_html($args, $default_val = '')
 function tkgp_content($data)
 {
     global $post;
-	
-	$pg = new TK_GPage();
-	$pg->createPage();
-	
+			
     if ($post->post_type == TK_GProject::slug) {
     	$project = new TK_GProject($post->ID);
       
 		  $data = $project->getProjectContent($data);
+    } else {
+    	$page = new TK_GPage();
+		$page->createPage();
+		
+		$data = $page->parsePostData($data);
     }
     return $data;
 }

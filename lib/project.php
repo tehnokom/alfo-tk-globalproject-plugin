@@ -38,7 +38,7 @@ class TK_GProject
 	/**
 	 * @const string slug
 	 */
-	const slug = 'tk_project';
+	const slug = 'project';
 	
     /**
      * TK_GProject constructor.
