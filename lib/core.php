@@ -15,8 +15,8 @@ function tkgp_create_type()
     register_post_type(TK_GProject::slug,
         array(
             'labels' => array(
-                'name' => _x('TK Projects', 'tk_project', 'tkgp'),
-                'singular_name' => _x('TK Projects', 'tk_project_singular', 'tkgp'),
+                'name' => _x('Projects', 'tk_project', 'tkgp'),
+                'singular_name' => _x('Projects', 'tk_project_singular', 'tkgp'),
                 'add' => _x('Create new', 'tk_project', 'tkgp'),
                 'add_new_item' => _x('Create new project', 'tk_project', 'tkgp'),
                 'edit_item' => _x('Edit project', 'tk_project', 'tkgp'),

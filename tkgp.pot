@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-22 05:33+0000\n"
+"POT-Creation-Date: 2017-02-22 05:45+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -30,14 +30,14 @@ msgstr ""
 msgid "You can not drop a single manager."
 msgstr ""
 
-#: lib/core.php:18 lib/core.php:345
+#: lib/core.php:18
 msgctxt "tk_project"
-msgid "TK Projects"
+msgid "Projects"
 msgstr ""
 
 #: lib/core.php:19
 msgctxt "tk_project_singular"
-msgid "TK Projects"
+msgid "Projects"
 msgstr ""
 
 #: lib/core.php:20
@@ -108,6 +108,11 @@ msgstr ""
 #: lib/core.php:99
 msgctxt "tk_meta"
 msgid "Votes"
+msgstr ""
+
+#: lib/core.php:345
+msgctxt "tk_project"
+msgid "TK Projects"
 msgstr ""
 
 #: lib/core.php:346

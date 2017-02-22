@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TehnoKom Global Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-22 05:34+0000\n"
-"PO-Revision-Date: 2017-02-22 05:35+0000\n"
+"POT-Creation-Date: 2017-02-22 05:46+0000\n"
+"PO-Revision-Date: 2017-02-22 05:46+0000\n"
 "Last-Translator: Александр Петров <580-39-39@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
@@ -14,20 +14,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: lib/page.php:126
-msgctxt "Project Page"
-msgid "Traget:"
-msgstr "Цель:"
+#: lib/core.php:18
+msgctxt "tk_project"
+msgid "Projects"
+msgstr "Проекты"
 
-#: lib/project.php:407
-msgctxt "Project Settings Type"
-msgid "Target of the project"
-msgstr "Цель проекта"
-
-#: lib/project.php:408
-msgctxt "Project Settings Type"
-msgid "Text description of the project target."
-msgstr "Текст описания цели проекта"
+#: lib/core.php:19
+msgctxt "tk_project_singular"
+msgid "Projects"
+msgstr "Проекты"
 
 #: tk_globalproject.php:55
 msgid "Loading..."
@@ -44,16 +39,6 @@ msgstr "Вы хотите удалить менеджера?"
 #: tk_globalproject.php:73
 msgid "You can not drop a single manager."
 msgstr "Вы не можете исключить единственного менеджера."
-
-#: lib/core.php:18 lib/core.php:345
-msgctxt "tk_project"
-msgid "TK Projects"
-msgstr "ТК Проекты"
-
-#: lib/core.php:19
-msgctxt "tk_project_singular"
-msgid "TK Projects"
-msgstr "ТК Проекты"
 
 #: lib/core.php:20
 msgctxt "tk_project"
@@ -124,6 +109,11 @@ msgstr "План Проекта"
 msgctxt "tk_meta"
 msgid "Votes"
 msgstr "Голосование"
+
+#: lib/core.php:345
+msgctxt "tk_project"
+msgid "TK Projects"
+msgstr "ТК Проекты"
 
 #: lib/core.php:346
 msgctxt "tk_project"
@@ -204,6 +194,11 @@ msgstr "У Вас нет доступа к данным голосования"
 msgctxt "Project Edit"
 msgid "You do not have permission to edit project"
 msgstr "У Вас нет прав для изменения проекта"
+
+#: lib/page.php:126
+msgctxt "Project Page"
+msgid "Traget:"
+msgstr "Цель:"
 
 #: lib/vote.php:78
 msgctxt "Project Settings"
@@ -366,6 +361,16 @@ msgstr "Групповой"
 msgctxt "Project Settings Type"
 msgid "Public"
 msgstr "Публичный"
+
+#: lib/project.php:407
+msgctxt "Project Settings Type"
+msgid "Target of the project"
+msgstr "Цель проекта"
+
+#: lib/project.php:408
+msgctxt "Project Settings Type"
+msgid "Text description of the project target."
+msgstr "Текст описания цели проекта"
 
 #: lib/project.php:420
 msgctxt "Project Settings"
