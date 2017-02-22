@@ -123,11 +123,14 @@ class TK_GPage {
 	 */
 	public function getPageHtml() {
 		$html = '';
-
+		$l18n = _x('Traget:', 'Project Page', 'tkgp');
+		
 		foreach ($this->projects as $project) {
-			$html .= "<div style='display: block; width:98%; border: 1px solid #000; margin: 0 auto 5px auto; padding: 3px;'>
+			$target = wpautop($project->target);
+			$html .= "<div style='display: block; width:98%; border: 1px solid rgba(204,204,204,0.5); margin: 0 auto 5px auto; padding: 5px; border-radius: 5px;'>
 			<h3><a href='{$project->permalink}'>{$project->title}</a></h3>
-			<div>{$project->target}</div>
+			<div><h5>{$l18n}</h5></div>
+			<div>{$target}</div>
 			</div>";
 		}
 
