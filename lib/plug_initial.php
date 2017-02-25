@@ -1,6 +1,6 @@
 <?php
 	function tkgp_check_version() {
-		$cur_version = '0.12';
+		$cur_version = '0.13';
 		$installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 		
 		if(empty($installed_version)) {
@@ -125,7 +125,13 @@
 									`guid` = REPLACE(`guid`,'tk_project','project')
 									WHERE `post_type` = 'tk_project';",
 								 ),
-							'ver_after' => '0.12')
+							'ver_after' => '0.12'),
+			'0.12' => array(
+							'sql' => array("UPDATE `{$wpdb->prefix}posts` SET `post_type` = 'projektoj', 
+									`guid` = REPLACE(`guid`,'project','projektoj')
+									WHERE `post_type` = 'project';",
+								 ),
+							'ver_after' => '0.13')
 		);
     	
 	 	if(!empty($patches[$installed_version])) {
