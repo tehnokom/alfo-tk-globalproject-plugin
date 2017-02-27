@@ -50,10 +50,10 @@ class TK_GPage {
 	public function __construct() {
 		global $wpdb;
 
-		$this -> wpdb = $wpdb;
-		$this -> wpdb -> enable_nulls = true;
-		$this -> max_projects = 15;
-		$this -> max_links = 10;
+		$this->wpdb = $wpdb;
+		$this->wpdb->enable_nulls = true;
+		$this->max_projects = 15;
+		$this->max_links = 10;
 	}
 
 	/**
@@ -62,11 +62,11 @@ class TK_GPage {
 	 * @param $ptype integer Page type
 	 */
 	public function createPage($page_num = 1, $ptype = 3) {
-		unset($this -> projects);
-		$offset = $this -> max_projects - $page_num * $this -> max_projects;
+		unset($this->projects);
+		$offset = $this->max_projects - $page_num * $this->max_projects;
 		$slug = TK_GProject::slug;
 		$user_id = get_current_user_id();
-		$prefix = $this -> wpdb -> prefix;
+		$prefix = $this->wpdb->prefix;
 
 		$sql = "SELECT p.`id`/*,
 					p.`post_author`,
@@ -87,20 +87,20 @@ class TK_GPage {
 			ORDER BY p.`post_date` DESC
 			LIMIT %d OFFSET %d";
 
-		while (count($this -> projects) < $this -> max_projects) {
-			$res = $this -> wpdb -> get_results($this -> wpdb -> prepare($sql, $ptype, $this -> max_projects, $offset), OBJECT);
+		while (count($this->projects) < $this->max_projects) {
+			$res = $this->wpdb->get_results($this->wpdb->prepare($sql, $ptype, $this->max_projects, $offset), OBJECT);
 
 			if (empty($res)) {
-				$this -> last_offset;
+				$this->last_offset;
 				break;
 			}
 
 			foreach ($res as $row) {
-				$cur = new TK_GProject($row -> id);
+				$cur = new TK_GProject($row->id);
 				++$offset;
 
-				if ($cur -> userCanRead($user_id)) {
-					$this -> projects[] = $cur;
+				if ($cur->userCanRead($user_id)) {
+					$this->projects[] = $cur;
 				}
 			}
 		}
@@ -112,7 +112,7 @@ class TK_GPage {
 	 * @return string
 	 */
 	public function parsePostData($data) {
-		$data = str_replace('{tk_project_page}', $this -> getPageHtml(), $data);
+		$data = str_replace('{tk_project_page}', $this->getPageHtml(), $data);
 
 		return $data;
 	}
