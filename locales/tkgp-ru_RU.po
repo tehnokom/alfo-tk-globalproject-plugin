@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TehnoKom Global Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-28 21:52+0000\n"
-"PO-Revision-Date: 2017-01-28 21:53+0000\n"
-"Last-Translator: Александр Петров <ra9oaj@gmail.com>\n"
+"POT-Creation-Date: 2017-02-22 05:46+0000\n"
+"PO-Revision-Date: 2017-02-22 05:46+0000\n"
+"Last-Translator: Александр Петров <580-39-39@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
@@ -14,15 +14,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: lib/vote.php:121
-msgctxt "Project Settings"
-msgid "Allow to vote against"
-msgstr "Позволить голосовать против"
+#: lib/core.php:18
+msgctxt "tk_project"
+msgid "Projects"
+msgstr "Проекты"
 
-#: lib/vote.php:122
-msgctxt "Project Settings"
-msgid "It allows users to vote against the project."
-msgstr "Это позволит пользователям голосовать против проекта."
+#: lib/core.php:19
+msgctxt "tk_project_singular"
+msgid "Projects"
+msgstr "Проекты"
 
 #: tk_globalproject.php:55
 msgid "Loading..."
@@ -40,6 +40,96 @@ msgstr "Вы хотите удалить менеджера?"
 msgid "You can not drop a single manager."
 msgstr "Вы не можете исключить единственного менеджера."
 
+#: lib/core.php:20
+msgctxt "tk_project"
+msgid "Create new"
+msgstr "Создать новый"
+
+#: lib/core.php:21
+msgctxt "tk_project"
+msgid "Create new project"
+msgstr "Создать новый проект"
+
+#: lib/core.php:22
+msgctxt "tk_project"
+msgid "Edit project"
+msgstr "Редактирование проекта"
+
+#: lib/core.php:23
+msgctxt "tk_project"
+msgid "New project"
+msgstr "Новый проект"
+
+#: lib/core.php:24
+msgctxt "tk_project"
+msgid "View project"
+msgstr "Посмотреть проект"
+
+#: lib/core.php:25
+msgctxt "tk_project"
+msgid "Search project"
+msgstr "Найти проект"
+
+#: lib/core.php:26
+msgctxt "tk_project"
+msgid "Project not found"
+msgstr "Проект не найден"
+
+#: lib/core.php:27
+msgctxt "tk_project"
+msgid "Project not found in Trash"
+msgstr "Проект в Корзине не найден"
+
+#: lib/core.php:29
+msgctxt "tk_project"
+msgid "TehnoKom Global Project system type"
+msgstr "системный тип ТехноКом Глобальный Проект"
+
+#: lib/core.php:50
+msgctxt "Taxonomy General Name"
+msgid "Categories of Projects"
+msgstr "Категории Проектов"
+
+#: lib/core.php:51
+msgctxt "Taxonomy Singular Name"
+msgid "Categories of Projects"
+msgstr "Категории Проектов"
+
+#: lib/core.php:85
+msgctxt "tk_meta"
+msgid "Settings of Project"
+msgstr "Настройки Проекта"
+
+#: lib/core.php:92
+msgctxt "tk_meta"
+msgid "Plane of Project"
+msgstr "План Проекта"
+
+#: lib/core.php:99
+msgctxt "tk_meta"
+msgid "Votes"
+msgstr "Голосование"
+
+#: lib/core.php:345
+msgctxt "tk_project"
+msgid "TK Projects"
+msgstr "ТК Проекты"
+
+#: lib/core.php:346
+msgctxt "tk_project"
+msgid "TK Projects Settings"
+msgstr "ТК Проекты Настройки"
+
+#: lib/core.php:439 lib/core.php:459 lib/ajax_functions.php:57
+msgctxt "Project Settings"
+msgid "Add"
+msgstr "Добавить"
+
+#: lib/core.php:446
+msgctxt "Project Settings"
+msgid "Groups are not supported."
+msgstr "Группы не поддерживаются."
+
 #: lib/ajax_functions.php:45
 msgctxt "Project Settings"
 msgid "Search..."
@@ -49,11 +139,6 @@ msgstr "Поиск..."
 msgctxt "Project Settings"
 msgid "Users"
 msgstr "Пользователи"
-
-#: lib/ajax_functions.php:57 lib/core.php:435 lib/core.php:455
-msgctxt "Project Settings"
-msgid "Add"
-msgstr "Добавить"
 
 #: lib/ajax_functions.php:112 lib/ajax_functions.php:230
 msgctxt "Project Vote"
@@ -110,6 +195,11 @@ msgctxt "Project Edit"
 msgid "You do not have permission to edit project"
 msgstr "У Вас нет прав для изменения проекта"
 
+#: lib/page.php:126
+msgctxt "Project Page"
+msgid "Traget:"
+msgstr "Цель:"
+
 #: lib/vote.php:78
 msgctxt "Project Settings"
 msgid "Enable Vote"
@@ -160,6 +250,16 @@ msgctxt "Project Settings"
 msgid "The data of the end of voting."
 msgstr "Дата завершения голсования."
 
+#: lib/vote.php:121
+msgctxt "Project Settings"
+msgid "Allow to vote against"
+msgstr "Позволить голосовать против"
+
+#: lib/vote.php:122
+msgctxt "Project Settings"
+msgid "It allows users to vote against the project."
+msgstr "Это позволит пользователям голосовать против проекта."
+
 #: lib/vote.php:129
 msgctxt "Project Settings"
 msgid "Allow re-vote"
@@ -182,217 +282,137 @@ msgctxt "Project Settings"
 msgid "Reset voting results."
 msgstr "Сбросить результаты голосования."
 
-#: lib/vote.php:556
+#: lib/vote.php:559
 msgctxt "Project Vote"
 msgid "Voting status"
 msgstr "Статус голосования"
 
-#: lib/vote.php:623
+#: lib/vote.php:627
 msgctxt "Project Vote"
 msgid "Progress of the approval"
 msgstr "Прогресс одобрения"
 
-#: lib/vote.php:630
+#: lib/vote.php:634
 msgctxt "Project Vote"
 msgid "APPROVED!"
 msgstr "ОДОБРЕНО!"
 
-#: lib/vote.php:634
+#: lib/vote.php:638
 msgctxt "Project Vote"
 msgid "Supported"
 msgstr "Поддержало"
 
-#: lib/vote.php:636
+#: lib/vote.php:640
 msgctxt "Project Vote"
 msgid "Not Supported"
 msgstr "Не поддержало"
 
-#: lib/vote.php:686
+#: lib/vote.php:690
 msgctxt "Project Vote"
 msgid "Vote"
 msgstr "Голосование"
 
-#: lib/vote.php:691
+#: lib/vote.php:695
 msgctxt "Project Vote"
 msgid "I support"
 msgstr "Я поддерживаю"
 
-#: lib/vote.php:697
+#: lib/vote.php:701
 msgctxt "Project Vote"
 msgid "I do't support"
 msgstr "Я не поддерживаю"
 
-#: lib/vote.php:719
+#: lib/vote.php:723
 msgctxt "Project Vote"
 msgid "Reset my vote"
 msgstr "Сбросить мой голос"
 
-#: lib/core.php:17 lib/core.php:348
-msgctxt "tk_project"
-msgid "TK Projects"
-msgstr "ТК Проекты"
-
-#: lib/core.php:18
-msgctxt "tk_project_singular"
-msgid "TK Projects"
-msgstr "ТК Проекты"
-
-#: lib/core.php:19
-msgctxt "tk_project"
-msgid "Create new"
-msgstr "Создать новый"
-
-#: lib/core.php:20
-msgctxt "tk_project"
-msgid "Create new project"
-msgstr "Создать новый проект"
-
-#: lib/core.php:21
-msgctxt "tk_project"
-msgid "Edit project"
-msgstr "Редактирование проекта"
-
-#: lib/core.php:22
-msgctxt "tk_project"
-msgid "New project"
-msgstr "Новый проект"
-
-#: lib/core.php:23
-msgctxt "tk_project"
-msgid "View project"
-msgstr "Посмотреть проект"
-
-#: lib/core.php:24
-msgctxt "tk_project"
-msgid "Search project"
-msgstr "Найти проект"
-
-#: lib/core.php:25
-msgctxt "tk_project"
-msgid "Project not found"
-msgstr "Проект не найден"
-
-#: lib/core.php:26
-msgctxt "tk_project"
-msgid "Project not found in Trash"
-msgstr "Проект в Корзине не найден"
-
-#: lib/core.php:28
-msgctxt "tk_project"
-msgid "TehnoKom Global Project system type"
-msgstr "системный тип ТехноКом Глобальный Проект"
-
-#: lib/core.php:49
-msgctxt "Taxonomy General Name"
-msgid "Categories of Projects"
-msgstr "Категории Проектов"
-
-#: lib/core.php:50
-msgctxt "Taxonomy Singular Name"
-msgid "Categories of Projects"
-msgstr "Категории Проектов"
-
-#: lib/core.php:84
-msgctxt "tk_meta"
-msgid "Settings of Project"
-msgstr "Настройки Проекта"
-
-#: lib/core.php:91
-msgctxt "tk_meta"
-msgid "Plane of Project"
-msgstr "План Проекта"
-
-#: lib/core.php:98
-msgctxt "tk_meta"
-msgid "Votes"
-msgstr "Голосование"
-
-#: lib/core.php:349
-msgctxt "tk_project"
-msgid "TK Projects Settings"
-msgstr "ТК Проекты Настройки"
-
-#: lib/core.php:442
-msgctxt "Project Settings"
-msgid "Groups are not supported."
-msgstr "Группы не поддерживаются."
-
-#: lib/project.php:153
+#: lib/project.php:173
 msgctxt "Project Edit"
 msgid "Edit Project"
 msgstr "Редактировать проект"
 
-#: lib/project.php:359
+#: lib/project.php:383
 msgctxt "Project Settings"
 msgid "Type"
 msgstr "Тип"
 
-#: lib/project.php:360
+#: lib/project.php:384
 msgctxt "Project Settings"
 msgid "Type of this project."
 msgstr "Тип данного проекта."
 
-#: lib/project.php:365 lib/project.php:416
+#: lib/project.php:389 lib/project.php:453
 msgctxt "Project Settings"
 msgid "Private"
 msgstr "Личный"
 
-#: lib/project.php:369
+#: lib/project.php:393
 msgctxt "Project Settings Type"
 msgid "Working"
 msgstr "Рабочий"
 
-#: lib/project.php:373
+#: lib/project.php:397
 msgctxt "Project Settings Type"
 msgid "Members only"
 msgstr "Групповой"
 
-#: lib/project.php:377
+#: lib/project.php:401
 msgctxt "Project Settings Type"
 msgid "Public"
 msgstr "Публичный"
 
-#: lib/project.php:383
+#: lib/project.php:407
+msgctxt "Project Settings Type"
+msgid "Target of the project"
+msgstr "Цель проекта"
+
+#: lib/project.php:408
+msgctxt "Project Settings Type"
+msgid "Text description of the project target."
+msgstr "Текст описания цели проекта"
+
+#: lib/project.php:420
 msgctxt "Project Settings"
 msgid "Project Manager"
 msgstr "Управляющие проектом"
 
-#: lib/project.php:384
+#: lib/project.php:421
 msgctxt "Project Settings"
 msgid "Manager with full access to settings this Project."
 msgstr "Управляющие с полным доступом к настройкам этого проекта."
 
-#: lib/project.php:390
+#: lib/project.php:427
 msgctxt "Project Settings"
 msgid "Working group"
 msgstr "Рабочая группа"
 
-#: lib/project.php:391
+#: lib/project.php:428
 msgctxt "Project Settings"
 msgid "Group to which the project was created."
 msgstr "Группа, для которой был создан данный проект."
 
-#: lib/project.php:397
+#: lib/project.php:434
 msgctxt "Project Settings"
 msgid "Visibility"
 msgstr "Видимость"
 
-#: lib/project.php:398
+#: lib/project.php:435
 msgctxt "Project Settings"
 msgid "Visibility for the categories of users."
 msgstr "Видимость для категорий пользователей."
 
-#: lib/project.php:404
+#: lib/project.php:441
 msgctxt "Project Settings"
 msgid "Public"
 msgstr "Общий"
 
-#: lib/project.php:408
+#: lib/project.php:445
 msgctxt "Project Settings"
 msgid "Registered"
 msgstr "Зарегистрированные"
 
-#: lib/project.php:412
+#: lib/project.php:449
 msgctxt "Project Settings"
 msgid "Members only"
 msgstr "Только для участников"

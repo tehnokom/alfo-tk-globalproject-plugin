@@ -3,6 +3,7 @@ if (!defined('TKGP_ROOT') || !defined('TKGP_URL')) {
     exit;
 }
 
+require_once(TKGP_ROOT . 'lib/page.php');
 require_once(TKGP_ROOT . 'lib/project.php');
 require_once(TKGP_ROOT . 'lib/vote.php');
 
@@ -14,8 +15,8 @@ function tkgp_create_type()
     register_post_type(TK_GProject::slug,
         array(
             'labels' => array(
-                'name' => _x('TK Projects', 'tk_project', 'tkgp'),
-                'singular_name' => _x('TK Projects', 'tk_project_singular', 'tkgp'),
+                'name' => _x('Projects', 'tk_project', 'tkgp'),
+                'singular_name' => _x('Projects', 'tk_project_singular', 'tkgp'),
                 'add' => _x('Create new', 'tk_project', 'tkgp'),
                 'add_new_item' => _x('Create new project', 'tk_project', 'tkgp'),
                 'edit_item' => _x('Edit project', 'tk_project', 'tkgp'),
@@ -484,7 +485,7 @@ function tkgp_field_html($args, $default_val = '')
 function tkgp_content($data)
 {
     global $post;
-
+			
     if ($post->post_type == TK_GProject::slug) {
     	$project = new TK_GProject($post->ID);
       
@@ -493,10 +494,20 @@ function tkgp_content($data)
     return $data;
 }
 
+function tkgp_include_templates($template_path) {
+	if(get_post_type() == TK_GProject::slug) {
+		if(!is_single()) {
+			$template_path = TKGP_ROOT . 'styles/default/page.php';
+		}
+	}
+	return $template_path;
+}
+
 add_action('init', 'tkgp_create_type');
 add_action('init', 'tkgp_create_taxonomy');
 add_action('admin_menu', 'tkgp_create_plugin_options');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
 add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);
+add_action('template_include', 'tkgp_include_templates');
 ?>

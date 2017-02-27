@@ -636,7 +636,7 @@ class TK_GVote
         </tr>';
         if (!$short) {
             $form .= '<tr><th>' . _x('Supported', 'Project Vote',
-                    'tkgp') . '</th><td>' . intval($approval_votes) . ' (' . $approval_percent . '%)</td></tr>';
+                    'tkgp') . '</th><td>' . intval($approval_votes) . ($allow_against ? ' (' . $approval_percent . '%)' : '') . '</td></tr>';
             $form .= $allow_against ? '<tr><th>' . _x('Not Supported', 'Project Vote',
                     'tkgp') . '</th><td>' . intval($reproval_votes) . ' (' . $reproval_percent . '%)</td></tr>' : '';
 
