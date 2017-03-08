@@ -263,6 +263,37 @@ class TK_GProject
 	}
 	
 	/**
+	 * Return TK_GProject object when new project is created or null
+	 * 
+	 * @param array $data
+	 * @return object | null 
+	 */
+	public static function createProject($data) {
+		if(empty($data['target'])
+			|| empty($data['post_title'])) {
+			return null;
+		}
+		
+		$user_id = get_current_user();
+		$in = $data;
+		$in['post_type'] = TK_GProject::slug;
+		$in['post_status'] = 'publish';
+		$in['comment_status'] = 'closed';
+		
+		$id = wp_insert_post($in);
+		
+		if($id && !is_object($id)) {
+			update_post_meta($id, 'ptype', $data['type']);
+			update_post_meta($id, 'ptarget', $data['target']);
+			update_post_meta($id, 'manager', array($user_id));
+			
+			return new TK_GProject($id);
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Return TRUE when user can read project else FALSE
 	 * 
 	 * @param int $user_id
