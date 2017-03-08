@@ -1,6 +1,6 @@
 <?php
 	function tkgp_check_version() {
-		$cur_version = '0.13';
+		$cur_version = '0.14';
 		$installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 		
 		if(empty($installed_version)) {
@@ -103,6 +103,25 @@
 			dbDelta($sql);
 		}
 		
+		$table_name = $wpdb->prefix . 'tkgp_tasks_links';
+		if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+			$sql = "CREATE TABLE {$table_name} (
+				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				  `project_id` bigint(20) unsigned NOT NULL,
+				  `task_id` bigint(20) unsigned NOT NULL,
+				  `task_type` tinyint(3) NOT NULL,
+				  `create_date` timestamp DEFAULT NOW(),
+				  PRIMARY KEY (`id`),
+				  INDEX `votes` (`project_id`),
+				  INDEX `users` (`task_id`),
+				  UNIQUE KEY `user_vote_unique` (`project_id`,`task_id`)
+				){$charset_collate};";
+			
+			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+				
+			dbDelta($sql);
+		}
+		
 		update_option('tkgp_db_version', $cur_version);
     }
     
@@ -131,7 +150,21 @@
 									`guid` = REPLACE(`guid`,'project','projektoj')
 									WHERE `post_type` = 'project';",
 								 ),
-							'ver_after' => '0.13')
+							'ver_after' => '0.13'),
+			'0.13' => array(
+							'sql' => array("CREATE TABLE {$wpdb->prefix}tkgp_tasks_links (
+										  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+										  `project_id` bigint(20) unsigned NOT NULL,
+										  `task_id` bigint(20) unsigned NOT NULL,
+										  `task_type` tinyint(3) NOT NULL,
+										  `create_date` timestamp DEFAULT NOW(),
+										  PRIMARY KEY (`id`),
+										  INDEX `votes` (`project_id`),
+										  INDEX `users` (`task_id`),
+										  UNIQUE KEY `project_task_unique` (`project_id`,`task_id`)
+										) DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate};",
+														 ),
+							'ver_after' => '0.14')
 		);
     	
 	 	if(!empty($patches[$installed_version])) {
