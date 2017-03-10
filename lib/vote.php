@@ -11,16 +11,12 @@ class TK_GVote
      * @var
      */
     protected $wpdb;
-    /**
-     * @var integer|null
-     */
-    protected $vote_id;
-
-    /**
-     * @var integer|null
-     */
-    protected $project_id;
-
+	
+	/**
+	  * @var array
+	  */
+	protected $opts;
+    
     /**
      * @var null $post_id
      */
@@ -38,16 +34,50 @@ class TK_GVote
             if (is_object($res)) {
 
 
-                $this->project_id = $res->ID;
-                $this->vote_id = $this->wpdb->get_var($this->wpdb->prepare("SELECT id 
+                $this->opts['project_id'] = $res->ID;
+                $this->opts['vote_id'] = $this->wpdb->get_var($this->wpdb->prepare("SELECT id 
 													 FROM {$this->wpdb->prefix}tkgp_votes 
 													 WHERE post_id = %d",
                     $this->project_id)
                 );
+				
+				$votes = $this->getVoteState();
+				if (isset($votes[0]) && intval($votes[0]['id']) === -1) {
+		            $this->opts['approval_votes'] = intval($votes[0]['cnt']);
+		            $this->opts['reproval_votes'] = empty($votes[1]['cnt']) ? 0 : intval($votes[1]['cnt']);
+		        } else {
+		            $this->opts['reproval_votes'] = intval($votes[0]['cnt']);
+		            $this->opts['approval_votes'] = empty($votes[1]['cnt']) ? 0 : intval($votes[1]['cnt']);
+		        }
+				
+				$this->opts = array_merge($this->opts,$this->getVoteSettings());
+				file_put_contents(__FILE__.".log", serialize($this->opts), FILE_APPEND);
             }
         }
     }
-
+	
+	/**
+	 * Magic method. It's Ma-a-a-gic :)
+	 * @param string $name
+	 * @return mixed | null
+	 */
+	public function __get($name) {
+		if(array_key_exists($name, $this->opts)) {
+			return $this->opts[$name];
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Magic method. It's Ma-a-a-gic :)
+	 * @param string $name
+	 * @return boolean
+	 */
+	public function __isset($name) {
+		return array_key_exists($name, $this->opts);
+	}
+	
     /**
      * @param integer $post_id
      * @return bool
@@ -279,7 +309,7 @@ class TK_GVote
      * @param mixed[] $arg
      * @return mixed[]|null
      */
-    public function getVoteSettings($arg = array())
+    protected function getVoteSettings($arg = array())
     {
         if (is_array($arg) && isset($this->vote_id)) {
             $columns = '*';
@@ -323,6 +353,7 @@ class TK_GVote
         if (isset($this->vote_id) && isset($arg)) {
             $data = array();
             $format = array();
+			
             foreach ($arg as $key => $val) {
                 $cur_format = '';
                 switch ($key) {
@@ -336,7 +367,7 @@ class TK_GVote
                         if (empty($cur_format)) {
                             $cur_format = '%s';
                         }
-
+						
                         $data[$key] = $val;
                         $format[] = $cur_format;
                         break;
@@ -350,6 +381,12 @@ class TK_GVote
                 array('id' => $this->vote_id),
                 $format,
                 array('%d'));
+			
+			if($res) {
+				$this->opts = array_merge($this->opts, $data);
+			}
+			
+			return $res;
         }
         return false;
     }
@@ -382,6 +419,7 @@ class TK_GVote
 
                 array('%d'));
             if ($res !== false) {
+            	$this->opts[$key] = $val;
                 return true;
             }
         }
@@ -570,22 +608,6 @@ class TK_GVote
     }
 
     /**
-     * @return null|int
-     */
-    public function getPostId()
-    {
-        return $this->project_id;
-    }
-
-    /**
-     * @return null|int
-     */
-    public function getVoteId()
-    {
-        return $this->vote_id;
-    }
-
-    /**
      * @param array $settings
      * @param bool $show_vote_button
      * @param bool $short
@@ -671,7 +693,7 @@ class TK_GVote
      * @param bool $variant_exists [optional]
      * @return string
      */
-    protected function getVoteButtonHtml($allow_against = false,$variant_exists = false)
+    public function getVoteButtonHtml(/*$allow_against = false,*/$variant_exists = false)
     {
         $html_code = '<div id="tkgp_vote_buttons">
 							<input type="hidden" name="tkgp_vote_nonce" value="' . wp_create_nonce('tkgp_user_vote') . '" />
@@ -692,13 +714,13 @@ class TK_GVote
         } else {
             $html_code .= '<div>
 							<div class="tkgp_button">
-							<a>' . _x('I support', 'Project Vote', 'tkgp') . '</a>
+							<a>' . _x('Support', 'Project Vote', 'tkgp') . '</a>
 							<input type="hidden" name="user_vote" value="-1"/>
 						  	</div>
 						  </div>';
-			$html_code .= $allow_against ? '<div>
+			$html_code .= $this->allow_against ? '<div>
 						  	<div class="tkgp_button">
-						  		<a>' . _x('I do\'t support', 'Project Vote', 'tkgp') . '</a>
+						  		<a>' . _x('Against', 'Project Vote', 'tkgp') . '</a>
 						  		<input type="hidden" name="user_vote" value="-2"/>
 						  	</div>
 						  </div>' : '';
