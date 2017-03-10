@@ -127,11 +127,19 @@ class TK_GPage {
 		
 		foreach ($this->projects as $project) {
 			$target = wpautop($project->target);
-			$html .= "<div style='display: block; width:98%; border: 1px solid rgba(204,204,204,0.5); margin: 0 auto 5px auto; padding: 5px; border-radius: 5px;'>
+			$html .= "<div style='display: block; width:98%; border: 1px solid rgba(204,204,204,0.9); margin: 0 auto 5px auto; padding: 5px; border-radius: 5px;'>
 			<h3><a href='{$project->permalink}'>{$project->title}</a></h3>
 			<div><h5>{$l18n}</h5></div>
-			<div>{$target}</div>
-			</div>";
+			<div>{$target}</div>";
+			
+			if(TK_GVote::exists($project->project_id)) {
+				$user_id = get_current_user_id();
+				$vote = new TK_GVote($project->project_id);
+				$caps = $project->userCan($user_id);
+				$html .= $vote->getResultVoteHtml($caps['vote'], false, !$caps['revote']);	
+			}
+			
+			$html .= "</div>";
 		}
 
 		return $html;
