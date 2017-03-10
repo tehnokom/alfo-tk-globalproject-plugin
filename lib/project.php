@@ -4,7 +4,13 @@
  * Class TK_GProject
  */
 class TK_GProject
-{	
+{
+	/**
+     * WordPress Database Access Abstraction Object
+     * @var
+     */
+    protected $wpdb;
+		
 	/**
 	 * @var bool
 	 */
@@ -24,7 +30,7 @@ class TK_GProject
 	  * @var array
 	  */
 	protected $opts;
-	
+
 	/**
 	 * @const string slug
 	 */
@@ -35,7 +41,7 @@ class TK_GProject
      * @param null $post_id
      */
     public function __construct($post_id = null)
-    {
+    { 	
         if (isset($post_id)) {
             $res = get_post($post_id);
 
@@ -44,6 +50,11 @@ class TK_GProject
 				$this->is_project = $res->post_type == TK_GProject::slug;
 				
 				if($this->is_project) {
+					global $wpdb;
+		
+    				$this->wpdb = $wpdb;
+					$this->wpdb->enable_nulls = true;
+    				
 					$this->opts['target'] = get_post_meta($this->project_id, 'ptarget', true);
 					$this->opts['guid'] = $res->guid;
 					$this->opts['title'] = get_the_title($this->project_id);
@@ -63,7 +74,10 @@ class TK_GProject
 	 * @return mixed | null
 	 */
 	public function __get($name) {
-		if(array_key_exists($name, $this->opts)) {
+		if($name == 'description') {
+			$post = get_post($this->project_id);
+			return $post->post_content;
+		} else if(array_key_exists($name, $this->opts)) {
 			return $this->opts[$name];
 		}
 		
@@ -71,7 +85,7 @@ class TK_GProject
 	}
 	
 	public function __isset($name) {
-		return array_key_exists($name, $this->opts);
+		return (isset($this->opts[$name]));
 	}
 	
     /**
@@ -204,6 +218,8 @@ class TK_GProject
 				$caps = $this->userCan($user_id);
 				$html .= $vote->getResultVoteHtml($caps['vote'], false, !$caps['revote']);	
 			}
+
+			$html .= $this->getTasksHtml();
 			
 			if(is_single($this->project_id)) {
 				$html .= wpautop($data);
@@ -211,6 +227,123 @@ class TK_GProject
 		}
 		
 		return $html;
+	}
+	
+	/**
+	 * Return HTML code of project Tasks
+	 * 
+	 * @return strng
+	 */
+	public function getTasksHtml()
+	{
+		$html = '';
+		
+		if(!$this->is_project){
+			return $html;
+		}
+		
+		$html = '<div class="tkgp_tasks">
+		<br id="tkgp_tasks_tab2">
+		<br id="tkgp_tasks_tab3">
+		<a href="#tkgp_tasks_tab1">' . _x('Tasks','Project Tasks','tkgp') . '</a><a href="#tkgp_tasks_tab2">' . 
+		_x('Sub-projects','Project Tasks','tkgp') . '</a>
+		<div>';
+		
+		$tree = $this->buildTasksTree($this->project_id, 0);
+		$html .= (empty($tree) ? '<p>' . _x('The tasks are still undefined', 'Project Tasks','tkgp') . '</p>' : $tree) .
+		'</div>';
+		
+		$html .= '<div>';
+		
+		$children = $this->getChildProjects();
+		if(!empty($children)) {
+			$html .= '<ul>';
+			
+			foreach ($children as $child) {
+				$html .= "<li><a href=\"{$child->permalink}\">{$child->title}</a></li>";
+			}
+			$html .= '</ul>';
+		} else {
+			$html .= '<p>' . _x('No associated projects', 'Project Tasks', 'tkgp') . '</p>';
+		}
+		
+		$html .= '</div>
+		</div>';
+		
+		return $html;
+	}
+	
+	/**
+	 * Recursively builds a task tree
+	 * 
+	 * @param int @parent_id
+	 * @param int @parent_type
+	 * @param string @root_tag (ul | ol)
+	 * @return string
+	 */
+	public function buildTasksTree($parent_id, $parent_type)
+	{
+		$html = '';
+		
+		$sql = "SELECT `child_id`, `child_type` FROM `{$this->wpdb->prefix}tkgp_tasks_links`
+				WHERE `parent_id` = %d
+				AND `parent_type` = %d
+				AND `child_type` <> 0";
+		
+		$res = $this->wpdb->get_results($this->wpdb->prepare($sql, $parent_id, $parent_type), OBJECT);
+		$root_tag = !$parent_type ? 'ul' : 'ol';
+		$tag_class = 'tkgp_tasks_' . (!$parent_type ? 'list' : ($parent_id == 1 ? 'stage' : 'unit'));
+		
+		$html .= !empty($res) ? "<{$root_tag} class=\"{$tag_class}\">" : ''; 
+		
+		foreach ($res as $row) {
+			$html .= '<li>';
+			 
+			switch ($row->child_type) {
+				case 1: //Stage
+					//Заглушка
+					break;
+				
+				case 2: //Task
+					//Заглушка
+					break;
+				
+				default:
+					break;
+			}
+			
+			$html .= '</li>';
+		}
+		
+		$html .= !empty($res) ? "</{$root_tag}>" : '';
+		
+		return $html;
+	}
+	
+	/**
+	 * Return array TK_GProject objects for children projects
+	 * 
+	 * @return array
+	 */
+	public function getChildProjects()
+	{
+		$out = array();
+		
+		$sql = "SELECT `child_id` FROM `{$this->wpdb->prefix}tkgp_tasks_links`
+				WHERE `parent_id` = %d
+				AND `parent_type` = 0
+				AND `child_type` = 0";
+		
+		$res = $this->wpdb->get_results($this->wpdb->prepare($sql, $this->project_id), OBJECT);
+		
+		foreach ($res as $row) {
+			$child = new TK_GProject($row->child_id);
+			if($child->isValid()) {
+				$out[] = $child;
+			}
+		}
+		
+		return $out;
 	}
 	
 	/**
@@ -487,6 +620,82 @@ class TK_GProject
             	)
         	),
     	);
+	}
+
+	static public function l10n($phrase_key, $default_phrase = '')
+	{
+		$out = '';
+		switch ($phrase_key) {
+			case 'target':
+				$out = _x('Target of project','Project l10n', 'tkgp');
+				break;
+			
+			case 'subprojects':
+				$out = _x('Subprojects','Project l10n', 'tkgp');
+				break;
+			
+			case 'subprojects_not_exists':
+				$out = _x('Subprojects not exists','Project l10n', 'tkgp');
+				break;
+			
+			case 'news':
+				$out = _x('News','Project l10n', 'tkgp');
+				break;
+			
+			case 'tasks':
+				$out = _x('Tasks','Project l10n', 'tkgp');
+				break;
+				
+			case 'description':
+				$out = _x('Description','Project l10n', 'tkgp');
+				break;
+				
+			case 'answers':
+				$out = _x('Answers','Project l10n', 'tkgp');
+				break;
+			
+			case 'team':
+				$out = _x('Team','Project l10n', 'tkgp');
+				break;
+			
+			case 'no_news':
+				$out = _x('No News','Project l10n', 'tkgp');
+				break;
+				
+			case 'no_tasks':
+				$out = _x('No Tasks','Project l10n', 'tkgp');
+				break;
+			
+			case 'no_answers':
+				$out = _x('No Answers','Project l10n', 'tkgp');
+				break;
+			
+			case 'no_information':
+				$out = _x('No Information','Project l10n', 'tkgp');
+				break;
+			
+			case 'Needed':
+				$out = _x('Needed','Project l10n', 'tkgp');
+				break;
+			
+			case 'Supported':
+				$out = _x('Supported','Project l10n', 'tkgp');
+				break;
+				
+			case 'needed':
+				$out = _x('needed','Project l10n', 'tkgp');
+				break;
+			
+			case 'supported':
+				$out = _x('supported','Project l10n', 'tkgp');
+				break;
+			
+			default:
+				$out = $default_phrase;
+				break;
+		}
+		
+		return $out;
 	}
 };
 
