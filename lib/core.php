@@ -162,7 +162,6 @@ function tkgp_show_metabox_votes()
     global $post;
 
     $vote = new TK_GVote($post->ID);
-    $vote_settings = $vote->getVoteSettings();
     ?>
     <input type="hidden" name="tkgp_meta_votes_nonce"
            value="<?php echo wp_create_nonce(basename(__FILE__) . '_votes'); ?>"/>
@@ -170,7 +169,7 @@ function tkgp_show_metabox_votes()
         <?php
         foreach (TK_GVote::getVotesFields() as $field) {
             $cur_id = str_replace('tkgp_vote_', '', $field['id']);
-            $current_val = $vote_settings[$cur_id];
+            $current_val = $vote->$cur_id;
             ?>
             <tr>
                 <th><label for="<?php echo $field['id']; ?>"/><?php echo $field['label']; ?></th>
@@ -498,6 +497,8 @@ function tkgp_include_templates($template_path) {
 	if(get_post_type() == TK_GProject::slug) {
 		if(!is_single()) {
 			$template_path = TKGP_ROOT . 'styles/default/page.php';
+		} else {
+			$template_path = TKGP_ROOT . 'styles/default/single-page.php';
 		}
 	}
 	return $template_path;
@@ -507,7 +508,7 @@ add_action('init', 'tkgp_create_type');
 add_action('init', 'tkgp_create_taxonomy');
 add_action('admin_menu', 'tkgp_create_plugin_options');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
-add_filter('the_content', 'tkgp_content');
+//add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);
 add_action('template_include', 'tkgp_include_templates');
 ?>
