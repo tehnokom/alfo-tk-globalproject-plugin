@@ -107,14 +107,16 @@
 		if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
 			$sql = "CREATE TABLE {$table_name} (
 				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-				  `project_id` bigint(20) unsigned NOT NULL,
-				  `task_id` bigint(20) unsigned NOT NULL,
-				  `task_type` tinyint(3) NOT NULL,
+				  `parent_id` bigint(20) unsigned NOT NULL,
+				  `parent_type` tinyint(3) NOT NULL,
+				  `child_id` bigint(20) unsigned NOT NULL,
+				  `child_type` tinyint(3) NOT NULL,
 				  `create_date` timestamp DEFAULT NOW(),
 				  PRIMARY KEY (`id`),
-				  INDEX `votes` (`project_id`),
-				  INDEX `users` (`task_id`),
-				  UNIQUE KEY `user_vote_unique` (`project_id`,`task_id`)
+				  INDEX `parent_id` (`parent_id`),
+				  INDEX `child_id` (`child_id`),
+				  UNIQUE KEY `child_unique` (`child_id`,`child_type`),
+				  UNIQUE KEY `link_unique` (`parent_id`,`parent_type`,`child_id`,`child_type`)
 				){$charset_collate};";
 			
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -152,18 +154,20 @@
 								 ),
 							'ver_after' => '0.13'),
 			'0.13' => array(
-							'sql' => array("CREATE TABLE {$wpdb->prefix}tkgp_tasks_links (
-										  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-										  `project_id` bigint(20) unsigned NOT NULL,
-										  `task_id` bigint(20) unsigned NOT NULL,
-										  `task_type` tinyint(3) NOT NULL,
-										  `create_date` timestamp DEFAULT NOW(),
-										  PRIMARY KEY (`id`),
-										  INDEX `votes` (`project_id`),
-										  INDEX `users` (`task_id`),
-										  UNIQUE KEY `project_task_unique` (`project_id`,`task_id`)
-										) DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate};",
-														 ),
+							'sql' => array("CREATE TABLE `{$wpdb->prefix}tkgp_tasks_links` (
+									`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+									`parent_id` bigint(20) unsigned NOT NULL,
+									`parent_type` tinyint(3) NOT NULL,
+									`child_id` bigint(20) unsigned NOT NULL,
+									`child_type` tinyint(3) NOT NULL,
+									`create_date` timestamp DEFAULT NOW(),
+									PRIMARY KEY (`id`),
+									INDEX `parent_id` (`parent_id`),
+									INDEX `child_id` (`child_id`),
+									UNIQUE KEY `child_unique` (`child_id`,`child_type`),
+									UNIQUE KEY `link_unique` (`parent_id`,`parent_type`,`child_id`,`child_type`)
+									) DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate};",
+								),
 							'ver_after' => '0.14')
 		);
     	
