@@ -1,0 +1,195 @@
+.tk-logo {
+	border-radius: 5px;
+	border: 1px solid #AAA;
+	width: 99%;
+	height: 200px;
+	background: url(../images/default-logo.jpg) no-repeat;
+}
+
+.tk-logo-cell1 {
+	display:table-cell;
+	float: left;
+	position: relative;
+	width: 70%;
+	height: 100%;
+}
+
+.tk-logo-cell1 > div {
+	padding: 2px 5px 2px 15px;
+	display: table;
+	height: 100%;
+	width: 100%;
+}
+
+.tk-logo-cell1 > div > div{
+	display: table-row;
+}
+
+.tk-logo-cell2 {
+	display:table-cell;
+	float: right;
+	background: rgba(0,0,0,0.5);
+	height: 100%;
+	width: 30%;
+}
+
+.tk-logo-cell2 > div {
+	display: table;
+	padding: 10px 10px 10px 10px;
+	width: 100%;
+	height: 100%;
+}
+
+.tk-logo-cell2 > div > div {
+	display: table-row;
+}
+
+.tk-logo-cell2 > div > div > div {
+	display: table-cell;
+	/*border: 1px solid #000;*/
+	vertical-align: middle;
+	padding: 2px 0 2px 0;
+}
+
+.tk-buttons {
+	height: 13%;
+}
+
+.tk-users {
+	height: 54%;
+}
+
+.tk-label {
+	height: 18%;
+	font-weight: bold;
+	color: white;
+}
+
+.tk-progress {
+	height: 5%;
+}
+
+.tk-progress-bar {
+	width:100%;
+	height: 7px;
+	background: white;
+	border-radius: 2px;
+}
+
+.tk-pb-approved {
+	background: red;
+	border-radius: 2px 0 0 2px;
+	height: 100%;
+}
+
+.tk-title {
+	vertical-align: bottom;
+	display: table-cell;
+	float: none !important;
+	color: white;
+	width:100%;
+	height: 75%;
+}
+
+.tk-social {
+	display: table-cell;
+	height: 25%;
+	width: 100%;
+}
+
+/*------------------------*/
+
+.tk-target, .tk-subprojects {
+	margin-top: 15px;
+	font-size: 14px;
+}
+
+.tk-target h2, .tk-subprojects h2 {
+	font-size: 17px;
+}
+
+.tk-subprojects ul {
+	margin-left: 15px;
+	list-style:square;
+}
+
+/*------------------------*/
+.tk-tabs {
+	margin-top: 15px;
+}
+
+#tk-tab2, #tk-tab3, #tk-tab4, #tk-tab5 {
+	position: fixed; 
+}
+
+.tk-tabs > a, 
+.tk-tabs #tk-tab2:target ~ a:nth-of-type(1), 
+.tk-tabs #tk-tab3:target ~ a:nth-of-type(1), 
+.tk-tabs #tk-tab4:target ~ a:nth-of-type(1),
+.tk-tabs #tk-tab5:target ~ a:nth-of-type(1),
+.tk-tabs > div { 
+	padding: 5px; 
+	border: 1px solid rgba(204,204,204,0.0);
+	background: none;
+} 
+
+.tk-tabs > a, .tk-tabs > a:hover { 
+	line-height: 28px; 
+	background: #fff; 
+	text-decoration: none;
+	font-size: 17px;
+	color:#121212;
+} 
+
+.tk-tabs div {
+	padding: 10px 5px 5px 5px;
+}
+
+#tk-tab2, #tk-tab3, #tk-tab4, #tk-tab5, .tk-tabs > div, 
+.tk-tabs #tk-tab2:target ~ div:nth-of-type(1), 
+.tk-tabs #tk-tab3:target ~ div:nth-of-type(1),
+.tk-tabs #tk-tab4:target ~ div:nth-of-type(1),
+.tk-tabs #tk-tab5:target ~ div:nth-of-type(1) {
+	display: none;
+} 
+
+.tk-tabs > div:nth-of-type(1), 
+.tk-tabs #tk-tab2:target ~ div:nth-of-type(2), 
+.tk-tabs #tk-tab3:target ~ div:nth-of-type(3),
+.tk-tabs #tk-tab4:target ~ div:nth-of-type(4),
+.tk-tabs #tk-tab5:target ~ div:nth-of-type(5) {
+	display: block;
+} 
+
+.tk-tabs > a:nth-of-type(1), 
+.tk-tabs #tk-tab2:target ~ a:nth-of-type(2), 
+.tk-tabs #tk-tab3:target ~ a:nth-of-type(3),
+.tk-tabs #tk-tab4:target ~ a:nth-of-type(4),
+.tk-tabs #tk-tab5:target ~ a:nth-of-type(5) {
+	border-bottom: 2px solid rgba(204,204,204,1.0);
+}
+
+/*----------------------------------*/
+#tkgp_vote_buttons > div {
+	width: 100%;
+}
+
+.tkgp_button, .tkgp_button_reset, .tkgp_edit_button {
+	width: 100%;
+	text-align:center;
+	background: green;
+	border: none;
+	box-shadow: none;
+	padding: 2px;
+	color: white !important;
+}
+
+.tkgp_button:active, .tkgp_button_reset:active, .tkgp_edit_button:active {
+	background:#00A000;
+}
+
+.tkgp_button a, .tkgp_button_reset a, .tkgp_edit_button a,
+.tkgp_button a:hover, .tkgp_button_reset a:hover, .tkgp_edit_button a:hover {
+	color: white;
+	font-size: 17px;
+}
