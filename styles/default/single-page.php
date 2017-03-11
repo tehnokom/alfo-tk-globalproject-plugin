@@ -2,11 +2,20 @@
 /*Template Name: Default TK Global Project Page
  *
  */
-get_header();
-
+ 
 $project = new TK_GProject($post->ID);
-$vote = new TK_GVote($post->ID);
+
+if(!$project->userCanRead(get_current_user_id())) { //Check access for this Project
+	$wp_query->set_404();
+	status_header( 404 );
+	get_template_part( 404 );
+	exit();
+}
+
+$vote = $project->getVote();
 $approval_percent = 100.0 * floatval($vote->approval_votes) / floatval($vote->target_votes);
+
+get_header();
 ?>
 <!--Start Logo-->
 	<div class="tk-logo">
