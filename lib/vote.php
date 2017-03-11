@@ -51,7 +51,6 @@ class TK_GVote
 		        }
 				
 				$this->opts = array_merge($this->opts,$this->getVoteSettings());
-				file_put_contents(__FILE__.".log", serialize($this->opts), FILE_APPEND);
             }
         }
     }
