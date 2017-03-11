@@ -54,13 +54,16 @@ class TK_GProject
 		
     				$this->wpdb = $wpdb;
 					$this->wpdb->enable_nulls = true;
-    				
-					$this->opts['target'] = get_post_meta($this->project_id, 'ptarget', true);
-					$this->opts['guid'] = $res->guid;
-					$this->opts['title'] = get_the_title($this->project_id);
-					$this->opts['permalink'] = get_permalink($this->project_id);
+					
 					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
 					$this->project_visibility = intval(get_post_meta($this->project_id, 'visiblity', true));
+    				
+					if($this->userCanRead(get_current_user_id())) { //Check access current user for this Project
+						$this->target = get_post_meta($this->project_id, 'ptarget', true);
+						$this->guid = $res->guid;
+						$this->title = get_the_title($this->project_id);
+						$this->permalink = get_permalink($this->project_id);
+					}
 				}
             }
         } else {
@@ -74,7 +77,7 @@ class TK_GProject
 	 * @return mixed | null
 	 */
 	public function __get($name) {
-		if($name == 'description') {
+		if($name == 'description' && $this->userCanRead(get_current_user_id())) {
 			$post = get_post($this->project_id);
 			return $post->post_content;
 		} else if(array_key_exists($name, $this->opts)) {
@@ -84,8 +87,22 @@ class TK_GProject
 		return null;
 	}
 	
+	/**
+	 * Magic method. It's Ma-a-a-gic :)
+	 * @param string $name
+	 * @return boolean
+	 */
 	public function __isset($name) {
 		return (isset($this->opts[$name]));
+	}
+	
+	/**
+	 * Magic method. It's Ma-a-a-gic :)
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	protected function __set($name, $value) {
+		$this->opts[$name] = $value;
 	}
 	
     /**
@@ -168,109 +185,25 @@ class TK_GProject
     }
 	
 	/**
-	 * Return HTML code of Project Archive page
-	 * 
-	 * @return string 
-	 */
-	public static function getPageHtml() 
-	{
-		$html = '';
-				
-		return $html;
-	}
-	
-	protected function getEditPostHtml()
-	{
-		$html = '<p style="text-align:right;">
-		<span class="tkgp_edit_button">';
-		
-		$html .= _x('Edit Project','Project Edit', 'tkgp');
-		$html .= '<input type="hidden" name="tkgp_access_nonce" value="' . wp_create_nonce('tkgp_project_access') . '"/>
-		<input type="hidden" name="tkgp_post_id" value="' . $this->project_id . '"/>
-		</span>
-		</p>';
-		
-		return $html;	
-	}
-	
-	/**
-	 * Return HTML code of Project Post
-	 * 
-	 * @param string $data
+	 * Return Edit project button HTML code
 	 * @return string
 	 */
-	public function getProjectContent($data = '')
-	{
-		$html = $data;
-		
-		if($this->isValid()) {
-			$user_id = get_current_user_id();
-			$html = get_post_meta($this->project_id, 'ptarget', true);
-			$html = wpautop($html);
-			
-			if(is_user_logged_in() && $this->userCanEdit($user_id)) {
-				// код кнопки редактирования
-				$html = $this->getEditPostHtml() . $html;
-			}
-			
-			if(TK_GVote::exists($this->project_id)) {
-				$vote = new TK_GVote($this->project_id);
-				$caps = $this->userCan($user_id);
-				$html .= $vote->getResultVoteHtml($caps['vote'], false, !$caps['revote']);	
-			}
-
-			$html .= $this->getTasksHtml();
-			
-			if(is_single($this->project_id)) {
-				$html .= wpautop($data);
-			}
-		}
-		
-		return $html;
-	}
-	
-	/**
-	 * Return HTML code of project Tasks
-	 * 
-	 * @return strng
-	 */
-	public function getTasksHtml()
+	protected function getEditPostHtml()
 	{
 		$html = '';
 		
-		if(!$this->is_project){
-			return $html;
-		}
-		
-		$html = '<div class="tkgp_tasks">
-		<br id="tkgp_tasks_tab2">
-		<br id="tkgp_tasks_tab3">
-		<a href="#tkgp_tasks_tab1">' . _x('Tasks','Project Tasks','tkgp') . '</a><a href="#tkgp_tasks_tab2">' . 
-		_x('Sub-projects','Project Tasks','tkgp') . '</a>
-		<div>';
-		
-		$tree = $this->buildTasksTree($this->project_id, 0);
-		$html .= (empty($tree) ? '<p>' . _x('The tasks are still undefined', 'Project Tasks','tkgp') . '</p>' : $tree) .
-		'</div>';
-		
-		$html .= '<div>';
-		
-		$children = $this->getChildProjects();
-		if(!empty($children)) {
-			$html .= '<ul>';
+		if(is_user_logged_in() && $this->userCanEdit($user_id)) {
+			$html = '<p style="text-align:right;">
+			<span class="tkgp_edit_button">';
 			
-			foreach ($children as $child) {
-				$html .= "<li><a href=\"{$child->permalink}\">{$child->title}</a></li>";
-			}
-			$html .= '</ul>';
-		} else {
-			$html .= '<p>' . _x('No associated projects', 'Project Tasks', 'tkgp') . '</p>';
+			$html .= _x('Edit Project','Project Edit', 'tkgp');
+			$html .= '<input type="hidden" name="tkgp_access_nonce" value="' . wp_create_nonce('tkgp_project_access') . '"/>
+			<input type="hidden" name="tkgp_post_id" value="' . $this->project_id . '"/>
+			</span>
+			</p>';
 		}
 		
-		$html .= '</div>
-		</div>';
-		
-		return $html;
+		return $html;	
 	}
 	
 	/**
@@ -279,7 +212,7 @@ class TK_GProject
 	 * @param int @parent_id
 	 * @param int @parent_type
 	 * @param string @root_tag (ul | ol)
-	 * @return string
+	 * @return array
 	 */
 	public function buildTasksTree($parent_id, $parent_type)
 	{
@@ -329,17 +262,19 @@ class TK_GProject
 	{
 		$out = array();
 		
-		$sql = "SELECT `child_id` FROM `{$this->wpdb->prefix}tkgp_tasks_links`
-				WHERE `parent_id` = %d
-				AND `parent_type` = 0
-				AND `child_type` = 0";
-		
-		$res = $this->wpdb->get_results($this->wpdb->prepare($sql, $this->project_id), OBJECT);
-		
-		foreach ($res as $row) {
-			$child = new TK_GProject($row->child_id);
-			if($child->isValid()) {
-				$out[] = $child;
+		if($this->isValid()) {
+			$sql = "SELECT `child_id` FROM `{$this->wpdb->prefix}tkgp_tasks_links`
+					WHERE `parent_id` = %d
+					AND `parent_type` = 0
+					AND `child_type` = 0";
+			
+			$res = $this->wpdb->get_results($this->wpdb->prepare($sql, $this->project_id), OBJECT);
+			
+			foreach ($res as $row) {
+				$child = new TK_GProject($row->child_id);
+				if($child->isValid()) {
+					$out[] = $child;
+				}
 			}
 		}
 		
@@ -433,18 +368,18 @@ class TK_GProject
 	 */
 	public function userCanRead($user_id) {
 		$access = false;
-		
+
 		switch($this->project_visibility) {
 			case 0: //Public
 				$access = true;
 				break;
-			
+				
 			case 1: //Registered
 				$user_data = get_user_by('ID',$user_id);
 				$access = $user_data === false ? false : true;
 				break;
 			
-			case 2: 
+			case 2:
 			case 3: //Members only and Privete
 				$members = $this->getManagers();
 				$access = array_search($user_id, $members) === false && !$this->userIsAdmin($user_id) ? false : true;
@@ -465,11 +400,13 @@ class TK_GProject
 	 */
 	public function userCanEdit($user_id) {
 		$access = false;
-		$post = get_post($this->project_id);
 		
-		$access = (array_search($user_id, $this->getManagers()) !== false 
-					|| $user_id === $post->post_author
-					|| is_super_admin($user_id)) ? true : false;
+		if($this->isValid()) {
+			$post = get_post($this->project_id);
+			$access = (array_search($user_id, $this->getManagers()) !== false 
+						|| $user_id === $post->post_author
+						|| is_super_admin($user_id)) ? true : false;
+		}
 		
 		return $access;
 	}
@@ -481,9 +418,11 @@ class TK_GProject
 	 */
 	public function userCanWork($user_id) {
 		$access = false;
-		$can_edit = $this->userCanEdit($user_id);
 		
-		$access = $can_edit || array_search($user_id, $this->getMembers()) !== false ? true : false;
+		if($this->isValid()) {
+			$can_edit = $this->userCanEdit($user_id);
+			$access = $can_edit || array_search($user_id, $this->getMembers()) !== false ? true : false;
+		}
 		
 		return $access;
 	}
@@ -496,16 +435,18 @@ class TK_GProject
 	public function userCanVote($user_id) {
 		$access = false;
 		
-		if($this->project_type === 0) { //Личный проект
-			$access = false;
-		} elseif ($this->project_type === 3) { //Общественный проект
-			$access = (get_userdata($user_id) !== false) ? true : false;
-		} else { // Рабочий и Групповой проекты
-			$managers = $this->getManagers();
-			$members = $this->getMembers();
-			$all_members = !empty($members) ? array_merge($managers, $members) : $managers;
-							
-			$access = (array_search($user_id, $all_members) !== false) ? true : false;	
+		if($this->isValid()) {
+			if($this->project_type === 0) { //Личный проект
+				$access = false;
+			} elseif ($this->project_type === 3) { //Общественный проект
+				$access = (get_userdata($user_id) !== false) ? true : false;
+			} else { // Рабочий и Групповой проекты
+				$managers = $this->getManagers();
+				$members = $this->getMembers();
+				$all_members = !empty($members) ? array_merge($managers, $members) : $managers;
+								
+				$access = (array_search($user_id, $all_members) !== false) ? true : false;	
+			}
 		}
 		
 		return $access;
@@ -517,12 +458,31 @@ class TK_GProject
 	 * @param int $user_id
 	 */
 	public function userCanRevote($user_id) {
-		$can_vote = $this->userCanVote($user_id);
-		$vote = new TK_GVote($this->project_id);
-					
-		$access = ($can_vote && !$vote->userCanVote($user_id)) ? true : false;
+		$access = false;
+		
+		if($this->isValid() && TK_GVote::exists($this->project_id)) {
+			$can_vote = $this->userCanVote($user_id);
+			$vote = $this->getVote();
+						
+			$access = ($can_vote && !$vote->userCanVote($user_id)) ? true : false;
+		}
 		
 		return $access;
+	}
+	
+	/**
+	 * Return TK_GVote object where Vote for this Project exists and user can read this Project, else NULL
+	 * 
+	 * @return object | null
+	 */
+	public function getVote() {
+		$obj = null;
+		
+		if($this->isValid() && $this->userCanRead(get_current_user_id())) {
+			$obj = TK_GVote::exists($this->project_id) ? new TK_GVote($this->project_id) : null;
+		}
+		
+		return $obj;
 	}
 	
 	/**
