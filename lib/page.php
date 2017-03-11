@@ -68,22 +68,13 @@ class TK_GPage {
 		$user_id = get_current_user_id();
 		$prefix = $this->wpdb->prefix;
 
-		$sql = "SELECT p.`id`/*,
-					p.`post_author`,
-					p.`post_date`,
-					p.`post_title`,
-					p.`guid`,
-					pm1.meta_value as ptype,
-					pm2.meta_value as ptarget*/
+		$sql = "SELECT p.`id`
 			FROM `{$prefix}posts` p,
-				 `{$prefix}postmeta` pm1,
-				 `{$prefix}postmeta` pm2
+				 `{$prefix}postmeta` pm1
 			WHERE pm1.post_id = p.id
-				AND pm2.post_id = p.id
 				AND p.`post_type` = '{$slug}'
 				AND pm1.meta_key = 'ptype'
 				AND pm1.meta_value = %d
-				AND pm2.meta_key = 'ptarget'
 			ORDER BY p.`post_date` DESC
 			LIMIT %d OFFSET %d";
 
