@@ -123,12 +123,12 @@ class TK_GPage {
 			<div><h5>{$l18n}</h5></div>
 			<div>{$target}</div>";
 			
-			if(TK_GVote::exists($project->project_id)) {
+			/*if(TK_GVote::exists($project->project_id)) {
 				$user_id = get_current_user_id();
 				$vote = new TK_GVote($project->project_id);
 				$caps = $project->userCan($user_id);
 				$html .= $vote->getResultVoteHtml($caps['vote'], false, !$caps['revote']);	
-			}
+			}*/
 			
 			$html .= "</div>";
 		}
