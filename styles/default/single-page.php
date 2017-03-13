@@ -6,12 +6,12 @@
 define('TKGP_STYLE_DIR', plugin_dir_path(__FILE__));
 define('TKGP_STYLE_URL', plugin_dir_url(__FILE__));
 
-
 wp_register_style('default.css', TKGP_STYLE_URL . 'css/default.css', array(tkgp_general));
 wp_register_script('default.js', TKGP_STYLE_URL . 'js/default.js', array('jquery', 'tkgp_js_general'));
 
 wp_enqueue_style('default.css');
 wp_enqueue_script('default.js');
+wp_localize_script('default.js', 'tkl10n', array('you_supported' => TK_GProject::l10n('you_supported')));
 
 $project = new TK_GProject($post->ID);
 
@@ -80,10 +80,16 @@ if($project->userCanVote(get_current_user_id())) {
 		</div>
 	</div>
 <!--End Logo-->
+<!--Start Hint-->
+	<div class="tk-hint">
+		<h2><?php echo TK_GProject::l10n('hint'); ?></h2>
+		<?php echo apply_filters("the_content",TK_GProject::l10n('hint_text')); ?>
+	</div>
+<!--End Hint-->
 <!--Start Target-->
 	<div class="tk-target">
 		<h2><?php echo TK_GProject::l10n('target'); ?></h2>
-		<?php echo wpautop($project->target); ?>
+		<?php echo apply_filters("the_content", $project->target); ?>
 	</div>
 <!--End Target-->
 <!--Start Subprojects-->
@@ -113,7 +119,7 @@ if(!empty($subprojects))
 <!--Start Tabs-->
 	<div class="tk-tabs">
 		<br id="tk-tab2" /><br id="tk-tab3" /><br id="tk-tab4" /><br id="tk-tab5" />
-		<a href="#tk-tab1"><?php echo TK_GProject::l10n('news'); ?></a><a href="#tk-tab2"><?php echo TK_GProject::l10n('description'); ?></a><a href="#tk-tab3"><?php echo TK_GProject::l10n('tasks'); ?></a><a href="#tk-tab4"><?php echo TK_GProject::l10n('answers'); ?></a><a href="#tk-tab5"><?php echo TK_GProject::l10n('team'); ?></a>
+		<a href="#tk-tab1"><?php echo TK_GProject::l10n('news'); ?></a><a class="tk-tab-main" href="#tk-tab2"><?php echo TK_GProject::l10n('description'); ?></a><a href="#tk-tab3"><?php echo TK_GProject::l10n('tasks'); ?></a><a href="#tk-tab4"><?php echo TK_GProject::l10n('answers'); ?></a><a href="#tk-tab5"><?php echo TK_GProject::l10n('team'); ?></a>
 		<div><?php echo TK_GProject::l10n('no_news'); ?></div>
 		<div><?php echo apply_filters("the_content", $project->description); ?></div>
 		<div><?php echo TK_GProject::l10n('no_tasks'); ?></div>
