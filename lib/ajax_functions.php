@@ -114,10 +114,10 @@ function tkgp_ajax_policy(&$message)
     }
 
     $project = new TK_GProject(intval($_POST['post_id']));
-    $vote = new TK_GVote(intval($_POST['post_id']));
+    $vote = $project->getVote();
     $user_id = get_current_user_id();
 
-    if (!$vote->voteExists() || $vote->getVoteId() != $_POST['vote_id']) {
+    if (!$vote->voteExists() || $vote->vote_id != $_POST['vote_id']) {
         //не существует такого голосования
         $message = _x('Voting does not exist or is hidden', 'Project Vote', 'tkgp');
     } else {
@@ -136,7 +136,7 @@ function tkgp_ajax_user_vote()
         && wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')
     ) {
         $project = new TK_GProject(intval($_POST['post_id']));
-        $vote = new TK_GVote(intval($_POST['post_id']));
+        $vote = $project->getVote();
         $user_id = get_current_user_id();
 
         if (!$project->userCanVote($user_id)) {
@@ -184,7 +184,7 @@ function tkgp_ajax_reset_user_vote()
 
     echo json_encode(array(
         'status' => $res,
-        'message' => $message
+        'message' => $message,
     ));
 
     wp_die();
@@ -199,8 +199,8 @@ function tkgp_ajax_get_vote_status()
         && (wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote')
             || wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote'))
     ) {
-        $vote = new TK_GVote($_POST['post_id']);
         $project = new TK_GProject($_POST['post_id']);
+		$vote = $project->getVote();
         $user_id = get_current_user_id();
 
         if (!$project->userCanRead($user_id)) {
@@ -208,8 +208,7 @@ function tkgp_ajax_get_vote_status()
             $html = _x('You do not have access to the data of voting', 'Project Vote', 'tkgp');
         } else {
             $res = true;
-            $html = $vote->getResultVoteHtml($project->userCanVote($user_id), false,
-                !$project->userCanRevote($user_id));
+            $html = $vote->getVoteButtonHtml();
         }
 
     }
@@ -220,6 +219,9 @@ function tkgp_ajax_get_vote_status()
 
     echo json_encode(array(
         'status' => true,
+        'approval_votes' => $vote->approval_votes,
+        'reproval_votes' => $vote->reproval_votes,
+        'target_votes' => $vote->target_votes,
         'new_content' => $html
     ));
 

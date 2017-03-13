@@ -694,38 +694,44 @@ class TK_GVote
      */
     public function getVoteButtonHtml(/*$allow_against = false,*/$variant_exists = false)
     {
-        $html_code = '<div id="tkgp_vote_buttons">
-							<input type="hidden" name="tkgp_vote_nonce" value="' . wp_create_nonce('tkgp_user_vote') . '" />
-							<input type="hidden" name="tkgp_vote_id" value="' . $this->vote_id . '">
-							<input type="hidden" name="tkgp_post_id" value="' . $this->project_id . '">';
-
-        if ($variant_exists) {
-            $vars = $this->getVoteVariants();
-            $html_code .= '<ul class="tkgp_variants">';
-
-            foreach ($vars as $var) {
-                $html_code .= '<li><input type="radio" name="user_vote" value="' . $var['variant_id'] . '" require/>' . $var['variant'] . '</li>';
-            }
-
-            $html_code .= '</ul>
-			<div class="tkgp_button"><a>' . _x('Vote', 'Project Vote', 'tkgp') . '</a></div>';
-
-        } else {
-            $html_code .= '<div>
-							<div class="tkgp_button">
-							<a>' . _x('Support', 'Project Vote', 'tkgp') . '</a>
-							<input type="hidden" name="user_vote" value="-1"/>
-						  	</div>
-						  </div>';
-			$html_code .= $this->allow_against ? '<div>
-						  	<div class="tkgp_button">
-						  		<a>' . _x('Against', 'Project Vote', 'tkgp') . '</a>
-						  		<input type="hidden" name="user_vote" value="-2"/>
-						  	</div>
-						  </div>' : '';
-        }
-
-        $html_code .= '</div>';
+    	$html_code = '';
+		
+		if($this->userCanVote(get_current_user_id())) {
+	        $html_code = '<div class="tkgp_vote_buttons">
+								<input type="hidden" name="tkgp_vote_nonce" value="' . wp_create_nonce('tkgp_user_vote') . '" />
+								<input type="hidden" name="tkgp_vote_id" value="' . $this->vote_id . '">
+								<input type="hidden" name="tkgp_post_id" value="' . $this->project_id . '">';
+	
+	        if ($variant_exists) {
+	            $vars = $this->getVoteVariants();
+	            $html_code .= '<ul class="tkgp_variants">';
+	
+	            foreach ($vars as $var) {
+	                $html_code .= '<li><input type="radio" name="user_vote" value="' . $var['variant_id'] . '" require/>' . $var['variant'] . '</li>';
+	            }
+	
+	            $html_code .= '</ul>
+				<div class="tkgp_button"><a>' . _x('Vote', 'Project Vote', 'tkgp') . '</a></div>';
+	
+	        } else {
+	            $html_code .= '<div>
+								<div class="tkgp_button tkgp_button_vote">
+								<a>' . _x('Support', 'Project Vote', 'tkgp') . '</a>
+								<input type="hidden" name="user_vote" value="-1"/>
+							  	</div>
+							  </div>';
+				$html_code .= $this->allow_against ? '<div>
+							  	<div class="tkgp_button tkgp_button_vote">
+							  		<a>' . _x('Against', 'Project Vote', 'tkgp') . '</a>
+							  		<input type="hidden" name="user_vote" value="-2"/>
+							  	</div>
+							  </div>' : '';
+	        }
+	
+	        $html_code .= '</div>';
+		} else if($this->allow_revote) {
+			$html_code = $this->getVoteResetButtonHtml();
+		}
 
         return $html_code;
     }
@@ -735,7 +741,7 @@ class TK_GVote
      */
     protected function getVoteResetButtonHtml()
     {
-        $html_code = '<div>
+        $html_code = '<div class="tkgp_vote_buttons">
 							<input type="hidden" name="tkgp_vote_nonce" value="' . wp_create_nonce('tkgp_reset_user_vote') . '" />
 							<input type="hidden" name="tkgp_vote_id" value="' . $this->vote_id . '">
 							<input type="hidden" name="tkgp_post_id" value="' . $this->project_id . '">
