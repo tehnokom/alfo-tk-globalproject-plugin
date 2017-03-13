@@ -12,8 +12,8 @@ function tkgp_image_preload() {
 }
 
 function tkgp_js_init() {
-	$j('#tkgp_vote_buttons div.tkgp_button').on('click', tkgp_handler_vote);
-	$j('div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
+	$j('.tkgp_vote_buttons div.tkgp_button_vote').on('click', tkgp_handler_vote);
+	$j('.tkgp_vote_buttons div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
 	$j('.tkgp_edit_button').on('click',tkgp_handler_edit_project);
 }
 
@@ -31,7 +31,7 @@ function tkgp_handler_vote() {
     var vote_id = $j(this).parents().find('input[name="tkgp_vote_id"]').val();
     var vote_nonce = $j(this).parents().find('input[name="tkgp_vote_nonce"]').val();
     var post_id = $j(this).parents().find('input[name="tkgp_post_id"]').val();
-    var wait_obj = $j(this).parents().find('#tkgp_vote_result');
+    var wait_obj = $j(this).parents('.tkgp_vote_block');
     tkgp_wait_animate(wait_obj);
 
     $j.ajax({
@@ -57,7 +57,7 @@ function tkgp_handler_reset_vote() {
     var vote_id = $j(this).parents().find('input[name="tkgp_vote_id"]').val();
     var vote_nonce = $j(this).parents().find('input[name="tkgp_vote_nonce"]').val();
     var post_id = $j(this).parents().find('input[name="tkgp_post_id"]').val();
-    var wait_obj = $j(this).parents().find('#tkgp_vote_result');
+    var wait_obj = $j(this).parents('.tkgp_vote_block');
     tkgp_wait_animate(wait_obj);
 
     $j.ajax({
@@ -75,7 +75,6 @@ function tkgp_handler_reset_vote() {
         })
         .fail(function (jqXHR, textStatus) {
             console.log("Request failed: " + textStatus);
-            location.reload();
         });
 }
 
@@ -102,9 +101,9 @@ function tkgp_handler_vote_result(result, args) {
 function tkgp_update_vote(vote_id, result, message, stage) {
     var res = $j.parseJSON(result);
     var mes = $j.parseJSON(message);
+	var vr = $j('input[name="tkgp_vote_id"][value="' + vote_id + '"]').parents().find('.tkgp_vote_block');
 
     if (stage === undefined) {
-        var vr = $j('input[name="tkgp_vote_id"][value="' + vote_id + '"]').parents().find('#tkgp_vote_result');
         var color = mes.status === false ? '#f00' : '#22ff22';
         var img = mes.status === false ? 'err_status.png' : 'ok_status.png';
         $j(vr).find('#tkgp_message').text(mes.message)
@@ -116,7 +115,8 @@ function tkgp_update_vote(vote_id, result, message, stage) {
         if (res.status === false) {
             location.reload();
         } else {
-            $j('input[name="tkgp_vote_id"][value="' + vote_id + '"]').parents().find('#tkgp_vote_result').replaceWith(res.new_content);
+            vr.trigger('tkgp_vote_updated', [res]); //event generated when vote status updated
+            tkgp_hide_wait_animate();
             tkgp_js_init();
         }
     }
