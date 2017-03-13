@@ -650,6 +650,10 @@ class TK_GProject
 				$out = _x('supported','Project l10n', 'tkgp');
 				break;
 			
+			case 'you_supported':
+				$out = _x('You supported','Project l10n', 'tkgp');
+				break;
+			
 			default:
 				$out = $default_phrase;
 				break;
