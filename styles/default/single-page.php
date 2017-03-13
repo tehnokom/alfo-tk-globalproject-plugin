@@ -2,7 +2,17 @@
 /*Template Name: Default TK Global Project Page
  *
  */
- 
+
+define('TKGP_STYLE_DIR', plugin_dir_path(__FILE__));
+define('TKGP_STYLE_URL', plugin_dir_url(__FILE__));
+
+
+wp_register_style('default.css', TKGP_STYLE_URL . 'css/default.css', array(tkgp_general));
+wp_register_script('default.js', TKGP_STYLE_URL . 'js/default.js', array('jquery', 'tkgp_js_general'));
+
+wp_enqueue_style('default.css');
+wp_enqueue_script('default.js');
+
 $project = new TK_GProject($post->ID);
 
 if(!$project->userCanRead(get_current_user_id())) { //Check access for this Project
@@ -29,17 +39,31 @@ get_header();
 				</div>
 			</div>
 		</div>
-		<div class="tk-logo-cell2">
+		<div class="tk-logo-cell2 tkgp_vote_block">
 			<div>
 				<div class="tk-buttons">
-					<div><?php echo $vote->getVoteButtonHtml(); ?></div>
+					<div>
+<?php 
+$button = $vote->getVoteButtonHtml();
+
+if($project->userCanVote(get_current_user_id())) {
+	if(!empty($button)) {
+		echo $button;
+	} else {
+?>
+						<div class="tkgp_button tk-supported"><a><?php echo TK_GProject::l10n('you_supported'); ?></a></div>
+<?php 
+	}
+} 
+?>
+					</div>
 				</div>
 				<div class="tk-users">
 					<div></div>
 				</div>
 				<div class="tk-label">
-					<div><?php echo number_format($vote->approval_votes, 0, '.', ' ') . ' ' . 
-					TK_GProject::l10n('supported'); ?></div>
+					<div><span class="tk-approval-votes"><?php echo number_format($vote->approval_votes, 0, '.', ' '); ?></span> 
+					<?php echo TK_GProject::l10n('supported'); ?></div>
 				</div>
 				<div  class="tk-progress">
 					<div>
@@ -49,7 +73,8 @@ get_header();
 					</div>
 				</div>
 				<div class="tk-label">
-					<div><?php echo TK_GProject::l10n('Needed') . ' ' . number_format($vote->target_votes, 0, '.', ' '); ?></div>
+					<div><?php echo TK_GProject::l10n('Needed'); ?>
+					<span class="tk-target-votes"><?php echo number_format($vote->target_votes, 0, '.', ' '); ?></span></div>
 				</div>
 			</div>
 		</div>

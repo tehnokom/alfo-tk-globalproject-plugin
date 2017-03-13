@@ -74,11 +74,12 @@
 	height: 7px;
 	background: white;
 	border-radius: 2px;
+	overflow:hidden;
 }
 
 .tk-pb-approved {
 	background: red;
-	border-radius: 2px 0 0 2px;
+	/*border-radius: 2px 0 0 2px;*/
 	height: 100%;
 }
 
@@ -170,7 +171,7 @@
 }
 
 /*----------------------------------*/
-#tkgp_vote_buttons > div {
+.tkgp_vote_buttons > div {
 	width: 100%;
 }
 
@@ -181,15 +182,26 @@
 	border: none;
 	box-shadow: none;
 	padding: 2px;
-	color: white !important;
+	color: white;
 }
 
 .tkgp_button:active, .tkgp_button_reset:active, .tkgp_edit_button:active {
 	background:#00A000;
 }
 
+.tkgp_vote_block {
+	position:relative;
+}
+
 .tkgp_button a, .tkgp_button_reset a, .tkgp_edit_button a,
 .tkgp_button a:hover, .tkgp_button_reset a:hover, .tkgp_edit_button a:hover {
 	color: white;
 	font-size: 17px;
+	font-weight: bold;
+}
+
+.tk-supported, .tk-supported a, .tk-supported:active {
+	background: #008dd0;
+	box-shadow: none;
+	cursor: default !important;
 }
