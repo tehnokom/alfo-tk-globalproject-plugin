@@ -39,9 +39,7 @@ function tkgp_localize_plugin() {
 
 function tkgp_css_registry() {
 	wp_register_style('tkgp_general', TKGP_URL.'css/tkgp_general.css');
-	wp_register_style('tkgp_default', TKGP_URL.'styles/default/css/default.css');
 	wp_enqueue_style('tkgp_general');
-	wp_enqueue_style('tkgp_default');
 }
 
 function tkgp_js_registry() {
