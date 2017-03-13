@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TehnoKom Global Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-11 01:57+0000\n"
-"PO-Revision-Date: 2017-03-11 01:58+0000\n"
+"POT-Creation-Date: 2017-03-13 10:35+0000\n"
+"PO-Revision-Date: 2017-03-13 10:35+0000\n"
 "Last-Translator: Сарваритдинов Равиль <ra9oaj@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
@@ -14,26 +14,233 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: lib/project.php:654
+#: lib/project.php:658
 msgctxt "Project l10n"
-msgid "You supported"
-msgstr "Поддержен"
+msgid "Hint"
+msgstr "Подсказка"
 
-#: tk_globalproject.php:57
+#: lib/project.php:662
+msgctxt "Project l10n"
+msgid ""
+"Click \"Support\" to support this public project. Offer your tasks and / or "
+"follow up on them to help implement the project. Join the project team."
+msgstr ""
+"Нажмите \"Поддерживаю\" для поддержки этого общественного проекта. "
+"Предложите свои задачи и / или выполните действия по ним, для того чтобы "
+"помочь в реализации проекта. Вступайте в команду проекта."
+
+#: tk_globalproject.php:55
 msgid "Loading..."
 msgstr "Загрузка..."
 
-#: tk_globalproject.php:73
+#: tk_globalproject.php:71
 msgid "You want to definitely reset the voting results?"
 msgstr "Вы точно желаете сбросить результаты голосования?"
 
-#: tk_globalproject.php:74
+#: tk_globalproject.php:72
 msgid "You want to delete the manager?"
 msgstr "Вы хотите удалить менеджера?"
 
-#: tk_globalproject.php:75
+#: tk_globalproject.php:73
 msgid "You can not drop a single manager."
 msgstr "Вы не можете исключить единственного менеджера."
+
+#: lib/ajax_functions.php:45
+msgctxt "Project Settings"
+msgid "Search..."
+msgstr "Поиск..."
+
+#: lib/ajax_functions.php:50
+msgctxt "Project Settings"
+msgid "Users"
+msgstr "Пользователи"
+
+#: lib/ajax_functions.php:57 lib/core.php:438 lib/core.php:458
+msgctxt "Project Settings"
+msgid "Add"
+msgstr "Добавить"
+
+#: lib/ajax_functions.php:112 lib/ajax_functions.php:232
+msgctxt "Project Vote"
+msgid "Operation is not allowed"
+msgstr "Операция не допустима"
+
+#: lib/ajax_functions.php:122
+msgctxt "Project Vote"
+msgid "Voting does not exist or is hidden"
+msgstr "Голосование не существует или оно скрыто"
+
+#: lib/ajax_functions.php:144
+msgctxt "Project Vote"
+msgid "You have no rights to vote"
+msgstr "У Вас нет права на голосование"
+
+#: lib/ajax_functions.php:147
+msgctxt "Project Vote"
+msgid "Your vote has been counted"
+msgstr "Ваш голос был учтен"
+
+#: lib/ajax_functions.php:148
+msgctxt "Project Vote"
+msgid "Your vote was not counted"
+msgstr "Ваш голос не был учтен"
+
+#: lib/ajax_functions.php:174
+msgctxt "Project Vote"
+msgid "You can not cancel your vote"
+msgstr "Вы не можете отменить свой голос"
+
+#: lib/ajax_functions.php:177
+msgctxt "Project Vote"
+msgid "You may not vote"
+msgstr "Вы не голосовали"
+
+#: lib/ajax_functions.php:180
+msgctxt "Project Vote"
+msgid "Your vote has been reset"
+msgstr "Ваш голос был сброшен"
+
+#: lib/ajax_functions.php:181
+msgctxt "Project Vote"
+msgid "Your vote was not reset"
+msgstr "Ваш голос не был сброшен"
+
+#: lib/ajax_functions.php:208
+msgctxt "Project Vote"
+msgid "You do not have access to the data of voting"
+msgstr "У Вас нет доступа к данным голосования"
+
+#: lib/ajax_functions.php:245
+msgctxt "Project Edit"
+msgid "You do not have permission to edit project"
+msgstr "У Вас нет прав для изменения проекта"
+
+#: lib/vote.php:107
+msgctxt "Project Settings"
+msgid "Enable Vote"
+msgstr "Включить голосование"
+
+#: lib/vote.php:108
+msgctxt "Project Settings"
+msgid "Enable/Disable vote for this project."
+msgstr "Включить/Выключить голосование для проекта."
+
+#: lib/vote.php:113
+msgctxt "Project Settings"
+msgid "Enable"
+msgstr "Включить"
+
+#: lib/vote.php:117
+msgctxt "Project Settings Type"
+msgid "Disable"
+msgstr "Выключить"
+
+#: lib/vote.php:123
+msgctxt "Project Settings"
+msgid "Vote for approval"
+msgstr "Голоса для одобрения"
+
+#: lib/vote.php:124
+msgctxt "Project Settings"
+msgid "Number of votes in which the project is considered approved."
+msgstr "количество голосов поддержки для одобрения этого проекта."
+
+#: lib/vote.php:136
+msgctxt "Project Settings"
+msgid "Start date"
+msgstr "Дата начала"
+
+#: lib/vote.php:137
+msgctxt "Project Settings"
+msgid "The date of commencement of voting."
+msgstr "Дата начала голосования."
+
+#: lib/vote.php:144
+msgctxt "Project Settings"
+msgid "End date"
+msgstr "Дата завершения"
+
+#: lib/vote.php:145
+msgctxt "Project Settings"
+msgid "The data of the end of voting."
+msgstr "Дата завершения голсования."
+
+#: lib/vote.php:150
+msgctxt "Project Settings"
+msgid "Allow to vote against"
+msgstr "Позволить голосовать против"
+
+#: lib/vote.php:151
+msgctxt "Project Settings"
+msgid "It allows users to vote against the project."
+msgstr "Это позволит пользователям голосовать против проекта."
+
+#: lib/vote.php:158
+msgctxt "Project Settings"
+msgid "Allow re-vote"
+msgstr "Допустить повторное голосование"
+
+#: lib/vote.php:159
+msgctxt "Project Settings"
+msgid "Users can reset their vote and vote again, or not to vote :)"
+msgstr ""
+"Пользователь может сбросить свой голос и проголосовать вновь, или не "
+"проголосовать :)"
+
+#: lib/vote.php:167
+msgctxt "Project Settings"
+msgid "Reset voting results"
+msgstr "Сбросить результаты голосования"
+
+#: lib/vote.php:168
+msgctxt "Project Settings"
+msgid "Reset voting results."
+msgstr "Сбросить результаты голосования."
+
+#: lib/vote.php:596
+msgctxt "Project Vote"
+msgid "Voting status"
+msgstr "Статус голосования"
+
+#: lib/vote.php:648
+msgctxt "Project Vote"
+msgid "Progress of the approval"
+msgstr "Прогресс одобрения"
+
+#: lib/vote.php:655
+msgctxt "Project Vote"
+msgid "APPROVED!"
+msgstr "ОДОБРЕНО!"
+
+#: lib/vote.php:659
+msgctxt "Project Vote"
+msgid "Supported"
+msgstr "Поддержало"
+
+#: lib/vote.php:661
+msgctxt "Project Vote"
+msgid "Not Supported"
+msgstr "Не поддержало"
+
+#: lib/vote.php:714
+msgctxt "Project Vote"
+msgid "Vote"
+msgstr "Голосование"
+
+#: lib/vote.php:719
+msgctxt "Project Vote"
+msgid "Support"
+msgstr "Поддерживаю"
+
+#: lib/vote.php:725
+msgctxt "Project Vote"
+msgid "Against"
+msgstr "Против"
+
+#: lib/vote.php:750
+msgctxt "Project Vote"
+msgid "Reset my vote"
+msgstr "Сбросить мой голос"
 
 #: lib/core.php:18
 msgctxt "tk_project"
@@ -125,80 +332,15 @@ msgctxt "tk_project"
 msgid "TK Projects Settings"
 msgstr "ТК Проекты Настройки"
 
-#: lib/core.php:438 lib/core.php:458 lib/ajax_functions.php:57
-msgctxt "Project Settings"
-msgid "Add"
-msgstr "Добавить"
-
 #: lib/core.php:445
 msgctxt "Project Settings"
 msgid "Groups are not supported."
 msgstr "Группы не поддерживаются."
 
-#: lib/ajax_functions.php:45
-msgctxt "Project Settings"
-msgid "Search..."
-msgstr "Поиск..."
-
-#: lib/ajax_functions.php:50
-msgctxt "Project Settings"
-msgid "Users"
-msgstr "Пользователи"
-
-#: lib/ajax_functions.php:112 lib/ajax_functions.php:232
-msgctxt "Project Vote"
-msgid "Operation is not allowed"
-msgstr "Операция не допустима"
-
-#: lib/ajax_functions.php:122
-msgctxt "Project Vote"
-msgid "Voting does not exist or is hidden"
-msgstr "Голосование не существует или оно скрыто"
-
-#: lib/ajax_functions.php:144
-msgctxt "Project Vote"
-msgid "You have no rights to vote"
-msgstr "У Вас нет права на голосование"
-
-#: lib/ajax_functions.php:147
-msgctxt "Project Vote"
-msgid "Your vote has been counted"
-msgstr "Ваш голос был учтен"
-
-#: lib/ajax_functions.php:148
-msgctxt "Project Vote"
-msgid "Your vote was not counted"
-msgstr "Ваш голос не был учтен"
-
-#: lib/ajax_functions.php:176
-msgctxt "Project Vote"
-msgid "You can not cancel your vote"
-msgstr "Вы не можете отменить свой голос"
-
-#: lib/ajax_functions.php:179
-msgctxt "Project Vote"
-msgid "You may not vote"
-msgstr "Вы не голосовали"
-
-#: lib/ajax_functions.php:182
-msgctxt "Project Vote"
-msgid "Your vote has been reset"
-msgstr "Ваш голос был сброшен"
-
-#: lib/ajax_functions.php:183
-msgctxt "Project Vote"
-msgid "Your vote was not reset"
-msgstr "Ваш голос не был сброшен"
-
-#: lib/ajax_functions.php:210
-msgctxt "Project Vote"
-msgid "You do not have access to the data of voting"
-msgstr "У Вас нет доступа к данным голосования"
-
-#: lib/ajax_functions.php:245
-msgctxt "Project Edit"
-msgid "You do not have permission to edit project"
-msgstr "У Вас нет прав для изменения проекта"
+#: lib/page.php:117
+msgctxt "Project Page"
+msgid "Traget:"
+msgstr "Цель:"
 
 #: lib/project.php:199
 msgctxt "Project Edit"
@@ -370,137 +512,10 @@ msgctxt "Project l10n"
 msgid "supported"
 msgstr "поддержали"
 
-#: lib/page.php:117
-msgctxt "Project Page"
-msgid "Traget:"
-msgstr "Цель:"
-
-#: lib/vote.php:107
-msgctxt "Project Settings"
-msgid "Enable Vote"
-msgstr "Включить голосование"
-
-#: lib/vote.php:108
-msgctxt "Project Settings"
-msgid "Enable/Disable vote for this project."
-msgstr "Включить/Выключить голосование для проекта."
-
-#: lib/vote.php:113
-msgctxt "Project Settings"
-msgid "Enable"
-msgstr "Включить"
-
-#: lib/vote.php:117
-msgctxt "Project Settings Type"
-msgid "Disable"
-msgstr "Выключить"
-
-#: lib/vote.php:123
-msgctxt "Project Settings"
-msgid "Vote for approval"
-msgstr "Голоса для одобрения"
-
-#: lib/vote.php:124
-msgctxt "Project Settings"
-msgid "Number of votes in which the project is considered approved."
-msgstr "количество голосов поддержки для одобрения этого проекта."
-
-#: lib/vote.php:136
-msgctxt "Project Settings"
-msgid "Start date"
-msgstr "Дата начала"
-
-#: lib/vote.php:137
-msgctxt "Project Settings"
-msgid "The date of commencement of voting."
-msgstr "Дата начала голосования."
-
-#: lib/vote.php:144
-msgctxt "Project Settings"
-msgid "End date"
-msgstr "Дата завершения"
-
-#: lib/vote.php:145
-msgctxt "Project Settings"
-msgid "The data of the end of voting."
-msgstr "Дата завершения голсования."
-
-#: lib/vote.php:150
-msgctxt "Project Settings"
-msgid "Allow to vote against"
-msgstr "Позволить голосовать против"
-
-#: lib/vote.php:151
-msgctxt "Project Settings"
-msgid "It allows users to vote against the project."
-msgstr "Это позволит пользователям голосовать против проекта."
-
-#: lib/vote.php:158
-msgctxt "Project Settings"
-msgid "Allow re-vote"
-msgstr "Допустить повторное голосование"
-
-#: lib/vote.php:159
-msgctxt "Project Settings"
-msgid "Users can reset their vote and vote again, or not to vote :)"
-msgstr ""
-"Пользователь может сбросить свой голос и проголосовать вновь, или не "
-"проголосовать :)"
-
-#: lib/vote.php:167
-msgctxt "Project Settings"
-msgid "Reset voting results"
-msgstr "Сбросить результаты голосования"
-
-#: lib/vote.php:168
-msgctxt "Project Settings"
-msgid "Reset voting results."
-msgstr "Сбросить результаты голосования."
-
-#: lib/vote.php:596
-msgctxt "Project Vote"
-msgid "Voting status"
-msgstr "Статус голосования"
-
-#: lib/vote.php:648
-msgctxt "Project Vote"
-msgid "Progress of the approval"
-msgstr "Прогресс одобрения"
-
-#: lib/vote.php:655
-msgctxt "Project Vote"
-msgid "APPROVED!"
-msgstr "ОДОБРЕНО!"
-
-#: lib/vote.php:659
-msgctxt "Project Vote"
-msgid "Supported"
-msgstr "Поддержало"
-
-#: lib/vote.php:661
-msgctxt "Project Vote"
-msgid "Not Supported"
-msgstr "Не поддержало"
-
-#: lib/vote.php:714
-msgctxt "Project Vote"
-msgid "Vote"
-msgstr "Голосование"
-
-#: lib/vote.php:719
-msgctxt "Project Vote"
-msgid "Support"
-msgstr "Поддерживаю"
-
-#: lib/vote.php:725
-msgctxt "Project Vote"
-msgid "Against"
-msgstr "Против"
-
-#: lib/vote.php:750
-msgctxt "Project Vote"
-msgid "Reset my vote"
-msgstr "Сбросить мой голос"
+#: lib/project.php:654
+msgctxt "Project l10n"
+msgid "You supported"
+msgstr "Поддержен"
 
 #. Name of the plugin
 msgid "TehnoKom Global Project"
