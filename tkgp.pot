@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-10 13:29+0000\n"
+"POT-Creation-Date: 2017-03-11 01:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -140,7 +140,7 @@ msgctxt "Project Settings"
 msgid "Users"
 msgstr ""
 
-#: lib/ajax_functions.php:112 lib/ajax_functions.php:230
+#: lib/ajax_functions.php:112 lib/ajax_functions.php:232
 msgctxt "Project Vote"
 msgid "Operation is not allowed"
 msgstr ""
@@ -165,352 +165,337 @@ msgctxt "Project Vote"
 msgid "Your vote was not counted"
 msgstr ""
 
-#: lib/ajax_functions.php:174
+#: lib/ajax_functions.php:176
 msgctxt "Project Vote"
 msgid "You can not cancel your vote"
 msgstr ""
 
-#: lib/ajax_functions.php:177
+#: lib/ajax_functions.php:179
 msgctxt "Project Vote"
 msgid "You may not vote"
 msgstr ""
 
-#: lib/ajax_functions.php:180
+#: lib/ajax_functions.php:182
 msgctxt "Project Vote"
 msgid "Your vote has been reset"
 msgstr ""
 
-#: lib/ajax_functions.php:181
+#: lib/ajax_functions.php:183
 msgctxt "Project Vote"
 msgid "Your vote was not reset"
 msgstr ""
 
-#: lib/ajax_functions.php:208
+#: lib/ajax_functions.php:210
 msgctxt "Project Vote"
 msgid "You do not have access to the data of voting"
 msgstr ""
 
-#: lib/ajax_functions.php:243
+#: lib/ajax_functions.php:245
 msgctxt "Project Edit"
 msgid "You do not have permission to edit project"
 msgstr ""
 
-#: lib/project.php:187
+#: lib/project.php:199
 msgctxt "Project Edit"
 msgid "Edit Project"
 msgstr ""
 
-#: lib/project.php:248
-msgctxt "Project Tasks"
-msgid "Tasks"
-msgstr ""
-
-#: lib/project.php:249
-msgctxt "Project Tasks"
-msgid "Sub-projects"
-msgstr ""
-
-#: lib/project.php:253
-msgctxt "Project Tasks"
-msgid "The tasks are still undefined"
-msgstr ""
-
-#: lib/project.php:267
-msgctxt "Project Tasks"
-msgid "No associated projects"
-msgstr ""
-
-#: lib/project.php:547
+#: lib/project.php:507
 msgctxt "Project Settings"
 msgid "Type"
 msgstr ""
 
-#: lib/project.php:548
+#: lib/project.php:508
 msgctxt "Project Settings"
 msgid "Type of this project."
 msgstr ""
 
-#: lib/project.php:553 lib/project.php:617
+#: lib/project.php:513 lib/project.php:577
 msgctxt "Project Settings"
 msgid "Private"
 msgstr ""
 
-#: lib/project.php:557
+#: lib/project.php:517
 msgctxt "Project Settings Type"
 msgid "Working"
 msgstr ""
 
-#: lib/project.php:561
+#: lib/project.php:521
 msgctxt "Project Settings Type"
 msgid "Members only"
 msgstr ""
 
-#: lib/project.php:565
+#: lib/project.php:525
 msgctxt "Project Settings Type"
 msgid "Public"
 msgstr ""
 
-#: lib/project.php:571
+#: lib/project.php:531
 msgctxt "Project Settings Type"
 msgid "Target of the project"
 msgstr ""
 
-#: lib/project.php:572
+#: lib/project.php:532
 msgctxt "Project Settings Type"
 msgid "Text description of the project target."
 msgstr ""
 
-#: lib/project.php:584
+#: lib/project.php:544
 msgctxt "Project Settings"
 msgid "Project Manager"
 msgstr ""
 
-#: lib/project.php:585
+#: lib/project.php:545
 msgctxt "Project Settings"
 msgid "Manager with full access to settings this Project."
 msgstr ""
 
-#: lib/project.php:591
+#: lib/project.php:551
 msgctxt "Project Settings"
 msgid "Working group"
 msgstr ""
 
-#: lib/project.php:592
+#: lib/project.php:552
 msgctxt "Project Settings"
 msgid "Group to which the project was created."
 msgstr ""
 
-#: lib/project.php:598
+#: lib/project.php:558
 msgctxt "Project Settings"
 msgid "Visibility"
 msgstr ""
 
-#: lib/project.php:599
+#: lib/project.php:559
 msgctxt "Project Settings"
 msgid "Visibility for the categories of users."
 msgstr ""
 
-#: lib/project.php:605
+#: lib/project.php:565
 msgctxt "Project Settings"
 msgid "Public"
 msgstr ""
 
-#: lib/project.php:609
+#: lib/project.php:569
 msgctxt "Project Settings"
 msgid "Registered"
 msgstr ""
 
-#: lib/project.php:613
+#: lib/project.php:573
 msgctxt "Project Settings"
 msgid "Members only"
 msgstr ""
 
-#: lib/project.php:630
+#: lib/project.php:590
 msgctxt "Project l10n"
 msgid "Target of project"
 msgstr ""
 
-#: lib/project.php:634
+#: lib/project.php:594
 msgctxt "Project l10n"
 msgid "Subprojects"
 msgstr ""
 
-#: lib/project.php:638
+#: lib/project.php:598
 msgctxt "Project l10n"
 msgid "Subprojects not exists"
 msgstr ""
 
-#: lib/project.php:642
+#: lib/project.php:602
 msgctxt "Project l10n"
 msgid "News"
 msgstr ""
 
-#: lib/project.php:646
+#: lib/project.php:606
 msgctxt "Project l10n"
 msgid "Tasks"
 msgstr ""
 
-#: lib/project.php:650
+#: lib/project.php:610
 msgctxt "Project l10n"
 msgid "Description"
 msgstr ""
 
-#: lib/project.php:654
+#: lib/project.php:614
 msgctxt "Project l10n"
 msgid "Answers"
 msgstr ""
 
-#: lib/project.php:658
+#: lib/project.php:618
 msgctxt "Project l10n"
 msgid "Team"
 msgstr ""
 
-#: lib/project.php:662
+#: lib/project.php:622
 msgctxt "Project l10n"
 msgid "No News"
 msgstr ""
 
-#: lib/project.php:666
+#: lib/project.php:626
 msgctxt "Project l10n"
 msgid "No Tasks"
 msgstr ""
 
-#: lib/project.php:670
+#: lib/project.php:630
 msgctxt "Project l10n"
 msgid "No Answers"
 msgstr ""
 
-#: lib/project.php:674
+#: lib/project.php:634
 msgctxt "Project l10n"
 msgid "No Information"
 msgstr ""
 
-#: lib/project.php:678
+#: lib/project.php:638
 msgctxt "Project l10n"
 msgid "Needed"
 msgstr ""
 
-#: lib/project.php:682
+#: lib/project.php:642
 msgctxt "Project l10n"
 msgid "Supported"
 msgstr ""
 
-#: lib/project.php:686
+#: lib/project.php:646
 msgctxt "Project l10n"
 msgid "needed"
 msgstr ""
 
-#: lib/project.php:690
+#: lib/project.php:650
 msgctxt "Project l10n"
 msgid "supported"
 msgstr ""
 
-#: lib/page.php:126
+#: lib/project.php:654
+msgctxt "Project l10n"
+msgid "You supported"
+msgstr ""
+
+#: lib/page.php:117
 msgctxt "Project Page"
 msgid "Traget:"
 msgstr ""
 
-#: lib/vote.php:108
+#: lib/vote.php:107
 msgctxt "Project Settings"
 msgid "Enable Vote"
 msgstr ""
 
-#: lib/vote.php:109
+#: lib/vote.php:108
 msgctxt "Project Settings"
 msgid "Enable/Disable vote for this project."
 msgstr ""
 
-#: lib/vote.php:114
+#: lib/vote.php:113
 msgctxt "Project Settings"
 msgid "Enable"
 msgstr ""
 
-#: lib/vote.php:118
+#: lib/vote.php:117
 msgctxt "Project Settings Type"
 msgid "Disable"
 msgstr ""
 
-#: lib/vote.php:124
+#: lib/vote.php:123
 msgctxt "Project Settings"
 msgid "Vote for approval"
 msgstr ""
 
-#: lib/vote.php:125
+#: lib/vote.php:124
 msgctxt "Project Settings"
 msgid "Number of votes in which the project is considered approved."
 msgstr ""
 
-#: lib/vote.php:137
+#: lib/vote.php:136
 msgctxt "Project Settings"
 msgid "Start date"
 msgstr ""
 
-#: lib/vote.php:138
+#: lib/vote.php:137
 msgctxt "Project Settings"
 msgid "The date of commencement of voting."
 msgstr ""
 
-#: lib/vote.php:145
+#: lib/vote.php:144
 msgctxt "Project Settings"
 msgid "End date"
 msgstr ""
 
-#: lib/vote.php:146
+#: lib/vote.php:145
 msgctxt "Project Settings"
 msgid "The data of the end of voting."
 msgstr ""
 
-#: lib/vote.php:151
+#: lib/vote.php:150
 msgctxt "Project Settings"
 msgid "Allow to vote against"
 msgstr ""
 
-#: lib/vote.php:152
+#: lib/vote.php:151
 msgctxt "Project Settings"
 msgid "It allows users to vote against the project."
 msgstr ""
 
-#: lib/vote.php:159
+#: lib/vote.php:158
 msgctxt "Project Settings"
 msgid "Allow re-vote"
 msgstr ""
 
-#: lib/vote.php:160
+#: lib/vote.php:159
 msgctxt "Project Settings"
 msgid "Users can reset their vote and vote again, or not to vote :)"
 msgstr ""
 
-#: lib/vote.php:168
+#: lib/vote.php:167
 msgctxt "Project Settings"
 msgid "Reset voting results"
 msgstr ""
 
-#: lib/vote.php:169
+#: lib/vote.php:168
 msgctxt "Project Settings"
 msgid "Reset voting results."
 msgstr ""
 
-#: lib/vote.php:597
+#: lib/vote.php:596
 msgctxt "Project Vote"
 msgid "Voting status"
 msgstr ""
 
-#: lib/vote.php:649
+#: lib/vote.php:648
 msgctxt "Project Vote"
 msgid "Progress of the approval"
 msgstr ""
 
-#: lib/vote.php:656
+#: lib/vote.php:655
 msgctxt "Project Vote"
 msgid "APPROVED!"
 msgstr ""
 
-#: lib/vote.php:660
+#: lib/vote.php:659
 msgctxt "Project Vote"
 msgid "Supported"
 msgstr ""
 
-#: lib/vote.php:662
+#: lib/vote.php:661
 msgctxt "Project Vote"
 msgid "Not Supported"
 msgstr ""
 
-#: lib/vote.php:712
+#: lib/vote.php:714
 msgctxt "Project Vote"
 msgid "Vote"
 msgstr ""
 
-#: lib/vote.php:717
+#: lib/vote.php:719
 msgctxt "Project Vote"
 msgid "Support"
 msgstr ""
 
-#: lib/vote.php:723
+#: lib/vote.php:725
 msgctxt "Project Vote"
 msgid "Against"
 msgstr ""
 
-#: lib/vote.php:745
+#: lib/vote.php:750
 msgctxt "Project Vote"
 msgid "Reset my vote"
 msgstr ""
