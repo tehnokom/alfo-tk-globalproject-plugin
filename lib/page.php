@@ -114,13 +114,15 @@ class TK_GPage {
 	 */
 	public function getPageHtml() {
 		$html = '';
-		$l18n = _x('Traget:', 'Project Page', 'tkgp');
+		$l10n = TK_GProject::l10n('target');
 		
 		foreach ($this->projects as $project) {
-			$target = wpautop($project->target);
+			$pid = TK_GProject::userIsAdmin(get_current_user_id()) ? " #{$project->project_id}" : ''; 
+			$title = apply_filters("the_title", $project->title);
+			$target = apply_filters("the_content" ,$project->target);
 			$html .= "<div style='display: block; width:98%; border: 1px solid rgba(204,204,204,0.9); margin: 0 auto 5px auto; padding: 5px; border-radius: 5px;'>
-			<h3><a href='{$project->permalink}'>{$project->title}</a></h3>
-			<div><h5>{$l18n}</h5></div>
+			<h3><a href='{$project->permalink}'>{$title}{$pid}</a></h3>
+			<div><h5>{$l10n}</h5></div>
 			<div>{$target}</div>";
 			
 			/*if(TK_GVote::exists($project->project_id)) {
