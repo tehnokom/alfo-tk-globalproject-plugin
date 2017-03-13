@@ -100,12 +100,12 @@
 
 /*------------------------*/
 
-.tk-target, .tk-subprojects {
+.tk-target, .tk-subprojects, .tk-hint {
 	margin-top: 15px;
 	font-size: 14px;
 }
 
-.tk-target h2, .tk-subprojects h2 {
+.tk-target h2, .tk-subprojects h2, .tk-hint h2 {
 	font-size: 17px;
 }
 
@@ -116,7 +116,7 @@
 
 /*------------------------*/
 .tk-tabs {
-	margin-top: 15px;
+	margin-top: 20px;
 }
 
 #tk-tab2, #tk-tab3, #tk-tab4, #tk-tab5 {
@@ -183,6 +183,10 @@
 	box-shadow: none;
 	padding: 2px;
 	color: white;
+}
+
+.tkgp_button_reset {
+	background:#d59e00 !important;
 }
 
 .tkgp_button:active, .tkgp_button_reset:active, .tkgp_edit_button:active {
