@@ -183,7 +183,7 @@ class TK_GProject
     {
 
     }
-	
+		
 	/**
 	 * Return Edit project button HTML code
 	 * @return string
@@ -254,6 +254,33 @@ class TK_GProject
 	}
 	
 	/**
+	 * Return TK_GProject object of parent Project,
+	 * or return NULL when parent not exists
+	 * 
+	 * @return object | null
+	 */
+	public function getParentProject() 
+	{
+		if($this->isValid()) {
+			$sql = "SELECT `parent_id` FROM `{$this->wpdb->prefix}tkgp_tasks_links`
+					WHERE `child_id` = %d
+					AND `parent_type` = 0
+					AND `child_type` = 0";
+			
+			$res = $this->wpdb->get_results($this->wpdb->prepare($sql, $this->project_id), OBJECT);
+			
+			if(count($res)) {
+				$parent = new TK_GProject($res[0]->parent_id);
+				if($parent->isValid()) {
+					return $parent;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Return array TK_GProject objects for children projects
 	 * 
 	 * @return array
@@ -279,6 +306,52 @@ class TK_GProject
 		}
 		
 		return $out;
+	}
+	
+	/**
+	 * Creates a link between this project and subobject.
+	 * If successful returns TRUE, else FALSE
+	 * 
+	 * @param int $child_id
+	 * @return bool
+	 */
+	public function createChildLink($child_id)
+	{
+		$res = $this->wpdb->insert("{$this->wpdb->prefix}tkgp_tasks_links",
+									array(	'parent_id' => $this->project_id,
+											'parent_type' => 0,
+											'child_id' => $child_id,
+											'child_type' => 0),
+									array('%d','%d','%d','%d'));
+									
+		if($res > 0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Delete a link between this project and subobject.
+	 * If successful returns TRUE, else FALSE
+	 * 
+	 * @param int $child_id
+	 * @return bool
+	 */
+	public function deleteChildLink($child_id)
+	{
+		$res = $this->wpdb->delete("{$this->wpdb->prefix}tkgp_tasks_links",
+									array(	'parent_id' => $this->project_id,
+											'parent_type' => 0,
+											'child_id' => $child_id,
+											'child_type' => 0),
+									array('%d','%d','%d','%d'));
+
+		if($res > 0) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -317,7 +390,7 @@ class TK_GProject
 	 * @param int $user_id
 	 * @return bool
 	 */
-	protected static function userIsAdmin($user_id) {
+	public static function userIsAdmin($user_id) {
 		$res = false;
 		
 		$user_data = get_user_by('ID',$user_id);
@@ -503,6 +576,15 @@ class TK_GProject
 	public static function getProjectFields()
 	{
 		return array(
+		array(
+            'label' => _x('Parent ID', 'Project Settings', 'tkgp'),
+            'desc' => _x('Parent Project ID', 'Project Settings', 'tkgp'),
+            'id' => 'tkgp_parent_id',
+            'type' => 'text',
+            'options' => array(
+                
+                )
+            ),
         array(
             'label' => _x('Type', 'Project Settings', 'tkgp'),
             'desc' => _x('Type of this project.', 'Project Settings', 'tkgp'),

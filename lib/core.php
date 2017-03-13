@@ -87,7 +87,7 @@ function tkgp_create_meta_box()
         null,
         'normal',
         'high');
-
+		
     add_meta_box('tk_project_meta_steps',
         _x('Plane of Project', 'tk_meta', 'tkgp'),
         'tkgp_show_metabox_steps',
@@ -115,6 +115,8 @@ function tkgp_show_metabox_settings()
 <table class="form-table">';
 
     foreach (TK_GProject::getProjectFields() as $field) {
+    	$current_val = '';
+		
         echo '<tr>
 	<th><label for="' . $field['id'] . '">' . $field['label'] . '</label></th>
 	<td>';
@@ -133,6 +135,14 @@ function tkgp_show_metabox_settings()
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? wp_get_current_user()->ID : $current_val;
                 break;
+			
+			case 'text':
+				$project = new TK_GProject($post->ID);
+				if($project->isValid()) {
+					$current_val = $project->getParentProject();
+					$current_val = is_object($current_val) ? $current_val->project_id : '';
+				}
+				break;
 			
             default:
 				$current_val = get_post_meta($post->ID, $field['id'], true);
@@ -217,6 +227,8 @@ function tkgp_save_post_meta($post_id)
         return $post_id;
     }
 
+	global $post;
+	
     $vote_updates = array();
     $fields = array_merge(TK_GProject::getProjectFields(), TK_GVote::getVotesFields());
 
@@ -287,7 +299,32 @@ function tkgp_save_post_meta($post_id)
                     $vote_updates['reset'] = true;
                 }
                 break;
-
+			
+			case 'tkgp_parent_id':
+				$project = new TK_GProject($post->ID);
+				$old = $project->getParentProject();
+				
+				if(!empty($_POST[$field['id']])) {
+					$prnt = preg_replace('/[^\d]+/', '', $_POST[$field['id']]);
+					$prnt = new TK_GProject($prnt);
+					$new = $prnt->isValid() ? $prnt : null;
+					
+					if(is_object($new)) {
+						if(is_object($old)) {
+							if($new->project_id != $old->project_id) {
+								$old->deleteChildLink($project->project_id);
+								$new->createChildLink($project->project_id);
+							}
+						} else {
+							$new->createChildLink($project->project_id);
+						}
+					}
+				} else if(is_object($old)) {
+					$old->deleteChildLink($project->project_id);
+				}
+							
+				break;
+			
             default:
                 $new = $_POST[$field['id']];
 				
@@ -299,7 +336,6 @@ function tkgp_save_post_meta($post_id)
     }
 
     if (!empty($vote_updates)) {
-        global $post;
         $vote = new TK_GVote($post->ID);
 
         if (!$vote->voteExists() && $vote_updates['enabled'] == 1) {
@@ -402,7 +438,7 @@ function tkgp_field_html($args, $default_val = '')
 
             $html .= '</ul>';
             break;
-
+					
         case 'number':
             $html .= '<input type="number" name="' . $args['id'] . '" value="' . (empty($default_val) ? $args['value'] : $default_val) . '"' . $properties . '/>';
             break;
@@ -473,7 +509,7 @@ function tkgp_field_html($args, $default_val = '')
 			break;
 		
         default:
-            $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '"' . $properties . ' value="' . $default_val . '">';
+            $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '"' . $properties . ' value="' . $default_val . '" />';
             break;
     }
 
