@@ -654,6 +654,14 @@ class TK_GProject
 				$out = _x('You supported','Project l10n', 'tkgp');
 				break;
 			
+			case 'hint':
+				$out = _x('Hint','Project l10n', 'tkgp');
+				break;
+			
+			case 'hint_text':
+				$out = _x('Click "Support" to support this public project. Offer your tasks and / or follow up on them to help implement the project. Join the project team.','Project l10n', 'tkgp');
+				break;
+			
 			default:
 				$out = $default_phrase;
 				break;
