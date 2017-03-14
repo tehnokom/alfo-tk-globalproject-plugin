@@ -27,15 +27,13 @@ class TK_GVote
         $this->wpdb = $wpdb;
         $this->wpdb->enable_nulls = true;
 
-
+		file_put_contents(__FILE__.'.log', "{$post_id}\r\n",FILE_APPEND);
         if (isset($post_id)) {
             $res = get_post($post_id);
 
             if (is_object($res)) {
-
-
-                $this->opts['project_id'] = $res->ID;
-                $this->opts['vote_id'] = $this->wpdb->get_var($this->wpdb->prepare("SELECT id 
+				$this->opts['project_id'] = $res->ID;
+				$this->opts['vote_id'] = $this->wpdb->get_var($this->wpdb->prepare("SELECT id 
 													 FROM {$this->wpdb->prefix}tkgp_votes 
 													 WHERE post_id = %d",
                     $this->project_id)
@@ -50,7 +48,10 @@ class TK_GVote
 		            $this->opts['approval_votes'] = empty($votes[1]['cnt']) ? 0 : intval($votes[1]['cnt']);
 		        }
 				
-				$this->opts = array_merge($this->opts,$this->getVoteSettings());
+				$settings = $this->getVoteSettings();
+				if(!empty($settings)) {
+					$this->opts =  array_merge($this->opts, $settings);	
+				}
             }
         }
     }
@@ -506,7 +507,11 @@ class TK_GVote
      */
     public function createVote($arg = array())
     {
+    	$o = intval(isset($this->project_id));
+		$e = !$this->voteExists();
+    	file_put_contents(__FILE__.'.log', "isset={$o}; ex={$e}\r\n",FILE_APPEND);
         if (isset($this->project_id) && !$this->voteExists()) {
+
             $data = array(
                 'post_id' => $this->project_id,
                 'enabled' => 1,

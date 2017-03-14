@@ -226,8 +226,6 @@ function tkgp_save_post_meta($post_id)
     ) {
         return $post_id;
     }
-
-	global $post;
 	
     $vote_updates = array();
     $fields = array_merge(TK_GProject::getProjectFields(), TK_GVote::getVotesFields());
@@ -301,7 +299,7 @@ function tkgp_save_post_meta($post_id)
                 break;
 			
 			case 'tkgp_parent_id':
-				$project = new TK_GProject($post->ID);
+				$project = new TK_GProject($post_id);
 				$old = $project->getParentProject();
 				
 				if(!empty($_POST[$field['id']])) {
@@ -336,7 +334,7 @@ function tkgp_save_post_meta($post_id)
     }
 
     if (!empty($vote_updates)) {
-        $vote = new TK_GVote($post->ID);
+        $vote = new TK_GVote($post_id);
 
         if (!$vote->voteExists() && $vote_updates['enabled'] == 1) {
             $vote->createVote();
