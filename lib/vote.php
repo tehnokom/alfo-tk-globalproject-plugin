@@ -27,7 +27,6 @@ class TK_GVote
         $this->wpdb = $wpdb;
         $this->wpdb->enable_nulls = true;
 
-		file_put_contents(__FILE__.'.log', "{$post_id}\r\n",FILE_APPEND);
         if (isset($post_id)) {
             $res = get_post($post_id);
 
@@ -509,7 +508,7 @@ class TK_GVote
     {
     	$o = intval(isset($this->project_id));
 		$e = !$this->voteExists();
-    	file_put_contents(__FILE__.'.log', "isset={$o}; ex={$e}\r\n",FILE_APPEND);
+		
         if (isset($this->project_id) && !$this->voteExists()) {
 
             $data = array(
