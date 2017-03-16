@@ -1,6 +1,6 @@
 <?php
 	function tkgp_check_version() {
-		$cur_version = '0.14';
+		$cur_version = '0.15';
 		$installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 		
 		if(empty($installed_version)) {
@@ -124,12 +124,28 @@
 			dbDelta($sql);
 		}
 		
+		$table_name = $wpdb->prefix . 'tkgp_projects';
+		if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+			$sql = "CREATE TABLE {$table_name} (
+				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				  `post_id` bigint(20) unsigned NOT NULL,
+				  PRIMARY KEY (`id`),
+				  UNIQUE KEY `post_id` (`post_id`)
+				){$charset_collate};";
+			
+			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+				
+			dbDelta($sql);
+		}
+		
 		update_option('tkgp_db_version', $cur_version);
     }
     
     function tkgp_db_update($installed_version, $cur_version) {
     	global $wpdb;
-    		
+    	
+    	$slug = TK_GProject::slug;
+    	
     	$patches = array(
 	    	'0.1' => array(
 	    					'sql' => array("ALTER TABLE `{$wpdb->prefix}tkgp_votes` 
@@ -168,7 +184,19 @@
 									UNIQUE KEY `link_unique` (`parent_id`,`parent_type`,`child_id`,`child_type`)
 									) DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate};",
 								),
-							'ver_after' => '0.14')
+							'ver_after' => '0.14'),
+			'0.14' => array(
+							'sql' => array("CREATE TABLE `{$wpdb->prefix}tkgp_projects` (
+				  					`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				  					`post_id` bigint(20) unsigned NOT NULL,
+				  					PRIMARY KEY (`id`),
+				  					UNIQUE KEY `post_id` (`post_id`)
+									) DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate};",
+											"INSERT INTO `{$wpdb->prefix}tkgp_projects` (`post_id`)
+												SELECT `id` FROM `{$wpdb->prefix}posts` 
+												WHERE `post_type` = '{$slug}' ORDER BY `post_date` ASC;"
+								 ),
+							'ver_after' => '0.15'),
 		);
     	
 	 	if(!empty($patches[$installed_version])) {
