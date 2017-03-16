@@ -46,7 +46,7 @@ class TK_GProject
             $res = get_post($post_id);
 
             if (is_object($res)) {
-                $this->opts['project_id'] = $res->ID;
+                $this->project_id = $res->ID;
 				$this->is_project = $res->post_type == TK_GProject::slug;
 				
 				if($this->is_project) {
@@ -63,6 +63,7 @@ class TK_GProject
 						$this->guid = $res->guid;
 						$this->title = get_the_title($this->project_id);
 						$this->permalink = get_permalink($this->project_id);
+						$this->internal_id = self::postToId($res->ID);
 					}
 				}
             }
@@ -103,6 +104,32 @@ class TK_GProject
 	 */
 	protected function __set($name, $value) {
 		$this->opts[$name] = $value;
+	}
+	
+	/**
+	 * Returns Internal Project ID or null
+	 * 
+	 * @param $post_id WP Post ID
+	 * @return int | null
+	 */
+	static public function postToId($post_id) {
+		global $wpdb;
+
+		return $wpdb->get_var($wpdb->prepare("SELECT `id` FROM {$wpdb->prefix}tkgp_projects
+											WHERE `post_id`=%d",$post_id));
+	}
+	
+	/**
+	 * Returns WP Post ID or null
+	 * 
+	 * @param $internal_id Internal Project ID
+	 * @return int | null
+	 */
+	static public function idToPost($internal_id) {
+		global $wpdb;
+
+		return $wpdb->get_var($wpdb->prepare("SELECT `post_id` FROM {$wpdb->prefix}tkgp_projects
+											WHERE `id`=%d",$internal_id));
 	}
 	
     /**

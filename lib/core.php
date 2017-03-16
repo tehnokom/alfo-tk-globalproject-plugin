@@ -140,7 +140,7 @@ function tkgp_show_metabox_settings()
 				$project = new TK_GProject($post->ID);
 				if($project->isValid()) {
 					$current_val = $project->getParentProject();
-					$current_val = is_object($current_val) ? $current_val->project_id : '';
+					$current_val = is_object($current_val) ? $current_val->internal_id : '';
 				}
 				break;
 			
@@ -304,6 +304,7 @@ function tkgp_save_post_meta($post_id)
 				
 				if(!empty($_POST[$field['id']])) {
 					$prnt = preg_replace('/[^\d]+/', '', $_POST[$field['id']]);
+					$prnt = TK_GProject::idToPost($prnt);
 					$prnt = new TK_GProject($prnt);
 					$new = $prnt->isValid() ? $prnt : null;
 					
