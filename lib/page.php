@@ -58,6 +58,7 @@ class TK_GPage {
 
 	/**
 	 * Creates a list of projects for the page
+	 * 
 	 * @param $page_num integer Page Number
 	 * @param $ptype integer Page type
 	 */
@@ -75,6 +76,9 @@ class TK_GPage {
 				AND p.`post_type` = '{$slug}'
 				AND pm1.meta_key = 'ptype'
 				AND pm1.meta_value = %d
+				AND not exists(SELECT 1 FROM `{$prefix}tkgp_tasks_links`
+					WHERE `child_type` = 0
+					AND `child_id` = p.`id`)
 			ORDER BY p.`post_date` DESC
 			LIMIT %d OFFSET %d";
 
@@ -96,18 +100,7 @@ class TK_GPage {
 			}
 		}
 	}
-
-	/**
-	 * Parses the meta tag archive projects page
-	 * @param $data string
-	 * @return string
-	 */
-	public function parsePostData($data) {
-		$data = str_replace('{tk_project_page}', $this->getPageHtml(), $data);
-
-		return $data;
-	}
-
+	
 	/**
 	 * Returns html code project page
 	 * @return string
@@ -137,6 +130,14 @@ class TK_GPage {
 
 		return $html;
 	}
-
+	
+	/**
+	 * Returns array of TK_GProject objects on current page
+	 * 
+	 * @return array
+	 */
+	 public function getProjectsOnPage() {
+	 	return $this->projects;	
+	 }
 };
 ?>

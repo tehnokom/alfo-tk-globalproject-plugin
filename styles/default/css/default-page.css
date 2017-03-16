@@ -1,0 +1,45 @@
+.tk-page-unit {
+	display:table;
+	width: 100%;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin: 10px 5px 10px 5px;
+}
+
+.tk-page-title, .tk-page-target, .tk-page-sub {
+	display:table-row;
+}
+
+.tk-page-title >div:nth-last-child(1) {
+	color:#999;
+}
+
+.tk-page-title > div {
+	border-bottom: 1px solid #ccc;
+}
+
+.tk-page-target {
+	font-size: 14px;	
+}
+
+.tk-page-target p:nth-last-child(1) {
+	margin-bottom: 0;
+}
+
+.tk-page-sub span::before {
+	content: '\2022';
+	padding-left: 2px;
+	padding-right: 4px;
+}
+
+.tk-page-sub span:nth-child(1)::before {
+	content: none;
+}
+
+.tk-page-title > div, .tk-page-target > div,
+.tk-page-sub > div {
+	display:table-cell;
+	padding: 5px;
+	width: 100%;
+	vertical-align:middle;
+}
