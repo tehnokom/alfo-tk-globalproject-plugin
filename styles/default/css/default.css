@@ -3,7 +3,8 @@
 	border: 1px solid #AAA;
 	width: 99%;
 	height: 200px;
-	background: url(../images/default-logo.jpg) no-repeat;
+	/*background: url(../images/default-logo.jpg) no-repeat;*/
+	color: #fff;
 }
 
 .tk-logo-cell1 {
@@ -96,6 +97,9 @@
 	display: table-cell;
 	height: 25%;
 	width: 100%;
+	font-size: 18px;
+	font-weight: bold;
+	vertical-align: middle;
 }
 
 /*------------------------*/

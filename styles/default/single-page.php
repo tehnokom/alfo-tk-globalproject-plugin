@@ -24,18 +24,22 @@ if(!$project->userCanRead(get_current_user_id())) { //Check access for this Proj
 
 $vote = $project->getVote();
 $approval_percent = 100.0 * floatval($vote->approval_votes) / floatval($vote->target_votes);
+$upload_dir = wp_upload_dir();
+$logo_file = $upload_dir['basedir'] . "/projektoj/logo-{$project->internal_id}.jpg";
+$logo_file = is_file($logo_file) ? $logo_file : TKGP_STYLE_DIR . 'images/default-logo.jpg';
+$logo_url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $logo_file);
 
 get_header();
 ?>
 <!--Start Logo-->
-	<div class="tk-logo">
+	<div class="tk-logo" style="background: url(<?php echo $logo_url; ?>) no-repeat;">
 		<div class="tk-logo-cell1">
 			<div>
 				<div>
 					<div class="tk-title"><h2><?php echo $project->title; ?></h2></div>
 				</div>
 				<div>
-					<div class="tk-social"></div>
+					<div class="tk-social">#<?php echo $project->internal_id; ?></div>
 				</div>
 			</div>
 		</div>
