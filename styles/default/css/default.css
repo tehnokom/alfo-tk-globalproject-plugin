@@ -7,14 +7,6 @@
 	color: #fff;
 }
 
-.tk-logo-cell1 {
-	display:table-cell;
-	float: left;
-	position: relative;
-	width: 70%;
-	height: 100%;
-}
-
 .tk-logo-cell1 > div {
 	padding: 2px 5px 2px 15px;
 	display: table;
@@ -24,6 +16,15 @@
 
 .tk-logo-cell1 > div > div{
 	display: table-row;
+}
+
+@media screen and (min-width: 601px) {
+.tk-logo-cell1 {
+	display:table-cell;
+	float: left;
+	position: relative;
+	width: 70%;
+	height: 100%;
 }
 
 .tk-logo-cell2 {
@@ -39,6 +40,59 @@
 	padding: 10px 10px 10px 10px;
 	width: 100%;
 	height: 100%;
+}
+
+.tk-label {
+	height: 18%;
+	font-weight: bold;
+	color: white;
+}
+
+.tkgp_button a, .tkgp_button_reset a, .tkgp_edit_button a,
+.tkgp_button a:hover, .tkgp_button_reset a:hover, .tkgp_edit_button a:hover {
+	color: white;
+	font-size: 17px;
+	font-weight: normal;
+}
+}
+
+@media screen and (max-width: 600px) {
+.tk-logo-cell1 {
+	display:table-cell;
+	float: left;
+	position: relative;
+	width: 60%;
+	height: 100%;
+}
+
+.tk-logo-cell2 {
+	display:table-cell;
+	float: right;
+	background: rgba(0,0,0,0.5);
+	height: 100%;
+	width: 40%;
+}
+
+.tk-logo-cell2 > div {
+	display: table;
+	padding: 3px;
+	width: 100%;
+	height: 100%;
+}
+
+.tk-label {
+	height: 14%;
+	font-weight: normal;
+	font-size: 10px;
+	color: white;
+}
+
+.tkgp_button a, .tkgp_button_reset a, .tkgp_edit_button a,
+.tkgp_button a:hover, .tkgp_button_reset a:hover, .tkgp_edit_button a:hover {
+	color: white;
+	font-size: 12px;
+	font-weight: bold;
+}
 }
 
 .tk-logo-cell2 > div > div {
@@ -58,12 +112,6 @@
 
 .tk-users {
 	height: 54%;
-}
-
-.tk-label {
-	height: 18%;
-	font-weight: bold;
-	color: white;
 }
 
 .tk-progress {
@@ -199,13 +247,6 @@
 
 .tkgp_vote_block {
 	position:relative;
-}
-
-.tkgp_button a, .tkgp_button_reset a, .tkgp_edit_button a,
-.tkgp_button a:hover, .tkgp_button_reset a:hover, .tkgp_edit_button a:hover {
-	color: white;
-	font-size: 17px;
-	font-weight: bold;
 }
 
 .tk-supported, .tk-supported a, .tk-supported:active {
