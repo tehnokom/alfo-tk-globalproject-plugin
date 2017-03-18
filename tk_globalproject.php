@@ -75,8 +75,26 @@ function tkgp_admin_js_registry() {
 			);
 }
 
+function tkgp_create_news_cat() {
+	$parent_cat_id = get_option('tkgp_news_cat_id');
+	
+	if(!$parent_cat_id) {
+		require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+		$cat_args = array('cat_name' => 'News of projects',
+						'category_nicename' => 'tkgp-news-projects',
+						'category_parent' => '');
+		
+		$parent_cat_id = wp_create_category('News of Projects');
+		
+		if($parent_cat_id) {
+			update_option('tkgp_news_cat_id', $parent_cat_id);
+		}
+	}
+}
+
 add_action('plugins_loaded', 'tkgp_check_version');
 add_action('plugins_loaded', 'tkgp_localize_plugin');
+add_action('plugins_loaded', 'tkgp_create_news_cat');
 add_action('wp_enqueue_scripts', 'tkgp_css_registry');
 add_action('wp_enqueue_scripts', 'tkgp_js_registry');
 add_action('admin_enqueue_scripts', 'tkgp_admin_css_registry');

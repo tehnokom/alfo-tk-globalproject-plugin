@@ -1,6 +1,6 @@
 <?php
 	function tkgp_check_version() {
-		$cur_version = '0.15';
+		$cur_version = '0.16';
 		$installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 		
 		if(empty($installed_version)) {
@@ -129,6 +129,7 @@
 			$sql = "CREATE TABLE {$table_name} (
 				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				  `post_id` bigint(20) unsigned NOT NULL,
+				  `news_id` bigint(20) unsigned NULL DEFAULT NULL,
 				  PRIMARY KEY (`id`),
 				  UNIQUE KEY `post_id` (`post_id`)
 				){$charset_collate};";
@@ -197,6 +198,11 @@
 												WHERE `post_type` = '{$slug}' ORDER BY `post_date` ASC;"
 								 ),
 							'ver_after' => '0.15'),
+			'0.15' => array(
+							'sql' => array("ALTER TABLE `{$wpdb->prefix}tkgp_projects` 
+									ADD COLUMN `news_id` bigint(20) unsigned NULL DEFAULT NULL AFTER `post_id`;"
+								 ),
+							'ver_after' => '0.16'),
 		);
     	
 	 	if(!empty($patches[$installed_version])) {

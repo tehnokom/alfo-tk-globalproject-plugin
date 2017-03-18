@@ -529,14 +529,37 @@ function tkgp_content($data)
 }
 
 function tkgp_include_templates($template_path) {
-	if(get_post_type() == TK_GProject::slug) {
+	$post_type = get_post_type();
+	$news_parent_cat_id = get_option('tkgp_news_cat_id');
+	
+	if($post_type == TK_GProject::slug) {
 		if(!is_single()) {
 			$template_path = TKGP_ROOT . 'styles/default/page.php';
 		} else {
 			$template_path = TKGP_ROOT . 'styles/default/single-page.php';
 		}
-	}
+	} /*else if($post_type == 'post' && $news_parent_cat_id) {
+		if(!is_single()) {
+			
+		} else {
+			
+		}
+	}*/
+	
 	return $template_path;
+}
+
+function tkgp_exclude_categories($args, $taxonomies) {
+	if(!is_admin()){
+		$root_cat_id = get_option('tkgp_news_cat_id');
+		
+		if(array_search('category', $taxonomies) !== false && empty($args['child_of'])) {
+			if(array_search($root_cat_id, $args['exclude_tree']) === false) {
+				$args['exclude_tree'][] = $root_cat_id;
+			}
+		}
+	}
+	return $args;
 }
 
 add_action('init', 'tkgp_create_type');
@@ -546,4 +569,5 @@ add_action('add_meta_boxes', 'tkgp_create_meta_box');
 //add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);
 add_action('template_include', 'tkgp_include_templates');
+add_filter('get_terms_args', 'tkgp_exclude_categories', 10, 2);
 ?>

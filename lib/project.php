@@ -46,7 +46,7 @@ class TK_GProject
             $res = get_post($post_id);
 
             if (is_object($res)) {
-                $this->project_id = $res->ID;
+                $this->opts['project_id'] = $res->ID;
 				$this->is_project = $res->post_type == TK_GProject::slug;
 				
 				if($this->is_project) {
@@ -59,16 +59,18 @@ class TK_GProject
 					$this->project_visibility = intval(get_post_meta($this->project_id, 'visiblity', true));
     				
 					if($this->userCanRead(get_current_user_id())) { //Check access current user for this Project
-						$this->target = get_post_meta($this->project_id, 'ptarget', true);
-						$this->guid = $res->guid;
-						$this->title = get_the_title($this->project_id);
-						$this->permalink = get_permalink($this->project_id);
-						$this->internal_id = self::postToId($res->ID);
+						$this->opts['target'] = get_post_meta($this->project_id, 'ptarget', true);
+						$this->opts['guid'] = $res->guid;
+						$this->opts['title'] = get_the_title($this->project_id);
+						$this->opts['permalink'] = get_permalink($this->project_id);
+						$this->opts['internal_id'] = self::postToId($res->ID);
 					}
+					
+					$this->checkCat();
 				}
             }
         } else {
-            $this->project_id = null;
+            $this->opts['project_id'] = null;
         }
     }
 
@@ -96,14 +98,31 @@ class TK_GProject
 	public function __isset($name) {
 		return (isset($this->opts[$name]));
 	}
-	
+
 	/**
-	 * Magic method. It's Ma-a-a-gic :)
-	 * @param string $name
-	 * @param mixed $value
+	 * Check exists WP Category for news of Projects.
+	 * If Category don't exists then creates it and associates it with the project.
 	 */
-	protected function __set($name, $value) {
-		$this->opts[$name] = $value;
+	protected function checkCat() {
+		$parent_cat_id = get_option('tkgp_news_cat_id');
+		
+		if($parent_cat_id) {
+			$res = $this->wpdb->get_var($this->wpdb->prepare("SELECT `news_id` FROM {$this->wpdb->prefix}tkgp_projects
+															WHERE `post_id` = %d", $this->project_id));
+												
+			if(!$res) {
+				require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+				$cat_id = wp_create_category("News of Project #{$this->internal_id}", $parent_cat_id);
+				$cat_id = !$cat_id ? null : $cat_id;
+
+				$this->wpdb->update("{$this->wpdb->prefix}tkgp_projects", 
+									array('news_id' => $cat_id),
+									array('post_id' => $this->project_id), 
+									array('%d'),
+									array('%d')
+									);
+			}
+		}
 	}
 	
 	/**
@@ -454,7 +473,7 @@ class TK_GProject
 			update_post_meta($id, 'ptype', $data['type']);
 			update_post_meta($id, 'ptarget', $data['target']);
 			update_post_meta($id, 'manager', array($user_id));
-			
+						
 			return new TK_GProject($id);
 		}
 		
