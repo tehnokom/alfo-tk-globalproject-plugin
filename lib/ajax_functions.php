@@ -251,10 +251,25 @@ function tkgp_ajax_get_project_editor() {
 	wp_die();
 }
 
+function tkgp_ajax_get_project_news() {
+	if(!empty($_POST['post_id']) || !empty($_GET['post_id'])) {
+		$project = new TK_GProject($_GET['post_id']);
+		$user_id = get_current_user_id();
+		
+		if($project->isValid() && $project->userCanRead($user_id)) {	
+			require_once(TKGP_STYLES_DIR . 'default/ajax-news-page.php');
+		}
+	}
+	
+	wp_die();
+}
+
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');
 add_action('wp_ajax_tkgp_user_vote', 'tkgp_ajax_user_vote');
 add_action('wp_ajax_tkgp_get_vote_status', 'tkgp_ajax_get_vote_status');
 add_action('wp_ajax_tkgp_reset_user_vote', 'tkgp_ajax_reset_user_vote');
 add_action('wp_ajax_tkgp_get_project_editor', 'tkgp_ajax_get_project_editor');
+add_action('wp_ajax_tkgp_get_project_news', 'tkgp_ajax_get_project_news');
+add_action('wp_ajax_nopriv_tkgp_get_project_news', 'tkgp_ajax_get_project_news');
 
 ?>

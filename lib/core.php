@@ -6,6 +6,7 @@ if (!defined('TKGP_ROOT') || !defined('TKGP_URL')) {
 require_once(TKGP_ROOT . 'lib/page.php');
 require_once(TKGP_ROOT . 'lib/project.php');
 require_once(TKGP_ROOT . 'lib/vote.php');
+require_once(TKGP_ROOT . 'lib/news.php');
 
 /**
  * Создание типа проектов

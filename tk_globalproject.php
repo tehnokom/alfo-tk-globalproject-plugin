@@ -26,6 +26,8 @@
 
 define('TKGP_ROOT', plugin_dir_path(__FILE__));
 define('TKGP_URL', plugin_dir_url(__FILE__));
+define('TKGP_STYLES_DIR', TKGP_ROOT . 'styles/');
+define('TKGP_STYLES_DIR', TKGP_URL . 'styles/');
 
 require_once(TKGP_ROOT.'lib/plug_initial.php');
 require_once(TKGP_ROOT.'lib/core.php');
