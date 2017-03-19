@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-19 10:11+0000\n"
+"POT-Creation-Date: 2017-03-19 12:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -395,6 +395,11 @@ msgstr ""
 #: lib/project.php:794
 msgctxt "Project l10n"
 msgid "No data"
+msgstr ""
+
+#: lib/project.php:798
+msgctxt "Project l10n"
+msgid "Parent project"
 msgstr ""
 
 #: lib/vote.php:107

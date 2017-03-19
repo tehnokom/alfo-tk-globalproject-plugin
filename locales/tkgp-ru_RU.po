@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TehnoKom Global Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-19 10:11+0000\n"
-"PO-Revision-Date: 2017-03-19 10:12+0000\n"
+"POT-Creation-Date: 2017-03-19 12:27+0000\n"
+"PO-Revision-Date: 2017-03-19 12:27+0000\n"
 "Last-Translator: Сарваритдинов Равиль <ra9oaj@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
@@ -14,20 +14,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: lib/project.php:626
-msgctxt "Project Settings"
-msgid "Parent ID"
-msgstr "ID родителя"
-
-#: lib/project.php:627
-msgctxt "Project Settings"
-msgid "Parent Project ID"
-msgstr "ID родительского проекта"
-
-#: lib/project.php:794
+#: lib/project.php:798
 msgctxt "Project l10n"
-msgid "No data"
-msgstr "Данные отсутствуют"
+msgid "Parent project"
+msgstr "Родительский проект"
 
 #: tk_globalproject.php:58
 msgid "Loading..."
@@ -215,6 +205,16 @@ msgctxt "Project Edit"
 msgid "Edit Project"
 msgstr "Редактировать проект"
 
+#: lib/project.php:626
+msgctxt "Project Settings"
+msgid "Parent ID"
+msgstr "ID родителя"
+
+#: lib/project.php:627
+msgctxt "Project Settings"
+msgid "Parent Project ID"
+msgstr "ID родительского проекта"
+
 #: lib/project.php:635
 msgctxt "Project Settings"
 msgid "Type"
@@ -399,6 +399,11 @@ msgstr ""
 "Нажмите \"Поддерживаю\" для поддержки этого общественного проекта. "
 "Предложите свои задачи и / или выполните действия по ним, для того чтобы "
 "помочь в реализации проекта. Вступайте в команду проекта."
+
+#: lib/project.php:794
+msgctxt "Project l10n"
+msgid "No data"
+msgstr "Данные отсутствуют"
 
 #: lib/vote.php:107
 msgctxt "Project Settings"
