@@ -172,6 +172,57 @@ function tkgp_show_project_editor(data, button) {
 	}
 }
 
+function tkgp_ajax_get_news(handler) {
+	var args = arguments;
+	
+	$j.ajax({
+        url: tkgp_js_vars.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'tkgp_get_project_news',
+            post_id: tkgp_js_vars.post_id,
+       		page_num: 1
+        }
+    })
+        .done(function (html) {
+        	if(typeof handler === "function") {
+	        	if(args !== undefined) {
+	        		handler(html, args[1]);
+	        	} else {
+	        		handler(news_html);
+	        	}
+        	}
+        })
+        .fail(function (jqXHR, textStatus) {
+            console.log("Request failed: " + textStatus);
+        });
+}
+
+function tkgp_ajax_get_target(handler) {
+	var args = arguments[1];
+	
+	$j.ajax({
+        url: tkgp_js_vars.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'tkgp_get_project_target',
+            post_id: tkgp_js_vars.post_id,
+        }
+    })
+        .done(function (html) {
+        	if(typeof handler === 'function') {
+        		if(args !== undefined) {
+        			handler(html, args);
+        		} else {
+        			handler(html);
+        		}
+        	}
+        })
+        .fail(function (jqXHR, textStatus) {
+            console.log("Request failed: " + textStatus);
+        });
+}
+
 function tkgp_handler_save_project_data() {
 	
 }

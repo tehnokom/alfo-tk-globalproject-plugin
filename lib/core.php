@@ -554,7 +554,7 @@ function tkgp_exclude_categories($args, $taxonomies) {
 	$root_cat_id = get_option('tkgp_news_cat_id');
 
 	if(!is_admin() && !empty($root_cat_id)){
-		if(array_search('category', $taxonomies) !== false && empty($args['child_of'])) {
+		if(array_search('category', $taxonomies) !== false && !empty($args['child_of'])) {
 			if(array_search($root_cat_id, $args['exclude_tree']) === false) {
 				$args['exclude_tree'][] = $root_cat_id;
 			}

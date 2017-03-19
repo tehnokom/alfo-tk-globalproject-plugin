@@ -34,9 +34,8 @@
 																WHERE `post_id` = %d;", $post->ID));
 
 			if(!empty($cat_id)) {
-				file_put_contents(__FILE__.".log", $cat_id."\r\n", FILE_APPEND);
 				$this->opts['cat_id'] = intval($cat_id);
-				$this->opts['query']['cat'] = intval($cat_id);
+				$this->opts['query']['category__in'] = array(intval($cat_id),get_option('tkgp_news_cat_id'));
 				$this->opts['query']['post_type'] = 'post';
 				$this->opts['query']['posts_per_page'] = 20;
 				$this->opts['query']['orderby'] = 'date';
