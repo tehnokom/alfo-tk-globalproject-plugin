@@ -252,8 +252,8 @@ function tkgp_ajax_get_project_editor() {
 }
 
 function tkgp_ajax_get_project_news() {
-	if(!empty($_POST['post_id']) || !empty($_GET['post_id'])) {
-		$project = new TK_GProject($_GET['post_id']);
+	if(!empty($_POST['post_id']) || !empty($_POST['post_id'])) {
+		$project = new TK_GProject($_POST['post_id']);
 		$user_id = get_current_user_id();
 		
 		if($project->isValid() && $project->userCanRead($user_id)) {	

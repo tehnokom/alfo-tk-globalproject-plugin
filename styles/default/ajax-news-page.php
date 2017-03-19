@@ -1,5 +1,5 @@
 <?php
-$news = new TK_GNews($_GET['post_id']);
+$news = new TK_GNews($_POST['post_id']);
 file_put_contents(__FILE__.".log", "1\r\n",FILE_APPEND);
 if($news->isValid()) {
 	$news->createPage();
