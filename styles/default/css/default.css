@@ -152,16 +152,16 @@
 
 /*------------------------*/
 
-.tk-target, .tk-subprojects, .tk-hint {
+.tk-target, .tk-subprojects, .tk-parent-project, .tk-hint {
 	margin-top: 15px;
 	font-size: 14px;
 }
 
-.tk-target h2, .tk-subprojects h2, .tk-hint h2 {
+.tk-target h2, .tk-subprojects h2, .tk-parent-project h2, .tk-hint h2 {
 	font-size: 17px;
 }
 
-.tk-subprojects ul {
+.tk-subprojects ul, .tk-parent-project ul {
 	margin-left: 15px;
 	list-style:square;
 }

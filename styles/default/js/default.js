@@ -41,7 +41,9 @@ function tk_vote_update(event, res) {
 	var percent = 100.0 * res.approval_votes / res.target_votes;
 	var new_content = res.new_content.length != 0 ? res.new_content : '<div class="tkgp_button tk-supported"><a>' + tkl10n.you_supported + '</a></div>' ;
 	
-	if(percent > 100) {
+	if(percent < 0.75) {
+		percent = 0.75;
+	} else if(percent > 100) {
 		percent = 100;
 	}
 		

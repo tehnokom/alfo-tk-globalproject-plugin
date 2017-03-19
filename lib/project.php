@@ -794,6 +794,11 @@ class TK_GProject
 				$out = _x('No data','Project l10n', 'tkgp');
 				break;
 			
+			case 'parent_project':
+				$out = _x('Parent project','Project l10n', 'tkgp');
+				break;
+			
+			
 			default:
 				$out = $default_phrase;
 				break;

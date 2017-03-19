@@ -24,6 +24,8 @@ if(!$project->userCanRead(get_current_user_id())) { //Check access for this Proj
 
 $vote = $project->getVote();
 $approval_percent = 100.0 * floatval($vote->approval_votes) / floatval($vote->target_votes);
+$approval_percent = $approval_percent < 0.75 ? 0.75 : $approval_percent;
+
 $upload_dir = wp_upload_dir();
 $logo_file = $upload_dir['basedir'] . "/projektoj/logo-{$project->internal_id}.jpg";
 $logo_file = is_file($logo_file) ? $logo_file : TKGP_STYLE_DIR . 'images/default-logo.jpg';
@@ -96,29 +98,42 @@ if($project->userCanVote(get_current_user_id())) {
 		<?php echo apply_filters("the_content", $project->target); ?>
 	</div>
 <!--End Target-->
+<!--Start Parent Project-->
+<?php
+$parent_project = $project->getParentProject();
+
+if(!empty($parent_project)) {
+?>
+	<div class="tk-parent-project">
+		<h2><?php echo TK_GProject::l10n('parent_project'); ?></h2>
+		<ul>
+			<li><a href="<?php echo $parent_project->permalink; ?>"><?php echo $parent_project->title; ?></a></li>
+		</ul>
+	</div>
+<?php
+}
+?>
+<!--End Parent Project-->
 <!--Start Subprojects-->
-	<div class="tk-subprojects">
-		<h2><?php echo TK_GProject::l10n('subprojects'); ?></h2>
 <?php
 $subprojects = $project->getChildProjects();
 
-if(!empty($subprojects))
-{
+if(!empty($subprojects)) {
 ?>
-	<ul>
+	<div class="tk-subprojects">
+		<h2><?php echo TK_GProject::l10n('subprojects'); ?></h2>
+		<ul>
 <?php
 	foreach ($subprojects as $cur) {
 		$li = "<li><a href=\"{$cur->permalink}\">{$cur->title}</a></li>";
 		echo $li;
 	}
 ?>
-	</ul>
+		</ul>
+	</div>
 <?php
-} else {
-	echo wpautop(TK_GProject::l10n('subprojects_not_exists'));
 }
 ?>
-	</div>
 <!--End Subprojects-->
 <!--Start Tabs-->
 	<div class="tk-tabs">
