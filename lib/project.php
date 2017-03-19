@@ -58,6 +58,12 @@ class TK_GProject
 					$this->project_type = intval(get_post_meta($this->project_id, 'ptype', true));
 					$this->project_visibility = intval(get_post_meta($this->project_id, 'visiblity', true));
     				
+					if(!self::postToId($res->ID)) {
+						$this->wpdb->insert("{$this->wpdb->prefix}tkgp_projects",
+											array('post_id' => $res->ID),
+											array('%d'));
+					}
+					
 					if($this->userCanRead(get_current_user_id())) { //Check access current user for this Project
 						$this->opts['target'] = get_post_meta($this->project_id, 'ptarget', true);
 						$this->opts['guid'] = $res->guid;
