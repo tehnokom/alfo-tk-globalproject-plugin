@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TehnoKom Global Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-13 10:35+0000\n"
-"PO-Revision-Date: 2017-03-13 10:35+0000\n"
+"POT-Creation-Date: 2017-03-19 10:11+0000\n"
+"PO-Revision-Date: 2017-03-19 10:12+0000\n"
 "Last-Translator: Сарваритдинов Равиль <ra9oaj@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
@@ -14,36 +14,136 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: lib/project.php:658
-msgctxt "Project l10n"
-msgid "Hint"
-msgstr "Подсказка"
+#: lib/project.php:626
+msgctxt "Project Settings"
+msgid "Parent ID"
+msgstr "ID родителя"
 
-#: lib/project.php:662
-msgctxt "Project l10n"
-msgid ""
-"Click \"Support\" to support this public project. Offer your tasks and / or "
-"follow up on them to help implement the project. Join the project team."
-msgstr ""
-"Нажмите \"Поддерживаю\" для поддержки этого общественного проекта. "
-"Предложите свои задачи и / или выполните действия по ним, для того чтобы "
-"помочь в реализации проекта. Вступайте в команду проекта."
+#: lib/project.php:627
+msgctxt "Project Settings"
+msgid "Parent Project ID"
+msgstr "ID родительского проекта"
 
-#: tk_globalproject.php:55
+#: lib/project.php:794
+msgctxt "Project l10n"
+msgid "No data"
+msgstr "Данные отсутствуют"
+
+#: tk_globalproject.php:58
 msgid "Loading..."
 msgstr "Загрузка..."
 
-#: tk_globalproject.php:71
+#: tk_globalproject.php:74
 msgid "You want to definitely reset the voting results?"
 msgstr "Вы точно желаете сбросить результаты голосования?"
 
-#: tk_globalproject.php:72
+#: tk_globalproject.php:75
 msgid "You want to delete the manager?"
 msgstr "Вы хотите удалить менеджера?"
 
-#: tk_globalproject.php:73
+#: tk_globalproject.php:76
 msgid "You can not drop a single manager."
 msgstr "Вы не можете исключить единственного менеджера."
+
+#: lib/core.php:19
+msgctxt "tk_project"
+msgid "Projects"
+msgstr "Проекты"
+
+#: lib/core.php:20
+msgctxt "tk_project_singular"
+msgid "Projects"
+msgstr "Проекты"
+
+#: lib/core.php:21
+msgctxt "tk_project"
+msgid "Create new"
+msgstr "Создать новый"
+
+#: lib/core.php:22
+msgctxt "tk_project"
+msgid "Create new project"
+msgstr "Создать новый проект"
+
+#: lib/core.php:23
+msgctxt "tk_project"
+msgid "Edit project"
+msgstr "Редактирование проекта"
+
+#: lib/core.php:24
+msgctxt "tk_project"
+msgid "New project"
+msgstr "Новый проект"
+
+#: lib/core.php:25
+msgctxt "tk_project"
+msgid "View project"
+msgstr "Посмотреть проект"
+
+#: lib/core.php:26
+msgctxt "tk_project"
+msgid "Search project"
+msgstr "Найти проект"
+
+#: lib/core.php:27
+msgctxt "tk_project"
+msgid "Project not found"
+msgstr "Проект не найден"
+
+#: lib/core.php:28
+msgctxt "tk_project"
+msgid "Project not found in Trash"
+msgstr "Проект в Корзине не найден"
+
+#: lib/core.php:30
+msgctxt "tk_project"
+msgid "TehnoKom Global Project system type"
+msgstr "системный тип ТехноКом Глобальный Проект"
+
+#: lib/core.php:51
+msgctxt "Taxonomy General Name"
+msgid "Categories of Projects"
+msgstr "Категории Проектов"
+
+#: lib/core.php:52
+msgctxt "Taxonomy Singular Name"
+msgid "Categories of Projects"
+msgstr "Категории Проектов"
+
+#: lib/core.php:86
+msgctxt "tk_meta"
+msgid "Settings of Project"
+msgstr "Настройки Проекта"
+
+#: lib/core.php:93
+msgctxt "tk_meta"
+msgid "Plane of Project"
+msgstr "План Проекта"
+
+#: lib/core.php:100
+msgctxt "tk_meta"
+msgid "Votes"
+msgstr "Голосование"
+
+#: lib/core.php:380
+msgctxt "tk_project"
+msgid "TK Projects"
+msgstr "ТК Проекты"
+
+#: lib/core.php:381
+msgctxt "tk_project"
+msgid "TK Projects Settings"
+msgstr "ТК Проекты Настройки"
+
+#: lib/core.php:474 lib/core.php:494 lib/ajax_functions.php:57
+msgctxt "Project Settings"
+msgid "Add"
+msgstr "Добавить"
+
+#: lib/core.php:481
+msgctxt "Project Settings"
+msgid "Groups are not supported."
+msgstr "Группы не поддерживаются."
 
 #: lib/ajax_functions.php:45
 msgctxt "Project Settings"
@@ -54,11 +154,6 @@ msgstr "Поиск..."
 msgctxt "Project Settings"
 msgid "Users"
 msgstr "Пользователи"
-
-#: lib/ajax_functions.php:57 lib/core.php:438 lib/core.php:458
-msgctxt "Project Settings"
-msgid "Add"
-msgstr "Добавить"
 
 #: lib/ajax_functions.php:112 lib/ajax_functions.php:232
 msgctxt "Project Vote"
@@ -114,6 +209,196 @@ msgstr "У Вас нет доступа к данным голосования"
 msgctxt "Project Edit"
 msgid "You do not have permission to edit project"
 msgstr "У Вас нет прав для изменения проекта"
+
+#: lib/project.php:245
+msgctxt "Project Edit"
+msgid "Edit Project"
+msgstr "Редактировать проект"
+
+#: lib/project.php:635
+msgctxt "Project Settings"
+msgid "Type"
+msgstr "Тип"
+
+#: lib/project.php:636
+msgctxt "Project Settings"
+msgid "Type of this project."
+msgstr "Тип данного проекта."
+
+#: lib/project.php:641 lib/project.php:705
+msgctxt "Project Settings"
+msgid "Private"
+msgstr "Личный"
+
+#: lib/project.php:645
+msgctxt "Project Settings Type"
+msgid "Working"
+msgstr "Рабочий"
+
+#: lib/project.php:649
+msgctxt "Project Settings Type"
+msgid "Members only"
+msgstr "Групповой"
+
+#: lib/project.php:653
+msgctxt "Project Settings Type"
+msgid "Public"
+msgstr "Публичный"
+
+#: lib/project.php:659
+msgctxt "Project Settings Type"
+msgid "Target of the project"
+msgstr "Цель проекта"
+
+#: lib/project.php:660
+msgctxt "Project Settings Type"
+msgid "Text description of the project target."
+msgstr "Текст описания цели проекта"
+
+#: lib/project.php:672
+msgctxt "Project Settings"
+msgid "Project Manager"
+msgstr "Управляющие проектом"
+
+#: lib/project.php:673
+msgctxt "Project Settings"
+msgid "Manager with full access to settings this Project."
+msgstr "Управляющие с полным доступом к настройкам этого проекта."
+
+#: lib/project.php:679
+msgctxt "Project Settings"
+msgid "Working group"
+msgstr "Рабочая группа"
+
+#: lib/project.php:680
+msgctxt "Project Settings"
+msgid "Group to which the project was created."
+msgstr "Группа, для которой был создан данный проект."
+
+#: lib/project.php:686
+msgctxt "Project Settings"
+msgid "Visibility"
+msgstr "Видимость"
+
+#: lib/project.php:687
+msgctxt "Project Settings"
+msgid "Visibility for the categories of users."
+msgstr "Видимость для категорий пользователей."
+
+#: lib/project.php:693
+msgctxt "Project Settings"
+msgid "Public"
+msgstr "Общий"
+
+#: lib/project.php:697
+msgctxt "Project Settings"
+msgid "Registered"
+msgstr "Зарегистрированные"
+
+#: lib/project.php:701
+msgctxt "Project Settings"
+msgid "Members only"
+msgstr "Только для участников"
+
+#: lib/project.php:718
+msgctxt "Project l10n"
+msgid "Target of project"
+msgstr "Цель проекта"
+
+#: lib/project.php:722
+msgctxt "Project l10n"
+msgid "Subprojects"
+msgstr "Подпроекты"
+
+#: lib/project.php:726
+msgctxt "Project l10n"
+msgid "Subprojects not exists"
+msgstr "Субпроектов нет"
+
+#: lib/project.php:730
+msgctxt "Project l10n"
+msgid "News"
+msgstr "Новости"
+
+#: lib/project.php:734
+msgctxt "Project l10n"
+msgid "Tasks"
+msgstr "Задачи"
+
+#: lib/project.php:738
+msgctxt "Project l10n"
+msgid "Description"
+msgstr "Описание"
+
+#: lib/project.php:742
+msgctxt "Project l10n"
+msgid "Answers"
+msgstr "Ответы"
+
+#: lib/project.php:746
+msgctxt "Project l10n"
+msgid "Team"
+msgstr "Команда"
+
+#: lib/project.php:750
+msgctxt "Project l10n"
+msgid "No News"
+msgstr "Нет новостей"
+
+#: lib/project.php:754
+msgctxt "Project l10n"
+msgid "No Tasks"
+msgstr "Нет задач"
+
+#: lib/project.php:758
+msgctxt "Project l10n"
+msgid "No Answers"
+msgstr "Нет ответов"
+
+#: lib/project.php:762
+msgctxt "Project l10n"
+msgid "No Information"
+msgstr "Информация отсутствует"
+
+#: lib/project.php:766
+msgctxt "Project l10n"
+msgid "Needed"
+msgstr "Необходимо"
+
+#: lib/project.php:770
+msgctxt "Project l10n"
+msgid "Supported"
+msgstr "Поддержало"
+
+#: lib/project.php:774
+msgctxt "Project l10n"
+msgid "needed"
+msgstr "необходимо"
+
+#: lib/project.php:778
+msgctxt "Project l10n"
+msgid "supported"
+msgstr "поддержали"
+
+#: lib/project.php:782
+msgctxt "Project l10n"
+msgid "You supported"
+msgstr "Поддержен"
+
+#: lib/project.php:786
+msgctxt "Project l10n"
+msgid "Hint"
+msgstr "Подсказка"
+
+#: lib/project.php:790
+msgctxt "Project l10n"
+msgid ""
+"Click \"Support\" to support this public project. Offer your tasks and / or "
+"follow up on them to help implement the project. Join the project team."
+msgstr ""
+"Нажмите \"Поддерживаю\" для поддержки этого общественного проекта. "
+"Предложите свои задачи и / или выполните действия по ним, для того чтобы "
+"помочь в реализации проекта. Вступайте в команду проекта."
 
 #: lib/vote.php:107
 msgctxt "Project Settings"
@@ -197,325 +482,50 @@ msgctxt "Project Settings"
 msgid "Reset voting results."
 msgstr "Сбросить результаты голосования."
 
-#: lib/vote.php:596
+#: lib/vote.php:600
 msgctxt "Project Vote"
 msgid "Voting status"
 msgstr "Статус голосования"
 
-#: lib/vote.php:648
+#: lib/vote.php:652
 msgctxt "Project Vote"
 msgid "Progress of the approval"
 msgstr "Прогресс одобрения"
 
-#: lib/vote.php:655
+#: lib/vote.php:659
 msgctxt "Project Vote"
 msgid "APPROVED!"
 msgstr "ОДОБРЕНО!"
 
-#: lib/vote.php:659
+#: lib/vote.php:663
 msgctxt "Project Vote"
 msgid "Supported"
 msgstr "Поддержало"
 
-#: lib/vote.php:661
+#: lib/vote.php:665
 msgctxt "Project Vote"
 msgid "Not Supported"
 msgstr "Не поддержало"
 
-#: lib/vote.php:714
+#: lib/vote.php:718
 msgctxt "Project Vote"
 msgid "Vote"
 msgstr "Голосование"
 
-#: lib/vote.php:719
+#: lib/vote.php:723
 msgctxt "Project Vote"
 msgid "Support"
 msgstr "Поддерживаю"
 
-#: lib/vote.php:725
+#: lib/vote.php:729
 msgctxt "Project Vote"
 msgid "Against"
 msgstr "Против"
 
-#: lib/vote.php:750
+#: lib/vote.php:754
 msgctxt "Project Vote"
 msgid "Reset my vote"
 msgstr "Сбросить мой голос"
-
-#: lib/core.php:18
-msgctxt "tk_project"
-msgid "Projects"
-msgstr "Проекты"
-
-#: lib/core.php:19
-msgctxt "tk_project_singular"
-msgid "Projects"
-msgstr "Проекты"
-
-#: lib/core.php:20
-msgctxt "tk_project"
-msgid "Create new"
-msgstr "Создать новый"
-
-#: lib/core.php:21
-msgctxt "tk_project"
-msgid "Create new project"
-msgstr "Создать новый проект"
-
-#: lib/core.php:22
-msgctxt "tk_project"
-msgid "Edit project"
-msgstr "Редактирование проекта"
-
-#: lib/core.php:23
-msgctxt "tk_project"
-msgid "New project"
-msgstr "Новый проект"
-
-#: lib/core.php:24
-msgctxt "tk_project"
-msgid "View project"
-msgstr "Посмотреть проект"
-
-#: lib/core.php:25
-msgctxt "tk_project"
-msgid "Search project"
-msgstr "Найти проект"
-
-#: lib/core.php:26
-msgctxt "tk_project"
-msgid "Project not found"
-msgstr "Проект не найден"
-
-#: lib/core.php:27
-msgctxt "tk_project"
-msgid "Project not found in Trash"
-msgstr "Проект в Корзине не найден"
-
-#: lib/core.php:29
-msgctxt "tk_project"
-msgid "TehnoKom Global Project system type"
-msgstr "системный тип ТехноКом Глобальный Проект"
-
-#: lib/core.php:50
-msgctxt "Taxonomy General Name"
-msgid "Categories of Projects"
-msgstr "Категории Проектов"
-
-#: lib/core.php:51
-msgctxt "Taxonomy Singular Name"
-msgid "Categories of Projects"
-msgstr "Категории Проектов"
-
-#: lib/core.php:85
-msgctxt "tk_meta"
-msgid "Settings of Project"
-msgstr "Настройки Проекта"
-
-#: lib/core.php:92
-msgctxt "tk_meta"
-msgid "Plane of Project"
-msgstr "План Проекта"
-
-#: lib/core.php:99
-msgctxt "tk_meta"
-msgid "Votes"
-msgstr "Голосование"
-
-#: lib/core.php:344
-msgctxt "tk_project"
-msgid "TK Projects"
-msgstr "ТК Проекты"
-
-#: lib/core.php:345
-msgctxt "tk_project"
-msgid "TK Projects Settings"
-msgstr "ТК Проекты Настройки"
-
-#: lib/core.php:445
-msgctxt "Project Settings"
-msgid "Groups are not supported."
-msgstr "Группы не поддерживаются."
-
-#: lib/page.php:117
-msgctxt "Project Page"
-msgid "Traget:"
-msgstr "Цель:"
-
-#: lib/project.php:199
-msgctxt "Project Edit"
-msgid "Edit Project"
-msgstr "Редактировать проект"
-
-#: lib/project.php:507
-msgctxt "Project Settings"
-msgid "Type"
-msgstr "Тип"
-
-#: lib/project.php:508
-msgctxt "Project Settings"
-msgid "Type of this project."
-msgstr "Тип данного проекта."
-
-#: lib/project.php:513 lib/project.php:577
-msgctxt "Project Settings"
-msgid "Private"
-msgstr "Личный"
-
-#: lib/project.php:517
-msgctxt "Project Settings Type"
-msgid "Working"
-msgstr "Рабочий"
-
-#: lib/project.php:521
-msgctxt "Project Settings Type"
-msgid "Members only"
-msgstr "Групповой"
-
-#: lib/project.php:525
-msgctxt "Project Settings Type"
-msgid "Public"
-msgstr "Публичный"
-
-#: lib/project.php:531
-msgctxt "Project Settings Type"
-msgid "Target of the project"
-msgstr "Цель проекта"
-
-#: lib/project.php:532
-msgctxt "Project Settings Type"
-msgid "Text description of the project target."
-msgstr "Текст описания цели проекта"
-
-#: lib/project.php:544
-msgctxt "Project Settings"
-msgid "Project Manager"
-msgstr "Управляющие проектом"
-
-#: lib/project.php:545
-msgctxt "Project Settings"
-msgid "Manager with full access to settings this Project."
-msgstr "Управляющие с полным доступом к настройкам этого проекта."
-
-#: lib/project.php:551
-msgctxt "Project Settings"
-msgid "Working group"
-msgstr "Рабочая группа"
-
-#: lib/project.php:552
-msgctxt "Project Settings"
-msgid "Group to which the project was created."
-msgstr "Группа, для которой был создан данный проект."
-
-#: lib/project.php:558
-msgctxt "Project Settings"
-msgid "Visibility"
-msgstr "Видимость"
-
-#: lib/project.php:559
-msgctxt "Project Settings"
-msgid "Visibility for the categories of users."
-msgstr "Видимость для категорий пользователей."
-
-#: lib/project.php:565
-msgctxt "Project Settings"
-msgid "Public"
-msgstr "Общий"
-
-#: lib/project.php:569
-msgctxt "Project Settings"
-msgid "Registered"
-msgstr "Зарегистрированные"
-
-#: lib/project.php:573
-msgctxt "Project Settings"
-msgid "Members only"
-msgstr "Только для участников"
-
-#: lib/project.php:590
-msgctxt "Project l10n"
-msgid "Target of project"
-msgstr "Цель проекта"
-
-#: lib/project.php:594
-msgctxt "Project l10n"
-msgid "Subprojects"
-msgstr "Подпроекты"
-
-#: lib/project.php:598
-msgctxt "Project l10n"
-msgid "Subprojects not exists"
-msgstr "Субпроектов нет"
-
-#: lib/project.php:602
-msgctxt "Project l10n"
-msgid "News"
-msgstr "Новости"
-
-#: lib/project.php:606
-msgctxt "Project l10n"
-msgid "Tasks"
-msgstr "Задачи"
-
-#: lib/project.php:610
-msgctxt "Project l10n"
-msgid "Description"
-msgstr "Описание"
-
-#: lib/project.php:614
-msgctxt "Project l10n"
-msgid "Answers"
-msgstr "Ответы"
-
-#: lib/project.php:618
-msgctxt "Project l10n"
-msgid "Team"
-msgstr "Команда"
-
-#: lib/project.php:622
-msgctxt "Project l10n"
-msgid "No News"
-msgstr "Нет новостей"
-
-#: lib/project.php:626
-msgctxt "Project l10n"
-msgid "No Tasks"
-msgstr "Нет задач"
-
-#: lib/project.php:630
-msgctxt "Project l10n"
-msgid "No Answers"
-msgstr "Нет ответов"
-
-#: lib/project.php:634
-msgctxt "Project l10n"
-msgid "No Information"
-msgstr "Информация отсутствует"
-
-#: lib/project.php:638
-msgctxt "Project l10n"
-msgid "Needed"
-msgstr "Необходимо"
-
-#: lib/project.php:642
-msgctxt "Project l10n"
-msgid "Supported"
-msgstr "Поддержало"
-
-#: lib/project.php:646
-msgctxt "Project l10n"
-msgid "needed"
-msgstr "необходимо"
-
-#: lib/project.php:650
-msgctxt "Project l10n"
-msgid "supported"
-msgstr "поддержали"
-
-#: lib/project.php:654
-msgctxt "Project l10n"
-msgid "You supported"
-msgstr "Поддержен"
 
 #. Name of the plugin
 msgid "TehnoKom Global Project"
