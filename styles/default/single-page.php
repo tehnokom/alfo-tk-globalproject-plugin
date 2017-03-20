@@ -24,7 +24,7 @@ if(!$project->userCanRead(get_current_user_id())) { //Check access for this Proj
 
 $vote = $project->getVote();
 $approval_percent = 100.0 * floatval($vote->approval_votes) / floatval($vote->target_votes);
-$approval_percent = $approval_percent < 0.75 ? 0.75 : $approval_percent;
+$approval_percent = $approval_percent && $approval_percent < 0.75 ? '2px' : $approval_percent . '%';
 
 $upload_dir = wp_upload_dir();
 $logo_file = $upload_dir['basedir'] . "/projektoj/logo-{$project->internal_id}.jpg";
@@ -74,7 +74,7 @@ if($project->userCanVote(get_current_user_id())) {
 				<div  class="tk-progress">
 					<div>
 						<div class="tk-progress-bar">
-							<div class="tk-pb-approved" style="width:<?php echo $approval_percent ?>%;"></div>
+							<div class="tk-pb-approved" style="width:<?php echo $approval_percent ?>;"></div>
 						</div>
 					</div>
 				</div>

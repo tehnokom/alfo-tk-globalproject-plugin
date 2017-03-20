@@ -5,7 +5,7 @@
 var $j = jQuery.noConflict();
 
 $j(document).ready(function ($j) {
-	$j('.tkgp_vote_block').on('tkgp_vote_updated',tk_vote_update);
+	$j('.tkgp_vote_block').on('tkgp_vote_updated', tk_vote_update);
 	$j('.tk-tabs > a[href^=#tk-tab]').on('click', tk_tab_handler);
 	
 	if(location.hash !== '') {
@@ -21,7 +21,9 @@ $j(document).ready(function ($j) {
 });
 
 function tk_tab_handler(tab_number) {
-	var tab_num = typeof tab_number !== 'object' ? tab_number : $j(this).attr('href').replace(/[^\d]+/,'');
+	var tab_num = typeof tab_number !== 'object' ? 
+					tab_number : 
+					$j(this).attr('href').replace(/[^\d]+/,'');
 
 	switch(tab_num) {
 		case '1':
@@ -41,18 +43,26 @@ function tk_vote_update(event, res) {
 	var percent = 100.0 * res.approval_votes / res.target_votes;
 	var new_content = res.new_content.length != 0 ? res.new_content : '<div class="tkgp_button tk-supported"><a>' + tkl10n.you_supported + '</a></div>' ;
 	
-	if(percent < 0.75) {
-		percent = 0.75;
+	if(percent && percent < 0.75) {
+		percent = '2px';
 	} else if(percent > 100) {
-		percent = 100;
+		percent = 100 + '%';
+	} else {
+		percent += '%';
 	}
 		
 	$j(this).find('.tkgp_vote_buttons').replaceWith(new_content);
 	$j(this).find('.tk-approval-votes').text(res.approval_votes);
 	$j(this).find('.tk-target-votes').text(res.target_votes);
-	$j(this).find('.tk-pb-approved').css('width',percent + '%');
+	$j(this).find('.tk-pb-approved').css('width',percent);
 }
 
 function tk_update_tab(html, args) {
-	$j('.tk-tabs > div:nth-of-type(' + args.tab_num + ')').empty().append(html);
+	var a_selector = 'a[href*="' + location.pathname + '#tk-tab"]' + 
+					', a[href*=' + location.hostname + '][href*=#tk-tab], a[href^=#tk-tab]';
+	
+	$j('.tk-tabs > div:nth-of-type(' + args.tab_num + ')')
+		.empty()
+		.append(html)
+		.find(a_selector).on('click', tk_tab_handler);
 }
