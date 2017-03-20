@@ -59,7 +59,7 @@ function tk_vote_update(event, res) {
 
 function tk_update_tab(html, args) {
 	var a_selector = 'a[href*="' + location.pathname + '#tk-tab"]' + 
-					', a[href*=' + location.hostname + '][href*=#tk-tab], a[href^=#tk-tab]';
+					', a[href*="' + location.hostname + '"][href*=#tk-tab], a[href^=#tk-tab]';
 	
 	$j('.tk-tabs > div:nth-of-type(' + args.tab_num + ')')
 		.empty()
