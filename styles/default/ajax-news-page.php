@@ -24,7 +24,12 @@ if($news->isValid()) {
 		</div>
 		<div class="tk-news-footer">
 			<div>
-				<?php echo __('Author').': '; the_author(); ?>
+				<?php echo __('Author').': '; ?>
+				<?php if(!defined('BP_PLUGIN_DIR')) {
+					 the_author() ;
+				} else {
+					 echo bp_core_get_userlink( get_the_author_id() );
+				} ?>
 			</div>
 		</div>
 	</div>
