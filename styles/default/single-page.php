@@ -31,6 +31,12 @@ $logo_file = $upload_dir['basedir'] . "/projektoj/logo-{$project->internal_id}.j
 $logo_file = is_file($logo_file) ? $logo_file : TKGP_STYLE_DIR . 'images/default-logo.jpg';
 $logo_url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $logo_file);
 
+$button_captions = array(
+						'approval_title' => TK_GProject::l10n('support_title'),
+						'reset_text' => TK_GProject::l10n('you_supported'),
+						'reset_title' => TK_GProject::l10n('supported_title') . ".\r\n"  . TK_GProject::l10n('cancel_support_title')
+						); 
+
 get_header();
 ?>
 <!--Start Logo-->
@@ -49,18 +55,26 @@ get_header();
 			<div>
 				<div class="tk-buttons">
 					<div>
-<?php 
-$button = $vote->getVoteButtonHtml();
+						<input type="hidden" class="tkgp_language_data" data-vbtn-reset-text="<?php TK_GProject::the_l10n('you_supported'); ?>" 
+							data-vbtn-reset-title="<?php echo $button_captions['reset_title']; ?>"
+							data-vbtn-approval-title="<?php TK_GProject::the_l10n('support_title'); ?>" />
+<?php
+$button = $vote->getVoteButtonHtml(false, $button_captions);
 
 if($project->userCanVote(get_current_user_id())) {
 	if(!empty($button)) {
 		echo $button;
 	} else {
+		$button_title = TK_GProject::l10n('supported_title') . ".\r\n" . TK_GProject::l10n('cant_cancel_support_title');
 ?>
-						<div class="tkgp_button tk-supported"><a><?php echo TK_GProject::l10n('you_supported'); ?></a></div>
+						<div class="tkgp_button tk-supported" title="<?php echo $button_title; ?>."><a><?php TK_GProject::the_l10n('you_supported'); ?></a></div>
 <?php 
 	}
-} 
+} else {
+?>
+						<div class="tkgp_button tk-supported" title="<?php TK_GProject::the_l10n('login_support_title'); ?>"><a href="<?php echo wp_login_url( get_permalink() ); ?>"><?php TK_GProject::the_l10n('support'); ?></a></div>
+<?php
+}
 ?>
 					</div>
 				</div>
@@ -94,7 +108,7 @@ if($project->userCanVote(get_current_user_id())) {
 <!--End Hint-->
 <!--Start Target-->
 	<div class="tk-target">
-		<h2><?php echo TK_GProject::l10n('target'); ?></h2>
+		<h2><?php TK_GProject::the_l10n('target'); ?></h2>
 		<?php echo apply_filters("the_content", $project->target); ?>
 	</div>
 <!--End Target-->
@@ -105,7 +119,7 @@ $parent_project = $project->getParentProject();
 if(!empty($parent_project)) {
 ?>
 	<div class="tk-parent-project">
-		<h2><?php echo TK_GProject::l10n('parent_project'); ?></h2>
+		<h2><?php TK_GProject::the_l10n('parent_project'); ?></h2>
 		<ul>
 			<li><a href="<?php echo $parent_project->permalink; ?>"><?php echo $parent_project->title; ?></a></li>
 		</ul>
@@ -121,7 +135,7 @@ $subprojects = $project->getChildProjects();
 if(!empty($subprojects)) {
 ?>
 	<div class="tk-subprojects">
-		<h2><?php echo TK_GProject::l10n('subprojects'); ?></h2>
+		<h2><?php TK_GProject::the_l10n('subprojects'); ?></h2>
 		<ul>
 <?php
 	foreach ($subprojects as $cur) {
@@ -138,12 +152,12 @@ if(!empty($subprojects)) {
 <!--Start Tabs-->
 	<div class="tk-tabs">
 		<br id="tk-tab2" /><br id="tk-tab3" /><br id="tk-tab4" /><br id="tk-tab5" />
-		<a href="#tk-tab1"><?php echo TK_GProject::l10n('news'); ?></a><a href="#tk-tab2"><?php echo TK_GProject::l10n('description'); ?></a><a href="#tk-tab3"><?php echo TK_GProject::l10n('tasks'); ?></a><a href="#tk-tab4"><?php echo TK_GProject::l10n('answers'); ?></a><a href="#tk-tab5"><?php echo TK_GProject::l10n('team'); ?></a>
+		<a href="#tk-tab1"><?php TK_GProject::the_l10n('news'); ?></a><a href="#tk-tab2"><?php TK_GProject::the_l10n('description'); ?></a><a href="#tk-tab3"><?php TK_GProject::the_l10n('tasks'); ?></a><a href="#tk-tab4"><?php TK_GProject::the_l10n('answers'); ?></a><a href="#tk-tab5"><?php TK_GProject::the_l10n('team'); ?></a>
 		<div></div>
 		<div></div>
-		<div><?php echo TK_GProject::l10n('no_tasks'); ?></div>
-		<div><?php echo TK_GProject::l10n('no_answers'); ?></div>
-		<div><?php echo TK_GProject::l10n('no_information'); ?></div>
+		<div><?php TK_GProject::the_l10n('no_tasks'); ?></div>
+		<div><?php TK_GProject::the_l10n('no_answers'); ?></div>
+		<div><?php TK_GProject::the_l10n('no_information'); ?></div>
 	</div>
 <!--End Tabs-->
 <?php

@@ -208,7 +208,15 @@ function tkgp_ajax_get_vote_status()
             $html = _x('You do not have access to the data of voting', 'Project Vote', 'tkgp');
         } else {
             $res = true;
-            $html = $vote->getVoteButtonHtml();
+			
+			$btn_titles = array();
+			foreach ($_POST as $key => $value) {
+				if(preg_match('/^(\w)+_(title|text)$/', $key)) {
+					$btn_titles[$key] = $value;
+				}
+			}
+			
+            $html = $vote->getVoteButtonHtml(false, $btn_titles);
         }
 
     }

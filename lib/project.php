@@ -795,7 +795,35 @@ class TK_GProject
 			case 'hint_text':
 				$out = _x('Click "Support" to support this public project. Offer your tasks and / or follow up on them to help implement the project. Join the project team.','Project l10n', 'tkgp');
 				break;
-				
+			
+			case 'authorize':
+				$out = _x('Authorize','Project l10n', 'tkgp');
+				break;
+			
+			case 'support':
+				$out = _x('Support', 'Project l10n', 'tkgp');
+				break;
+			
+			case 'support_title':
+				$out = _x('Click to support the project','Project l10n', 'tkgp');
+				break;
+			
+			case 'supported_title':
+				$out = _x('You have already supported this project','Project l10n', 'tkgp');
+				break;	
+			
+			case 'cancel_support_title':
+				$out = _x('Click to cancel your project support','Project l10n', 'tkgp');
+				break;
+			
+			case 'cant_cancel_support_title':
+				$out = _x('Can not cancel support','Project l10n', 'tkgp');
+				break;
+			
+			case 'login_support_title':
+				$out = _x('Log in to support the project','Project l10n', 'tkgp');
+				break;
+			
 			case 'no_data':
 				$out = _x('No data','Project l10n', 'tkgp');
 				break;
@@ -811,6 +839,10 @@ class TK_GProject
 		}
 		
 		return $out;
+	}
+
+	static public function the_l10n($phrase_key, $default_phrase = '') {
+		echo self::l10n($phrase_key, $default_phrase);
 	}
 };
 

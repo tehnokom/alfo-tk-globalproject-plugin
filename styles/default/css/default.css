@@ -1,5 +1,6 @@
 img {
 	max-width: 100%;
+	height: initial;
 }
 
 .tk-logo {
@@ -7,7 +8,6 @@ img {
 	border: 1px solid #AAA;
 	width: 99%;
 	height: 200px;
-	/*background: url(../images/default-logo.jpg) no-repeat;*/
 	color: #fff;
 }
 
@@ -55,7 +55,7 @@ img {
 .tkgp_button a, .tkgp_button_reset a, .tkgp_edit_button a,
 .tkgp_button a:hover, .tkgp_button_reset a:hover, .tkgp_edit_button a:hover {
 	color: white;
-	font-size: 17px;
+	font-size: 16px;
 	font-weight: normal;
 }
 }
@@ -162,7 +162,7 @@ img {
 }
 
 .tk-target h2, .tk-subprojects h2, .tk-parent-project h2, .tk-hint h2 {
-	font-size: 17px;
+	font-size: 16px;
 }
 
 .tk-subprojects ul, .tk-parent-project ul {
@@ -243,11 +243,12 @@ img {
 	color: white;
 }
 
-.tkgp_button_reset {
-	background:#d59e00 !important;
+.tkgp_button a {
+	display: block;
+	width: 100%;
 }
 
-.tkgp_button:active, .tkgp_button_reset:active, .tkgp_edit_button:active {
+.tkgp_button:active, .tkgp_edit_button:active {
 	background:#00A000;
 }
 
@@ -255,10 +256,16 @@ img {
 	position:relative;
 }
 
-.tk-supported, .tk-supported a, .tk-supported:active {
+.tkgp_button_reset, .tk-supported, .tk-supported a {
 	background: #008dd0;
+}
+
+.tkgp_button_reset:active, .tk-supported:active, .tk-supported:active a {
+	background: #33a7de;
+}
+
+.tk-supported, .tk-supported a, .tk-supported:active {
 	box-shadow: none;
-	cursor: default !important;
 }
 
 /*----------------------------------*/

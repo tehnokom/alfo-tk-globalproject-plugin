@@ -617,70 +617,6 @@ class TK_GVote
      * @param bool $user_can_vote
      * @return string
      */
-    protected function getStandartVoteHtml($settings, $show_vote_button, $short, $user_can_vote)
-    {
-        $target_votes = floatval($settings['target_votes']);
-        $allow_revote = (bool)$settings['allow_revote'];
-		$allow_against = (bool)$settings['allow_against'];
-        $votes = $this->getVoteState();
-        $approval_votes = 0;
-        $reproval_votes = 0;
-
-        if (isset($votes[0]) && intval($votes[0]['id']) === -1) {
-            $approval_votes = intval($votes[0]['cnt']);
-            $reproval_votes = empty($votes[1]['cnt']) ? 0 : intval($votes[1]['cnt']);
-        } else {
-            $reproval_votes = intval($votes[0]['cnt']);
-            $approval_votes = empty($votes[1]['cnt']) ? 0 : intval($votes[1]['cnt']);
-        }
-
-        $approval_color = $approval_votes < $target_votes ? '#FF0000' : '#00FF00';
-
-        $total_factor = $approval_votes > $target_votes ? intval($approval_votes / $target_votes) + 1 : 1; //Если голосов одобрения больше или равно требуемому количеству
-        $total_votes = $approval_votes + $reproval_votes; //Всего проголосовало человек
-        $approval = 100.0 * floatval($approval_votes) / ($target_votes * $total_factor); //Процент одобрения от требуемых голосов для одобрения
-        $reproval = 100.0 * floatval($reproval_votes) / ($target_votes * $total_factor); //Процент не одобрения от требуемых голосов для одобрения
-
-        $total_approval = $total_votes ? 100.0 * floatval($approval_votes) / $total_votes : 0; //Процент одобривших от общего количества проголосовавших
-        $total_reproval = $total_votes ? 100.0 * floatval($reproval_votes) / $total_votes : 0; //Процент не одобривших от общего количества проголосовавших
-        $approval_percent = str_replace(',0', '',
-            number_format($total_approval, 1, ',', '')); //Процент одобривших от общего количества проголосовавших
-        $reproval_percent = str_replace(',0', '',
-            number_format($total_reproval, 1, ',', '')); //Процент не одобривших от общего количества проголосовавших
-
-        $form .= '<table>
-        	<tr><th>' . _x('Progress of the approval', 'Project Vote', 'tkgp') . '</th>
-               		<td>
-                		<div id="tkgp_approval_status">';
-        $form .= '<div id="tkgp_approval" style="float: left; width: ' . $approval . '%; height: 100%; background: ' . $approval_color . ';"></div>';
-        /*Код на будущее, когда будет реализация голосов против Проекта*/
-        /*<div id="tkgp_reproval" style="float: left; width: ' . $reproval . '%; height: 100%; background: #EEE;"></div>';*/
-        $form .= '</div><div id="tkgp_approval_desc">' . ($approval_votes < $target_votes ? $approval_votes . ' <b>/</b> ' . $target_votes
-                : _x('APPROVED!', 'Project Vote', 'tkgp'));
-        $form .= '</div></td>
-        </tr>';
-        if (!$short) {
-            $form .= '<tr><th>' . _x('Supported', 'Project Vote',
-                    'tkgp') . '</th><td>' . intval($approval_votes) . ($allow_against ? ' (' . $approval_percent . '%)' : '') . '</td></tr>';
-            $form .= $allow_against ? '<tr><th>' . _x('Not Supported', 'Project Vote',
-                    'tkgp') . '</th><td>' . intval($reproval_votes) . ' (' . $reproval_percent . '%)</td></tr>' : '';
-
-            if ($show_vote_button && ($user_can_vote || $allow_revote)) {
-                $form .= '<tr><td colspan="2">' . ($user_can_vote ? $this->getVoteButtonHtml($allow_against) : ($allow_revote ? $this->getVoteResetButtonHtml() : '')) . '</td></tr>';
-            }
-        }
-        $form .= '</table>';
-
-        return $form;
-    }
-
-    /**
-     * @param array $settings
-     * @param bool $show_vote_button
-     * @param bool $short
-     * @param bool $user_can_vote
-     * @return string
-     */
     protected function getVariantVoteHtml($settings, $show_vote_button, $short, $user_can_vote)
     {
         $form .= '';
@@ -696,7 +632,7 @@ class TK_GVote
      * @param bool $variant_exists [optional]
      * @return string
      */
-    public function getVoteButtonHtml(/*$allow_against = false,*/$variant_exists = false)
+    public function getVoteButtonHtml($variant_exists = false, $button_titles = array())
     {
     	$html_code = '';
 		
@@ -719,14 +655,14 @@ class TK_GVote
 	
 	        } else {
 	            $html_code .= '<div>
-								<div class="tkgp_button tkgp_button_vote">
-								<a>' . _x('Support', 'Project Vote', 'tkgp') . '</a>
+								<div class="tkgp_button tkgp_button_vote" ' . (!empty($button_titles['approval_title']) ? 'title="' . $button_titles['approval_title'] . '"' : '' ) . '>
+								<a>' . (empty($button_titles['approval_text']) ? _x('Support', 'Project Vote', 'tkgp') : $button_titles['approval_text']) . '</a>
 								<input type="hidden" name="user_vote" value="-1"/>
 							  	</div>
 							  </div>';
 				$html_code .= $this->allow_against ? '<div>
-							  	<div class="tkgp_button tkgp_button_vote">
-							  		<a>' . _x('Against', 'Project Vote', 'tkgp') . '</a>
+							  	<div class="tkgp_button tkgp_button_vote" ' . (!empty($button_titles['reproval_title']) ? 'title="' . $button_titles['reproval_title'] . '"' : '' ) . '>
+							  		<a>' . (empty($button_titles['reproval_text']) ? _x('Against', 'Project Vote', 'tkgp') : $button_titles['reproval_text']) . '</a>
 							  		<input type="hidden" name="user_vote" value="-2"/>
 							  	</div>
 							  </div>' : '';
@@ -734,7 +670,7 @@ class TK_GVote
 	
 	        $html_code .= '</div>';
 		} else if($this->allow_revote) {
-			$html_code = $this->getVoteResetButtonHtml();
+			$html_code = $this->getVoteResetButtonHtml($button_titles);
 		}
 
         return $html_code;
@@ -743,15 +679,15 @@ class TK_GVote
     /**
      * @return string
      */
-    protected function getVoteResetButtonHtml()
+    protected function getVoteResetButtonHtml($button_titles = array())
     {
         $html_code = '<div class="tkgp_vote_buttons">
 							<input type="hidden" name="tkgp_vote_nonce" value="' . wp_create_nonce('tkgp_reset_user_vote') . '" />
 							<input type="hidden" name="tkgp_vote_id" value="' . $this->vote_id . '">
 							<input type="hidden" name="tkgp_post_id" value="' . $this->project_id . '">
 							<div>
-								<div class="tkgp_button_reset">
-								<a>' . _x('Reset my vote', 'Project Vote', 'tkgp') . '</a>
+								<div class="tkgp_button_reset" ' . (!empty($button_titles['reset_title']) ? 'title="' . $button_titles['reset_title'] . '"' : '' ) . '>
+								<a>' . (empty($button_titles['reset_text']) ? _x('Reset my vote', 'Project Vote', 'tkgp') : $button_titles['reset_text']) . '</a>
 						  		</div>
 						  </div>
 					  </div>';

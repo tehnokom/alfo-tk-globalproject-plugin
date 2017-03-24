@@ -86,7 +86,13 @@ function tkgp_handler_vote_result(result, args) {
             action: 'tkgp_get_vote_status',
             post_id: args.post_id,
             vote_id: args.vote_id,
-            vote_nonce: args.vote_nonce
+            vote_nonce: args.vote_nonce,
+            approval_text: $j('.tkgp_language_data[data-vbtn-approval-text]').attr('data-vbtn-approval-text'),
+            approval_title: $j('.tkgp_language_data[data-vbtn-approval-title]').attr('data-vbtn-approval-title'),
+			reproval_text: $j('.tkgp_language_data[data-vbtn-reproval-text]').attr('data-vbtn-reproval-text'),
+			reproval_title: $j('.tkgp_language_data[data-vbtn-reproval-title]').attr('data-vbtn-reproval-title'),
+			reset_text: $j('.tkgp_language_data[data-vbtn-reset-text]').attr('data-vbtn-reset-text'),
+			reset_title: $j('.tkgp_language_data[data-vbtn-reset-title]').attr('data-vbtn-reset-title')
         }
     })
         .done(function (new_html) {
