@@ -88,7 +88,7 @@ function tkgp_create_meta_box()
         null,
         'normal',
         'high');
-		
+
     add_meta_box('tk_project_meta_steps',
         _x('Plane of Project', 'tk_meta', 'tkgp'),
         'tkgp_show_metabox_steps',
@@ -116,8 +116,9 @@ function tkgp_show_metabox_settings()
 <table class="form-table">';
 
     foreach (TK_GProject::getProjectFields() as $field) {
-    	$current_val = '';
-		
+        $current_val = '';
+        $project = new TK_GProject($post->ID);
+
         echo '<tr>
 	<th><label for="' . $field['id'] . '">' . $field['label'] . '</label></th>
 	<td>';
@@ -133,26 +134,26 @@ function tkgp_show_metabox_settings()
                 break;
 
             case 'select_user':
-                $current_val = get_post_meta($post->ID, $field['id'], true);
-                $current_val = $current_val == '' ? wp_get_current_user()->ID : $current_val;
-                break;
-			
-			case 'text':
-				$project = new TK_GProject($post->ID);
-				if($project->isValid()) {
-					$current_val = $project->getParentProject();
-					$current_val = is_object($current_val) ? $current_val->internal_id : '';
-				}
-				break;
-			
-            default:
-				$current_val = get_post_meta($post->ID, $field['id'], true);
+                if ($project->isValid()) {
+                    $current_val = $project->getManagers();
+                }
                 break;
 
-                
+            case 'text':
+                if ($project->isValid()) {
+                    $current_val = $project->getParentProject();
+                    $current_val = is_object($current_val) ? $current_val->internal_id : '';
+                }
+                break;
+
+            default:
+                $current_val = get_post_meta($post->ID, $field['id'], true);
+                break;
+
+
         }
-		tkgp_display_options_field($field, $current_val);
-		echo '</td>';
+        tkgp_display_options_field($field, $current_val);
+        echo '</td>';
         echo '</tr>';
     }
 
@@ -227,7 +228,7 @@ function tkgp_save_post_meta($post_id)
     ) {
         return $post_id;
     }
-	
+
     $vote_updates = array();
     $fields = array_merge(TK_GProject::getProjectFields(), TK_GVote::getVotesFields());
 
@@ -252,13 +253,13 @@ function tkgp_save_post_meta($post_id)
 
                         if ($field['id'] == 'manager') {
                             //тут же добавляем текущий проект к выбранному пользователю
-                            update_user_meta($_POST[$idx], 'tkgp_projects', $post_id);
+                            update_user_meta($_POST[$key], 'tkgp_projects', $post_id);
                         }
                     }
                 }
 
                 if ($old != $new) {
-                    update_post_meta($post_id, $field['id'], $new);
+                    update_post_meta($post_id, 'tkgp_' . $field['id'], $new);
                 }
 
                 break;
@@ -284,11 +285,11 @@ function tkgp_save_post_meta($post_id)
                         $_POST[$field['id']] . ' 00:00:00')->format('YmdHis');
                 }
                 break;
-			
-			case 'tkgp_vote_allow_against':
+
+            case 'tkgp_vote_allow_against':
                 $vote_updates['allow_against'] = (empty($_POST[$field['id']]) ? 0 : 1);
                 break;
-			
+
             case 'tkgp_vote_allow_revote':
                 $vote_updates['allow_revote'] = (empty($_POST[$field['id']]) ? 0 : 1);
                 break;
@@ -298,36 +299,36 @@ function tkgp_save_post_meta($post_id)
                     $vote_updates['reset'] = true;
                 }
                 break;
-			
-			case 'tkgp_parent_id':
-				$project = new TK_GProject($post_id);
-				$old = $project->getParentProject();
-				
-				if(!empty($_POST[$field['id']])) {
-					$prnt = preg_replace('/[^\d]+/', '', $_POST[$field['id']]);
-					$prnt = TK_GProject::idToPost($prnt);
-					$prnt = new TK_GProject($prnt);
-					$new = $prnt->isValid() ? $prnt : null;
-					
-					if(is_object($new)) {
-						if(is_object($old)) {
-							if($new->project_id != $old->project_id) {
-								$old->deleteChildLink($project->project_id);
-								$new->createChildLink($project->project_id);
-							}
-						} else {
-							$new->createChildLink($project->project_id);
-						}
-					}
-				} else if(is_object($old)) {
-					$old->deleteChildLink($project->project_id);
-				}
-							
-				break;
-			
+
+            case 'tkgp_parent_id':
+                $project = new TK_GProject($post_id);
+                $old = $project->getParentProject();
+
+                if (!empty($_POST[$field['id']])) {
+                    $prnt = preg_replace('/[^\d]+/', '', $_POST[$field['id']]);
+                    $prnt = TK_GProject::idToPost($prnt);
+                    $prnt = new TK_GProject($prnt);
+                    $new = $prnt->isValid() ? $prnt : null;
+
+                    if (is_object($new)) {
+                        if (is_object($old)) {
+                            if ($new->project_id != $old->project_id) {
+                                $old->deleteChildLink($project->project_id);
+                                $new->createChildLink($project->project_id);
+                            }
+                        } else {
+                            $new->createChildLink($project->project_id);
+                        }
+                    }
+                } else if (is_object($old)) {
+                    $old->deleteChildLink($project->project_id);
+                }
+
+                break;
+
             default:
                 $new = $_POST[$field['id']];
-				
+
                 if ($old != $new) {
                     update_post_meta($post_id, $field['id'], $new);
                 }
@@ -399,14 +400,14 @@ function tkgp_option_page()
  */
 function tkgp_display_options_field($args, $default_val = '')
 {
-	if($args['type'] == 'editor') {
-		$settings = $args['properties'];
-		$value = empty($default_val) ? $args['value'] : $default_val;
-		
-		wp_editor($value, $args['id'], $settings);
-	} else {
-    	echo tkgp_field_html($args, $default_val);
-	}
+    if ($args['type'] == 'editor') {
+        $settings = $args['properties'];
+        $value = empty($default_val) ? $args['value'] : $default_val;
+
+        wp_editor($value, $args['id'], $settings);
+    } else {
+        echo tkgp_field_html($args, $default_val);
+    }
 }
 
 /**
@@ -420,7 +421,7 @@ function tkgp_field_html($args, $default_val = '')
     $html = '';
 
     $properties = '';
-	
+
     if (!empty($args['properties'])) {
         foreach ($args['properties'] as $prop => $val) {
             $properties .= ' ' . $prop . (isset($val) ? ('="' . $val . '"') : '');
@@ -438,7 +439,7 @@ function tkgp_field_html($args, $default_val = '')
 
             $html .= '</ul>';
             break;
-					
+
         case 'number':
             $html .= '<input type="number" name="' . $args['id'] . '" value="' . (empty($default_val) ? $args['value'] : $default_val) . '"' . $properties . '/>';
             break;
@@ -504,10 +505,10 @@ function tkgp_field_html($args, $default_val = '')
             $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '" value="' . $args['value'] . '" ' . $properties . ' />';
             break;
 
-		case 'textarea':
-			$html .= '<textarea name="'. $args['id'] . '" ' . $properties . '>' . $args['value'] . '</textarea>';
-			break;
-		
+        case 'textarea':
+            $html .= '<textarea name="' . $args['id'] . '" ' . $properties . '>' . $args['value'] . '</textarea>';
+            break;
+
         default:
             $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '"' . $properties . ' value="' . $default_val . '" />';
             break;
@@ -520,47 +521,49 @@ function tkgp_field_html($args, $default_val = '')
 function tkgp_content($data)
 {
     global $post;
-			
+
     if ($post->post_type == TK_GProject::slug) {
-    	$project = new TK_GProject($post->ID);
-      
-		  $data = $project->getProjectContent($data);
+        $project = new TK_GProject($post->ID);
+
+        $data = $project->getProjectContent($data);
     }
     return $data;
 }
 
-function tkgp_include_templates($template_path) {
-	$post_type = get_post_type();
-	$news_parent_cat_id = get_option('tkgp_news_cat_id');
-	
-	if($post_type == TK_GProject::slug) {
-		if(!is_single()) {
-			$template_path = TKGP_ROOT . 'styles/default/page.php';
-		} else {
-			$template_path = TKGP_ROOT . 'styles/default/single-page.php';
-		}
-	} /*else if($post_type == 'post' && $news_parent_cat_id) {
+function tkgp_include_templates($template_path)
+{
+    $post_type = get_post_type();
+    $news_parent_cat_id = get_option('tkgp_news_cat_id');
+
+    if ($post_type == TK_GProject::slug) {
+        if (!is_single()) {
+            $template_path = TKGP_ROOT . 'styles/default/page.php';
+        } else {
+            $template_path = TKGP_ROOT . 'styles/default/single-page.php';
+        }
+    } /*else if($post_type == 'post' && $news_parent_cat_id) {
 		if(!is_single()) {
 			
 		} else {
 			
 		}
 	}*/
-	
-	return $template_path;
+
+    return $template_path;
 }
 
-function tkgp_exclude_categories($args, $taxonomies) {
-	$root_cat_id = get_option('tkgp_news_cat_id');
+function tkgp_exclude_categories($args, $taxonomies)
+{
+    $root_cat_id = get_option('tkgp_news_cat_id');
 
-	if(!is_admin() && !empty($root_cat_id)){
-		if(array_search('category', $taxonomies) !== false && !empty($args['child_of'])) {
-			if(array_search($root_cat_id, $args['exclude_tree']) === false) {
-				$args['exclude_tree'][] = $root_cat_id;
-			}
-		}
-	}
-	return $args;
+    if (!is_admin() && !empty($root_cat_id)) {
+        if (array_search('category', $taxonomies) !== false && !empty($args['child_of'])) {
+            if (array_search($root_cat_id, $args['exclude_tree']) === false) {
+                $args['exclude_tree'][] = $root_cat_id;
+            }
+        }
+    }
+    return $args;
 }
 
 add_action('init', 'tkgp_create_type');

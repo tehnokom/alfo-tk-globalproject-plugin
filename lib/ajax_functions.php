@@ -35,15 +35,15 @@ function tkgp_ajax_get_user()
  */
 function tkgp_print_form($type)
 {
-	echo '<div id="tkgp_modal_user">
+    echo '<div id="tkgp_modal_user">
         <div id="tkgp_modal_header">
             <span id="modal_close">x</span>';
-    
-	switch ($type) {
-		case 'users':
-			echo '<input id="tkgp_search" type="text"'
-				. 'placeholder="' . _x('Search...', 'Project Settings', 'tkgp') . '">'
-				. '</div>
+
+    switch ($type) {
+        case 'users':
+            echo '<input id="tkgp_search" type="text"'
+                . 'placeholder="' . _x('Search...', 'Project Settings', 'tkgp') . '">'
+                . '</div>
         		<div class="container">
 					<table>
                 		<tr>
@@ -53,27 +53,27 @@ function tkgp_print_form($type)
             		</table>
         		</div>
         	<div id="tkgp_modal_footer">
-        		<input type="button" id="tkgp_add_selected" class="button" value="' 
-        	. _x('Add', 'Project Settings', 'tkgp') . '">
+        		<input type="button" id="tkgp_add_selected" class="button" value="'
+                . _x('Add', 'Project Settings', 'tkgp') . '">
         	</div>';
-			break;
-		
-		case 'settings':
-			echo '</div>';
-			
-			$post = get_post( $_POST['post_id'], OBJECT, 'edit' );
-			
-			wp_editor($post->post_content, 'editpost');
-			\_WP_Editors::enqueue_scripts();
-			print_footer_scripts();
-    		\_WP_Editors::editor_js();
-			break;
-			
-		default:
-			
-			break;
-	} 
-	
+            break;
+
+        case 'settings':
+            echo '</div>';
+
+            $post = get_post($_POST['post_id'], OBJECT, 'edit');
+
+            wp_editor($post->post_content, 'editpost');
+            \_WP_Editors::enqueue_scripts();
+            print_footer_scripts();
+            \_WP_Editors::editor_js();
+            break;
+
+        default:
+
+            break;
+    }
+
     echo '</div>
     <div id="tkgp_overlay"></div>';
 }
@@ -200,7 +200,7 @@ function tkgp_ajax_get_vote_status()
             || wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote'))
     ) {
         $project = new TK_GProject($_POST['post_id']);
-		$vote = $project->getVote();
+        $vote = $project->getVote();
         $user_id = get_current_user_id();
 
         if (!$project->userCanRead($user_id)) {
@@ -208,14 +208,14 @@ function tkgp_ajax_get_vote_status()
             $html = _x('You do not have access to the data of voting', 'Project Vote', 'tkgp');
         } else {
             $res = true;
-			
-			$btn_titles = array();
-			foreach ($_POST as $key => $value) {
-				if(preg_match('/^(\w)+_(title|text)$/', $key)) {
-					$btn_titles[$key] = $value;
-				}
-			}
-			
+
+            $btn_titles = array();
+            foreach ($_POST as $key => $value) {
+                if (preg_match('/^(\w)+_(title|text)$/', $key)) {
+                    $btn_titles[$key] = $value;
+                }
+            }
+
             $html = $vote->getVoteButtonHtml(false, $btn_titles);
         }
 
@@ -236,53 +236,56 @@ function tkgp_ajax_get_vote_status()
     wp_die();
 }
 
-function tkgp_ajax_get_project_editor() {
-	$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
+function tkgp_ajax_get_project_editor()
+{
+    $message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
 
-	if(!empty($_POST['post_id'])
-		&& wp_verify_nonce($_POST['access_nonce'], 'tkgp_project_access')
-	) {
-		$project = new TK_GProject($_POST['post_id']);
-		$user_id = get_current_user_id();
-		
-		if($project->userCanEdit($user_id)) { //есть права на редактирование проета
-			tkgp_print_form('settings'); //выводим форму редактора
-			wp_die();
-		}
+    if (!empty($_POST['post_id'])
+        && wp_verify_nonce($_POST['access_nonce'], 'tkgp_project_access')
+    ) {
+        $project = new TK_GProject($_POST['post_id']);
+        $user_id = get_current_user_id();
 
-		$message = _x('You do not have permission to edit project', 'Project Edit','tkgp');
-		
-	}
+        if ($project->userCanEdit($user_id)) { //есть права на редактирование проета
+            tkgp_print_form('settings'); //выводим форму редактора
+            wp_die();
+        }
 
-	echo json_encode(array('status' => false, 'message' => $message));
-	
-	wp_die();
+        $message = _x('You do not have permission to edit project', 'Project Edit', 'tkgp');
+
+    }
+
+    echo json_encode(array('status' => false, 'message' => $message));
+
+    wp_die();
 }
 
-function tkgp_ajax_get_project_news() {
-	if(!empty($_POST['post_id'])) {
-		$project = new TK_GProject($_POST['post_id']);
-		$user_id = get_current_user_id();
-		
-		if($project->isValid() && $project->userCanRead($user_id)) {	
-			require_once(TKGP_STYLES_DIR . 'default/ajax-news-page.php');
-		}
-	}
-	
-	wp_die();
+function tkgp_ajax_get_project_news()
+{
+    if (!empty($_POST['post_id'])) {
+        $project = new TK_GProject($_POST['post_id']);
+        $user_id = get_current_user_id();
+
+        if ($project->isValid() && $project->userCanRead($user_id)) {
+            require_once(TKGP_STYLES_DIR . 'default/ajax-news-page.php');
+        }
+    }
+
+    wp_die();
 }
 
-function tkgp_get_project_target() {
-	if(!empty($_POST['post_id'])) {
-		$project = new TK_GProject($_POST['post_id']);
-		$user_id = get_current_user_id();
-		
-		if($project->isValid() && $project->userCanRead($user_id)) {
-			echo apply_filters('the_content', $project->description);
-		}
-	}
-	
-	wp_die();
+function tkgp_get_project_target()
+{
+    if (!empty($_POST['post_id'])) {
+        $project = new TK_GProject($_POST['post_id']);
+        $user_id = get_current_user_id();
+
+        if ($project->isValid() && $project->userCanRead($user_id)) {
+            echo apply_filters('the_content', $project->description);
+        }
+    }
+
+    wp_die();
 }
 
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');

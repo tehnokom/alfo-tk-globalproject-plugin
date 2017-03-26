@@ -78,11 +78,11 @@
 }
 
 #tkgp_modal_footer, #tkgp_modal_header {
-	height: 12%;
+    height: 12%;
 }
 
 #tkgp_add_selected {
-	float: right;
+    float: right;
 }
 
 #tkgp_modal_user th {
