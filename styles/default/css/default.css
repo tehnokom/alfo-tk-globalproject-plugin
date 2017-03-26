@@ -204,7 +204,7 @@ img {
 }
 
 .tk-tabs > div {
-    padding: 10px 5px 5px 5px;
+    padding: 10px 0 5px 0;
     position: relative;
 }
 
@@ -281,8 +281,12 @@ img {
     width: 100%;
 }
 
+.tk-news-title h2 {
+    font-size: 17px;
+}
+
 .tk-news-unit div {
-    padding: 5px 5px 5px 10px;
+    padding: 5px;
 }
 
 .tk-news-unit > div {
@@ -295,17 +299,17 @@ img {
 
 .tk-news-title > div {
     vertical-align: middle;
-    padding: 5px 5px 0px 5px;
+    padding: 5px 0 0 0;
 }
 
 .tk-news-footer > div {
-    padding: 5px;
+    padding: 5px 0 5px 0;
 }
 
 .tk-news-meta > div {
     color: #999;
     vertical-align: baseline;
-    padding: 0 5px 5px 10px;
+    padding: 0 0 5px 5px;
 }
 
 /*----------------------------------*/

@@ -27,12 +27,16 @@ if ($news->isValid()) {
                         <?php if (!defined('BP_PLUGIN_DIR')) {
                             the_author();
                         } else {
-                            echo bp_core_get_userlink(get_the_author_meta('ID'));
-                        } ?>
+                            $user_link = bp_core_get_userlink(get_the_author_meta('ID'), false, true);
+?>
+                            <a href="<?php echo $user_link; ?>"><?php the_author(); ?></a>
+<?php
+                        }
+?>
                     </div>
                 </div>
             </div>
-            <?php
+<?php
         }
 
         wp_reset_postdata();

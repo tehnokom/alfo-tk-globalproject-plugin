@@ -3,7 +3,7 @@
     width: 100%;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin: 10px 5px 10px 5px;
+    margin: 10px 0 10px 0;
 }
 
 @media screen and (min-width: 601px) {
