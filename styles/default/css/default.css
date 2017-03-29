@@ -312,6 +312,23 @@ img {
     padding: 0 0 5px 5px;
 }
 
+.tk-bp-xprofile, .tk-bp-xprofile > div, .tk-bp-date > div {
+    display: table-cell !important;
+    vertical-align: middle;
+}
+
+.tk-bp-profile, .tk-bp-date {
+    display: table-row !important;
+}
+
+.tk-bp-avatar {
+    min-width: 52px;
+}
+
+.tk-bp-title {
+    margin-left: auto;
+}
+
 /*----------------------------------*/
 .tk-modal-wall {
     display: table;

@@ -10,12 +10,41 @@ if ($news->isValid()) {
             $post = $news->post();
             ?>
             <div class="tk-news-unit">
-                <div class="tk-news-title">
-                    <div><h2><?php the_title(); ?></h2></div>
-                </div>
-                <div class="tk-news-meta">
-                    <div><?php echo get_the_date('l, j F Y'); ?></div>
-                </div>
+                <?php if (defined('BP_PLUGIN_DIR')) {
+                    $author = new BP_Core_User($post->post_author);
+                    ?>
+                    <div class="tk-bp-xprofile">
+                        <div class="tk-bp-avatar">
+                            <a href="<?php echo $author->user_url; ?>">
+                                <?php echo $author->avatar_thumb; ?>
+                            </a>
+                        </div>
+                        <div>
+                            <div class="tk-bp-profile">
+                                <div>
+                                    <a href="<?php echo $author->user_url; ?>"><?php echo $author->fullname; ?></a>
+                                </div>
+                            </div>
+                            <div class="tk-bp-date tk-news-meta">
+                                <div>
+                                    <?php echo get_the_date('l, j F Y'); ?>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tk-bp-title tk-news-title">
+                            <div>
+                                <h2><?php the_title(); ?></h2>
+                            </div>
+                        </div>
+                    </div>
+                <?php } else { ?>
+                    <div class="tk-news-title">
+                        <div><h2><?php the_title(); ?></h2></div>
+                    </div>
+                    <div class="tk-news-meta">
+                        <div><?php echo get_the_date('l, j F Y'); ?></div>
+                    </div>
+                <?php } ?>
                 <div class="tk-news-content">
                     <div>
                         <?php the_content(); ?>
@@ -23,20 +52,15 @@ if ($news->isValid()) {
                 </div>
                 <div class="tk-news-footer">
                     <div>
-                        <?php echo __('Author') . ': '; ?>
                         <?php if (!defined('BP_PLUGIN_DIR')) {
+                            echo __('Author') . ': ';
                             the_author();
-                        } else {
-                            $user_link = bp_core_get_userlink(get_the_author_meta('ID'), false, true);
-?>
-                            <a href="<?php echo $user_link; ?>"><?php the_author(); ?></a>
-<?php
                         }
-?>
+                        ?>
                     </div>
                 </div>
             </div>
-<?php
+            <?php
         }
 
         wp_reset_postdata();
