@@ -60,7 +60,7 @@ class TK_GPage
 
         $this->wpdb = $wpdb;
         $this->wpdb->enable_nulls = true;
-        $this->max_projects = 15;
+        $this->max_projects = 25;
         $this->max_links = 10;
 
         $this->sql_src = array(
@@ -90,7 +90,7 @@ class TK_GPage
     {
         unset($this->projects);
         $this->cur_project_idx = 0;
-        $offset = $this->max_projects - $page_num * $this->max_projects;
+        $offset = $page_num * $this->max_projects - $this->max_projects;
         $user_id = get_current_user_id();
 
         $sql = $this->compileSqlQuery();
@@ -116,14 +116,62 @@ class TK_GPage
     }
 
     /**
+     * Allows you to specify query and field parameters
+     */
+    public function quiery($args)
+    {
+        if (is_array($args)) {
+            foreach ($args as $key => $val) {
+                if(is_array($val)) {
+                    $this->parseQuery($key, $val);
+                }
+            }
+        }
+    }
+
+    private function parseQuery($type, $args)
+    {
+        if ($type === 'sort_by') {
+            foreach ($args as $val) {
+                switch ($val) {
+                    case 'priority':
+                        break;
+
+                    case 'popularity':
+                        continue;
+                        break;
+
+                    case 'date':
+                        unset($this->sql_src['order_by']);
+                        $this->sql_src['order_by'][] = "p.`post_date` DESC";
+                        break;
+
+                    case 'title':
+                        unset($this->sql_src['order_by']);
+                        $this->sql_src['order_by'][] = "p.`post_title` ASC";
+                        break;
+
+                    default:
+                        continue;
+                        break;
+                }
+            }
+        } else if ($type === 'order_by' && !empty($this->sql_src['order_by'])) {
+            foreach ($args as $key => $val) {
+                if (!empty($this->sql_src['order_by'][$key])) {
+                    $this->sql_src['order_by'][$key] = preg_replace('/(ASC)|(DESC)/i',
+                                $val, $this->sql_src['order_by'][$key]);
+                }
+            }
+        }
+    }
+
+    /**
      * Compiles the query based on the milestones of the specified parameters and returns its code
      * @return string
      */
     protected function compileSqlQuery()
     {
-        $slug = TK_GProject::slug;
-        $prefix = $this->wpdb->prefix;
-
         $sql = 'SELECT';
 
         foreach ($this->sql_src['fields'] as $field) {
@@ -165,76 +213,6 @@ class TK_GPage
         $sql .= ';';
 
         return $sql;
-    }
-
-    /**
-     * Parses $_POST array and generates parameters for constructing the page in accordance with them
-     * @return array
-     */
-    public function parseParamsFromPost()
-    {
-        return $this->parseParams($_POST);
-    }
-
-    /**
-     * Parses $_GET  array and generates parameters for constructing the page in accordance with them
-     * @return array
-     */
-    public function parseParamsFromGet()
-    {
-        return $this->parseParams($_GET);
-    }
-
-    /**
-     * Parses the string or array and generates parameters for constructing the page in accordance with them
-     * @param $args
-     * @return array
-     */
-    public function parseParams($args)
-    {
-        $out = array();
-        $correct = array();
-
-        if (!is_array($args) && !empty($args)) {
-            $out = explode(',', $args);
-            $out = is_array($out) ? $out : array();
-        } else {
-            $out = $args;
-        }
-
-        foreach ($out as $key => $val) {
-            switch ($key) {
-                case 'sort_by':
-                    $correct = array('priority', 'popularity', 'date', 'title');
-                    break;
-
-                case 'order_by':
-                    $correct = array('asc', 'desc');
-                    break;
-
-                default:
-                    unset($out[$key]);
-                    continue;
-                    break;
-            }
-
-            if (!self::checkParam($val, $correct)) {
-                unset($out[$key]);
-            }
-        }
-
-        return $out;
-    }
-
-    /**
-     * Returns TRUE when $param correct, else returns FALSE
-     * @param $param
-     * @param $variants
-     * @return mixed
-     */
-    private static function checkParam($param, $variants)
-    {
-        return array_search(strtolower($param), $variants);
     }
 
     /**
