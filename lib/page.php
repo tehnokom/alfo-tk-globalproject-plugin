@@ -16,8 +16,9 @@ class TK_GPage
      * Current project index
      * @var integer
      */
-    protected $cur_project = 0;
+    protected $cur_project = null;
 
+    protected $cur_project_idx = 0;
     /**
      * Current page index
      * @var integer
@@ -43,6 +44,11 @@ class TK_GPage
     protected $last_offset = 0;
 
     /**
+     * Default SQL
+     * @var string
+     */
+    private $sql_src = '';
+    /**
      * A numerically indexed array of project row objects
      * @var array
      */
@@ -56,6 +62,22 @@ class TK_GPage
         $this->wpdb->enable_nulls = true;
         $this->max_projects = 15;
         $this->max_links = 10;
+
+        $this->sql_src = array(
+            'fields' => array('p.`id`'),
+            'tables' => array('posts p', 'postmeta pm1'),
+            'tables_links' => array('pm1.`post_id` = p.`id`'),
+            'where' => array("AND p.`post_type` =  '" . TK_GProject::slug . "'",
+                "AND pm1.meta_key = 'ptype'",
+                "AND pm1.meta_value = %d",
+                "AND not exists(SELECT 1 FROM `{$this->wpdb->prefix}tkgp_tasks_links`
+					WHERE `child_type` = 0
+					AND `child_id` = p.`id`)"
+            ),
+            'order_by' => array('p.`post_date` DESC'),
+            'limit' => '%d',
+            'offset' => '%d'
+        );
     }
 
     /**
@@ -64,29 +86,18 @@ class TK_GPage
      * @param $page_num integer Page Number
      * @param $ptype integer Page type
      */
-    public function createPage($page_num = 1, $ptype = 3)
+    public function createPage($page_num = 1, $project_type = 3)
     {
         unset($this->projects);
+        $this->cur_project_idx = 0;
         $offset = $this->max_projects - $page_num * $this->max_projects;
-        $slug = TK_GProject::slug;
         $user_id = get_current_user_id();
-        $prefix = $this->wpdb->prefix;
 
-        $sql = "SELECT p.`id`
-			FROM `{$prefix}posts` p,
-				 `{$prefix}postmeta` pm1
-			WHERE pm1.post_id = p.id
-				AND p.`post_type` = '{$slug}'
-				AND pm1.meta_key = 'ptype'
-				AND pm1.meta_value = %d
-				AND not exists(SELECT 1 FROM `{$prefix}tkgp_tasks_links`
-					WHERE `child_type` = 0
-					AND `child_id` = p.`id`)
-			ORDER BY p.`post_date` DESC
-			LIMIT %d OFFSET %d";
+        $sql = $this->compileSqlQuery();
 
         while (count($this->projects) < $this->max_projects) {
-            $res = $this->wpdb->get_results($this->wpdb->prepare($sql, $ptype, $this->max_projects, $offset), OBJECT);
+            $res = $this->wpdb->get_results($this->wpdb->prepare($sql, $project_type,
+                $this->max_projects, $offset), OBJECT);
 
             if (empty($res)) {
                 $this->last_offset;
@@ -98,51 +109,159 @@ class TK_GPage
                 ++$offset;
 
                 if ($cur->userCanRead($user_id)) {
-                    $this->projects[] = $cur;
+                    $this->projects[] = $cur->project_id;
                 }
             }
         }
     }
 
     /**
-     * Returns html code project page
+     * Compiles the query based on the milestones of the specified parameters and returns its code
      * @return string
      */
-    public function getPageHtml()
+    protected function compileSqlQuery()
     {
-        $html = '';
-        $l10n = TK_GProject::l10n('target');
+        $slug = TK_GProject::slug;
+        $prefix = $this->wpdb->prefix;
 
-        foreach ($this->projects as $project) {
-            $pid = TK_GProject::userIsAdmin(get_current_user_id()) ? " #{$project->project_id}" : '';
-            $title = apply_filters("the_title", $project->title);
-            $target = apply_filters("the_content", $project->target);
-            $html .= "<div style='display: block; width:98%; border: 1px solid rgba(204,204,204,0.9); margin: 0 auto 5px auto; padding: 5px; border-radius: 5px;'>
-			<h3><a href='{$project->permalink}'>{$title}{$pid}</a></h3>
-			<div><h5>{$l10n}</h5></div>
-			<div>{$target}</div>";
+        $sql = 'SELECT';
 
-            /*if(TK_GVote::exists($project->project_id)) {
-                $user_id = get_current_user_id();
-                $vote = new TK_GVote($project->project_id);
-                $caps = $project->userCan($user_id);
-                $html .= $vote->getResultVoteHtml($caps['vote'], false, !$caps['revote']);
-            }*/
-
-            $html .= "</div>";
+        foreach ($this->sql_src['fields'] as $field) {
+            $sql .= " {$field},";
         }
 
-        return $html;
+        $sql = trim($sql, ",");
+        $sql .= "\r\n   FROM";
+
+        foreach ($this->sql_src['tables'] as $table) {
+            $sql .= " {$this->wpdb->prefix}{$table},";
+        }
+
+        $sql = trim($sql, ",");
+        $sql .= " \r\n   WHERE";
+
+        foreach ($this->sql_src['tables_links'] as $link) {
+            $sql .= substr($sql, -5) === 'WHERE' ? " {$link}" : "\r\n       AND {$link}";
+        }
+
+        foreach ($this->sql_src['where'] as $where) {
+            $sql .= substr($sql, -5) === 'WHERE' ? " {$where}" : "\r\n      {$where}";
+        }
+
+        if (!empty($this->sql_src['order_by'])) {
+            $sql .= "\r\nORDER BY";
+            foreach ($this->sql_src['order_by'] as $order) {
+                $sql .= " {$order},";
+            }
+
+            $sql = trim($sql, ",");
+        }
+
+        if (!empty($this->sql_src['limit'])) {
+            $sql .= "\r\nLIMIT {$this->sql_src['limit']}";
+            $sql .= !empty($this->sql_src['offset']) ? " OFFSET {$this->sql_src['offset']}" : '';
+        }
+
+        $sql .= ';';
+
+        return $sql;
     }
 
     /**
-     * Returns array of TK_GProject objects on current page
-     *
+     * Parses $_POST array and generates parameters for constructing the page in accordance with them
      * @return array
      */
-    public function getProjectsOnPage()
+    public function parseParamsFromPost()
     {
-        return $this->projects;
+        return $this->parseParams($_POST);
+    }
+
+    /**
+     * Parses $_GET  array and generates parameters for constructing the page in accordance with them
+     * @return array
+     */
+    public function parseParamsFromGet()
+    {
+        return $this->parseParams($_GET);
+    }
+
+    /**
+     * Parses the string or array and generates parameters for constructing the page in accordance with them
+     * @param $args
+     * @return array
+     */
+    public function parseParams($args)
+    {
+        $out = array();
+        $correct = array();
+
+        if (!is_array($args) && !empty($args)) {
+            $out = explode(',', $args);
+            $out = is_array($out) ? $out : array();
+        } else {
+            $out = $args;
+        }
+
+        foreach ($out as $key => $val) {
+            switch ($key) {
+                case 'sort_by':
+                    $correct = array('priority', 'popularity', 'date', 'title');
+                    break;
+
+                case 'order_by':
+                    $correct = array('asc', 'desc');
+                    break;
+
+                default:
+                    unset($out[$key]);
+                    continue;
+                    break;
+            }
+
+            if (!self::checkParam($val, $correct)) {
+                unset($out[$key]);
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Returns TRUE when $param correct, else returns FALSE
+     * @param $param
+     * @param $variants
+     * @return mixed
+     */
+    private static function checkParam($param, $variants)
+    {
+        return array_search(strtolower($param), $variants);
+    }
+
+    /**
+     * Returns TRUE when next Project is exists else false
+     * @return bool
+     */
+    public function nextProject()
+    {
+        if (++$this->cur_project_idx <= count($this->projects)) {
+            $project = new TK_GProject($this->projects[$this->cur_project_idx - 1]);
+            if ($project->isValid()) {
+                $this->cur_project = $project;
+                return true;
+            }
+        }
+
+        $this->cur_project_idx = 0;
+        return false;
+    }
+
+    /**
+     * Returns TK_Gproject object when project exists or NULL
+     * @return object | null
+     */
+    public function project()
+    {
+        return is_object($this->cur_project) ? $this->cur_project : null;
     }
 }
 

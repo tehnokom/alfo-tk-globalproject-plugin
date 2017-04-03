@@ -10,19 +10,21 @@ if ($news->isValid()) {
             $post = $news->post();
             ?>
             <div class="tk-news-unit">
-                <?php if (defined('BP_PLUGIN_DIR')) {
+                <?php if (defined('BP_PLUGIN_DIR')) { //если включен BP
                     $author = new BP_Core_User($post->post_author);
                     ?>
                     <div class="tk-bp-xprofile">
                         <div class="tk-bp-avatar">
-                            <a href="<?php echo $author->user_url; ?>">
+                            <a href="<?php echo $author->user_url; ?>" title="<?php echo $author->fullname; ?>">
                                 <?php echo $author->avatar_thumb; ?>
                             </a>
                         </div>
                         <div>
                             <div class="tk-bp-profile">
                                 <div>
-                                    <a href="<?php echo $author->user_url; ?>"><?php echo $author->fullname; ?></a>
+                                    <a href="<?php echo $author->user_url; ?>" title="<?php echo $author->fullname; ?>">
+                                        <?php echo $author->fullname; ?>
+                                    </a>
                                 </div>
                             </div>
                             <div class="tk-bp-date tk-news-meta">
@@ -37,7 +39,7 @@ if ($news->isValid()) {
                             </div>
                         </div>
                     </div>
-                <?php } else { ?>
+                <?php } else { //если не включен BP?>
                     <div class="tk-news-title">
                         <div><h2><?php the_title(); ?></h2></div>
                     </div>
@@ -52,7 +54,7 @@ if ($news->isValid()) {
                 </div>
                 <div class="tk-news-footer">
                     <div>
-                        <?php if (!defined('BP_PLUGIN_DIR')) {
+                        <?php if (!defined('BP_PLUGIN_DIR')) { //если не включен BP
                             echo __('Author') . ': ';
                             the_author();
                         }

@@ -38,6 +38,7 @@ register_activation_hook(__FILE__, 'tkgp_check_version');
 function tkgp_localize_plugin()
 {
     load_plugin_textdomain('tkgp', false, dirname(plugin_basename(__FILE__)) . '/locales/');
+    load_plugin_textdomain('tk-style', false, dirname(plugin_basename(__FILE__)) . '/styles/default/locales/');
 }
 
 function tkgp_css_registry()

@@ -55,3 +55,48 @@
     width: 100%;
     vertical-align: middle;
 }
+
+/*------------------------------------------*/
+.tk-projects-list, .tk-panel {
+    display: table-cell;
+}
+
+.tk-panel {
+    width: 250px;
+    max-width: 250px;
+    padding: 10px 0  0 20px;
+    vertical-align: top;
+}
+
+.tk-panel > div {
+    padding: 5px;
+}
+
+.tk-filter-box {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(204,204,204,0.7);
+}
+
+.tk-title {
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+
+#tk-filter-order {
+    position: relative;
+    border: 1px solid #eee;
+    margin-top: 10px;
+    padding: 10px 2px 2px 2px;
+}
+
+#tk-filter-order > label[for="tk-filter-order"] {
+    position: absolute;
+    top: -10px;
+    left: 5px;
+    background: #fff;
+    padding: 0 3px 0 3px;
+}

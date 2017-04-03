@@ -359,6 +359,7 @@ function tkgp_save_post_meta($post_id)
  *
  * @param string Template string
  * @param array $target_array Array for search
+ * @return array
  */
 function tkgp_array_search($key_template, $target_array)
 {
@@ -415,6 +416,7 @@ function tkgp_display_options_field($args, $default_val = '')
  *
  * @param array $args
  * @param mixed|array $default_val
+ * @return string
  */
 function tkgp_field_html($args, $default_val = '')
 {
@@ -533,7 +535,7 @@ function tkgp_content($data)
 function tkgp_include_templates($template_path)
 {
     $post_type = get_post_type();
-    $news_parent_cat_id = get_option('tkgp_news_cat_id');
+    //$news_parent_cat_id = get_option('tkgp_news_cat_id');
 
     if ($post_type == TK_GProject::slug) {
         if (!is_single()) {
