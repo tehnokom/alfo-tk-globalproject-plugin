@@ -122,7 +122,7 @@ class TK_GPage
     {
         if (is_array($args)) {
             foreach ($args as $key => $val) {
-                if(is_array($val)) {
+                if (is_array($val)) {
                     $this->parseQuery($key, $val);
                 }
             }
@@ -148,7 +148,9 @@ class TK_GPage
 
                     case 'title':
                         unset($this->sql_src['order_by']);
-                        $this->sql_src['order_by'][] = "p.`post_title` ASC";
+                        $lang = function_exists(qtranxf_getLanguage) ? qtranxf_getLanguage() : '';
+                        $this->sql_src['order_by'][] = !empty($lang) ? "get_wp_localize(p.`post_title`,'{$lang}') ASC"
+                            : 'p.`post_title` ASC';
                         break;
 
                     default:
@@ -160,7 +162,7 @@ class TK_GPage
             foreach ($args as $key => $val) {
                 if (!empty($this->sql_src['order_by'][$key])) {
                     $this->sql_src['order_by'][$key] = preg_replace('/(ASC)|(DESC)/i',
-                                $val, $this->sql_src['order_by'][$key]);
+                        $val, $this->sql_src['order_by'][$key]);
                 }
             }
         }

@@ -75,7 +75,7 @@
 .tk-filter-box {
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-shadow: 0 0 5px rgba(204,204,204,0.7);
+    box-shadow: 0 0 10px rgba(204,204,204,0.85);
 }
 
 .tk-title {
@@ -88,7 +88,7 @@
 
 #tk-filter-order {
     position: relative;
-    border: 1px solid #eee;
+    border: 1px solid #ddd;
     margin-top: 10px;
     padding: 10px 2px 2px 2px;
 }

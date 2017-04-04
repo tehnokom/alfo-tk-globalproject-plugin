@@ -1,7 +1,7 @@
 <?php
 function tkgp_check_version()
 {
-    $cur_version = '0.16';
+    $cur_version = '0.17';
     $installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 
     if (empty($installed_version)) {
@@ -143,6 +143,35 @@ function tkgp_db_install($cur_version)
         dbDelta($sql);
     }
 
+    if ($wpdb->get_var("SHOW FUNCTION STATUS LIKE 'get_wp_localize'") != 'get_wp_localize') {
+        $sql = "CREATE FUNCTION `get_wp_localize`(`wp_data` TEXT CHARSET utf8, `wp_lang` VARCHAR(4) CHARSET utf8) 
+                    RETURNS TEXT CHARSET utf8 NOT DETERMINISTIC READS SQL DATA SQL SECURITY INVOKER 
+                BEGIN 
+                    DECLARE tag varchar(8) DEFAULT '';
+                    DECLARE start_pos int;
+                    DECLARE end_pos int;
+
+                    IF wp_lang != '' THEN
+                        SET tag = CONCAT('[:', wp_lang, ']');
+                        IF INSTR(wp_data, tag) THEN
+                            SET start_pos = INSTR(wp_data, tag) + LENGTH(tag);
+                            SET end_pos = LOCATE('[:]', wp_data, start_pos);
+                            IF end_pos THEN
+                                SET end_pos = end_pos;
+                                RETURN SUBSTR(wp_data, start_pos, end_pos - start_pos);
+                            ELSE
+                                RETURN SUBSTR(wp_data, start_post);
+                            END IF;
+                        END IF;
+                    END IF;    
+                    RETURN wp_data;
+                END;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        dbDelta($sql);
+    }
+
     update_option('tkgp_db_version', $cur_version);
 }
 
@@ -153,28 +182,6 @@ function tkgp_db_update($installed_version, $cur_version)
     $slug = TK_GProject::slug;
 
     $patches = array(
-        '0.1' => array(
-            'sql' => array("ALTER TABLE `{$wpdb->prefix}tkgp_votes` 
-									ADD COLUMN `allow_against` BIT(1) NULL DEFAULT NULL AFTER `allow_revote`,
-									ADD COLUMN `consider_against` BIT(1) NULL DEFAULT NULL AFTER `allow_against`;",
-                "ALTER TABLE `{$wpdb->prefix}tkgp_usersvotes` 
-									DROP INDEX `user_vote_unique` ,
-									ADD UNIQUE INDEX `user_vote_unique` (`vote_id` ASC, `user_id` ASC);"
-            ),
-            'ver_after' => '0.11'
-        ),
-        '0.11' => array(
-            'sql' => array("UPDATE `{$wpdb->prefix}posts` SET `post_type` = 'project', 
-									`guid` = REPLACE(`guid`,'tk_project','project')
-									WHERE `post_type` = 'tk_project';",
-            ),
-            'ver_after' => '0.12'),
-        '0.12' => array(
-            'sql' => array("UPDATE `{$wpdb->prefix}posts` SET `post_type` = 'projektoj', 
-									`guid` = REPLACE(`guid`,'project','projektoj')
-									WHERE `post_type` = 'project';",
-            ),
-            'ver_after' => '0.13'),
         '0.13' => array(
             'sql' => array("CREATE TABLE `{$wpdb->prefix}tkgp_tasks_links` (
 									`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -208,6 +215,32 @@ function tkgp_db_update($installed_version, $cur_version)
 									ADD COLUMN `news_id` bigint(20) unsigned NULL DEFAULT NULL AFTER `post_id`;"
             ),
             'ver_after' => '0.16'),
+        '0.16' => array(
+            'sql' => array("CREATE FUNCTION `get_wp_localize`(`wp_data` TEXT CHARSET utf8, `wp_lang` VARCHAR(4) CHARSET utf8) 
+                                RETURNS TEXT CHARSET utf8 NOT DETERMINISTIC READS SQL DATA SQL SECURITY INVOKER 
+                            BEGIN 
+                                DECLARE tag varchar(8) DEFAULT '';
+                                DECLARE start_pos int;
+                                DECLARE end_pos int;
+
+                                IF wp_lang != '' THEN
+                                    SET tag = CONCAT('[:', wp_lang, ']');
+                                    IF INSTR(wp_data, tag) THEN
+                                        SET start_pos = INSTR(wp_data, tag) + LENGTH(tag);
+                                        SET end_pos = LOCATE('[:]', wp_data, start_pos);
+                                        IF end_pos THEN
+                                            SET end_pos = end_pos;
+                                            RETURN SUBSTR(wp_data, start_pos, end_pos - start_pos);
+                                        ELSE
+                                            RETURN SUBSTR(wp_data, start_post);
+                                        END IF;
+                                    END IF;
+                                END IF;    
+                                RETURN wp_data;
+                            END;"
+            ),
+            'ver_after' => '0.17'
+        )
     );
 
     if (!empty($patches[$installed_version])) {
