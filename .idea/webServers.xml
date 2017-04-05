@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="cfa9e25c-ce3b-4704-b862-d66bea5a9366" name="WP Local" url="http://wp">
-        <fileTransfer port="0" mountedRoot="$PROJECT_DIR$/../www/WP/html" accessType="MOUNT" />
+      <webServer id="5fc7305e-36b5-40e4-9d35-0138f30ee460" name="WP" url="http://wp">
+        <fileTransfer port="0" mountedRoot="$PROJECT_DIR$/../www/WP/html/wp-content/plugins" accessType="MOUNT" />
       </webServer>
     </option>
   </component>
