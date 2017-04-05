@@ -1,5 +1,15 @@
 <?php
 $page = new TK_GPage();
+
+if(!empty($_POST['sort_by'])) {
+    $filters = array('sort_by' => explode(',', $_POST['sort_by']));
+    if(!empty($_POST['order_by'])) {
+        $filters['order_by'] = explode(',', $_POST['order_by']);
+    }
+
+    $page->quiery($filters);
+}
+
 $page->createPage();
 
 while ($page->nextProject()) {

@@ -18,7 +18,12 @@ class TK_GPage
      */
     protected $cur_project = null;
 
+    /**
+     * Current project index
+     * @var int
+     */
     protected $cur_project_idx = 0;
+
     /**
      * Current page index
      * @var integer

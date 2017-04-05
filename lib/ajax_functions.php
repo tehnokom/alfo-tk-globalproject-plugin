@@ -288,6 +288,12 @@ function tkgp_get_project_target()
     wp_die();
 }
 
+function tkgp_get_projects()
+{
+    require_once(TKGP_STYLES_DIR . 'default/ajax-page.php');
+    wp_die();
+}
+
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');
 add_action('wp_ajax_tkgp_user_vote', 'tkgp_ajax_user_vote');
 add_action('wp_ajax_tkgp_get_vote_status', 'tkgp_ajax_get_vote_status');
@@ -298,5 +304,7 @@ add_action('wp_ajax_tkgp_get_project_news', 'tkgp_ajax_get_project_news');
 add_action('wp_ajax_nopriv_tkgp_get_project_news', 'tkgp_ajax_get_project_news');
 add_action('wp_ajax_tkgp_get_project_target', 'tkgp_get_project_target');
 add_action('wp_ajax_nopriv_tkgp_get_project_target', 'tkgp_get_project_target');
+add_action('wp_ajax_tkgp_get_projects', 'tkgp_get_projects');
+add_action('wp_ajax_nopriv_tkgp_get_projects', 'tkgp_get_projects');
 
 ?>
