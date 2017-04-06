@@ -9,7 +9,7 @@ $j(document).ready(function ($j) {
     $j('.tk-tabs > a[href^=#tk-tab]').on('click', tk_tab_handler);
     $j(document).on('tkgp_send_vote_request', tk_animate_start);
     $j(document).on('tkgp_send_reset_vote_request', tk_animate_start);
-    //$j('.tkgp_vote_block').on('tkgp_vote_updated', tk_animate_stop);
+    $j('.tkgp_vote_block').on('tkgp_vote_updated', tk_animate_stop);
 
 
     if (location.hash !== '') {
