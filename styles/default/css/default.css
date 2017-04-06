@@ -81,7 +81,7 @@ img {
         width: 40%;
     }
 
-    .tk-logo-cell2 > divdiv:not(.tk-modal-wall) {
+    .tk-logo-cell2 > div:not(.tk-modal-wall) {
         display: table;
         padding: 3px;
         width: 100%;
@@ -107,7 +107,7 @@ img {
     display: table-row;
 }
 
-.tk-logo-cell2 > div > div > div {
+.tk-logo-cell2 > div:not(.tk-modal-wall) > div > div {
     display: table-cell;
     /*border: 1px solid #000;*/
     vertical-align: middle;
