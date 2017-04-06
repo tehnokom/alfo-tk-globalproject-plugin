@@ -134,6 +134,7 @@ function tkgp_db_install($cur_version)
 				  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				  `post_id` bigint(20) unsigned NOT NULL,
 				  `news_id` bigint(20) unsigned NULL DEFAULT NULL,
+				  `priority` TINYINT unsigned DEFAULT 50,
 				  PRIMARY KEY (`id`),
 				  UNIQUE KEY `post_id` (`post_id`)
 				){$charset_collate};";
@@ -166,6 +167,28 @@ function tkgp_db_install($cur_version)
                     END IF;    
                     RETURN wp_data;
                 END;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        dbDelta($sql);
+    }
+
+    if ($wpdb->get_var("SHOW FUNCTION STATUS LIKE 'get_project_popularity'") != 'get_project_popularity') {
+        $sql = "CREATE FUNCTION `get_project_popularity`(`post_id` BIGINT(20) UNSIGNED, `approval_only` TINYINT(1) UNSIGNED)
+                    RETURNS BIGINT UNSIGNED NOT DETERMINISTIC READS SQL DATA SQL SECURITY INVOKER 
+                BEGIN 
+                    DECLARE v_id BIGINT(20) UNSIGNED DEFAULT 0; 
+                    DECLARE v_count BIGINT(20) UNSIGNED DEFAULT 0; 
+                    SELECT v.id 
+                        INTO v_id 
+                    FROM {$wpdb->prefix}tkgp_votes v 
+                    WHERE v.post_id = post_id; 
+                    SELECT count(*) 
+                        INTO v_count 
+                    FROM {$wpdb->prefix}tkgp_usersvotes uv 
+                    WHERE uv.vote_id = v_id AND (approval_only = 0 OR uv.variant_id = -1); 
+                    RETURN v_count; 
+                    END;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
@@ -237,7 +260,24 @@ function tkgp_db_update($installed_version, $cur_version)
                                     END IF;
                                 END IF;    
                                 RETURN wp_data;
-                            END;"
+                            END;",
+                            "CREATE FUNCTION `get_project_popularity`(`post_id` BIGINT(20) UNSIGNED, `approval_only` TINYINT(1) UNSIGNED)
+                                RETURNS BIGINT UNSIGNED NOT DETERMINISTIC READS SQL DATA SQL SECURITY INVOKER 
+                             BEGIN 
+                                DECLARE v_id BIGINT(20) UNSIGNED DEFAULT 0; 
+                                DECLARE v_count BIGINT(20) UNSIGNED DEFAULT 0; 
+                                SELECT v.id 
+                                    INTO v_id 
+                                FROM {$wpdb->prefix}tkgp_votes v 
+                                WHERE v.post_id = post_id; 
+                                SELECT count(*) 
+                                    INTO v_count 
+                                FROM {$wpdb->prefix}tkgp_usersvotes uv 
+                                WHERE uv.vote_id = v_id AND (approval_only = 0 OR uv.variant_id = -1); 
+                                RETURN v_count; 
+                             END;",
+                            "ALTER TABLE `{$wpdb->prefix}tkgp_projects` 
+									ADD COLUMN `priority` TINYINT unsigned DEFAULT 50 AFTER `news_id`;"
             ),
             'ver_after' => '0.17'
         )

@@ -2,10 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Default Style for TK Global Projects\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-29 10:56+0000\n"
-"PO-Revision-Date: 2017-03-30 01:42+0000\n"
+"POT-Creation-Date: 2017-04-06 09:22+0000\n"
+"PO-Revision-Date: 2017-04-06 09:23+0000\n"
 "Last-Translator: Сарваритдинов Равиль <ra9oaj@mail.ru>\n"
-"Language-Team: Russian (Russian Federation)\n"
+"Language-Team: Russian\n"
 "Language: ru-RU\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
 "n%10<=4 &&(n%100<10||n%100 >= 20)? 1 : 2)\n"
@@ -14,37 +14,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: styles/default/page.php:69
+#: styles/default/page.php:23
+msgctxt "Default style"
+msgid "Filters"
+msgstr "Фильтры"
+
+#: styles/default/page.php:26
 msgctxt "Default style"
 msgid "Sorting"
 msgstr "Сортировка"
 
-#: styles/default/page.php:71
+#: styles/default/page.php:28
 msgctxt "Default style"
 msgid "by proirity"
 msgstr "по приоритету"
 
-#: styles/default/page.php:72
+#: styles/default/page.php:29
 msgctxt "Default style"
 msgid "by popularity"
 msgstr "по популярности"
 
-#: styles/default/page.php:73
+#: styles/default/page.php:30
 msgctxt "Default style"
 msgid "by date"
 msgstr "по дате"
 
-#: styles/default/page.php:74
+#: styles/default/page.php:31
 msgctxt "Default style"
 msgid "by title"
 msgstr "по названию"
 
-#: styles/default/page.php:77
+#: styles/default/page.php:34
 msgctxt "Default style"
 msgid "DESC"
 msgstr "по убыванию"
 
-#: styles/default/page.php:78
+#: styles/default/page.php:35
 msgctxt "Default style"
 msgid "ASC"
 msgstr "по возрастанию"

@@ -3,48 +3,53 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-29 10:56+0000\n"
+"POT-Creation-Date: 2017-04-06 09:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
 "Language: \n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Loco https://localise.biz/"
+"X-Generator: Loco - https://localise.biz/"
 
-#: styles/default/page.php:69
+#: styles/default/page.php:23
+msgctxt "Default style"
+msgid "Filters"
+msgstr ""
+
+#: styles/default/page.php:26
 msgctxt "Default style"
 msgid "Sorting"
 msgstr ""
 
-#: styles/default/page.php:71
+#: styles/default/page.php:28
 msgctxt "Default style"
 msgid "by proirity"
 msgstr ""
 
-#: styles/default/page.php:72
+#: styles/default/page.php:29
 msgctxt "Default style"
 msgid "by popularity"
 msgstr ""
 
-#: styles/default/page.php:73
+#: styles/default/page.php:30
 msgctxt "Default style"
 msgid "by date"
 msgstr ""
 
-#: styles/default/page.php:74
+#: styles/default/page.php:31
 msgctxt "Default style"
 msgid "by title"
 msgstr ""
 
-#: styles/default/page.php:77
+#: styles/default/page.php:34
 msgctxt "Default style"
 msgid "DESC"
 msgstr ""
 
-#: styles/default/page.php:78
+#: styles/default/page.php:35
 msgctxt "Default style"
 msgid "ASC"
 msgstr ""

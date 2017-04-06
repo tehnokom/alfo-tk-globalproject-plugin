@@ -70,6 +70,8 @@ class TK_GProject
                         $this->opts['title'] = get_the_title($this->project_id);
                         $this->opts['permalink'] = get_permalink($this->project_id);
                         $this->opts['internal_id'] = self::postToId($res->ID);
+                        $this->opts['priority'] = $wpdb->get_var($wpdb->prepare("SELECT `priority` 
+                        FROM `{$wpdb->prefix}tkgp_projects` WHERE `post_id` = %d",$this->project_id));
                     }
 
                     $this->checkCat();
@@ -311,6 +313,21 @@ class TK_GProject
         return $html;
     }
 
+    public function setProjectPriority($priority)
+    {
+        if($this->isValid()
+            && $this->userCanEdit(get_current_user_id())
+            && $priority <= 100 && $priority > 0) {
+            $res = $this->wpdb->update("{$this->wpdb->prefix}tkgp_projects",
+                array('priority' => $priority),
+                array('id' => "{$this->internal_id}"),
+                '%d','%d');
+            return boolval($res);
+        }
+
+        return false;
+    }
+
     /**
      * Return TK_GProject object of parent Project,
      * or return NULL when parent not exists
@@ -500,6 +517,7 @@ class TK_GProject
      * Return TRUE when user can read project else FALSE
      *
      * @param int $user_id
+     * @return bool
      */
     public function userCanRead($user_id)
     {
@@ -533,6 +551,7 @@ class TK_GProject
      * Return TRUE when user can edit project else FALSE
      *
      * @param int $user_id
+     * @return bool
      */
     public function userCanEdit($user_id)
     {
@@ -552,6 +571,7 @@ class TK_GProject
      * Return TRUE when user can work project esle FALSE
      *
      * @param int $user_id
+     * @return bool
      */
     public function userCanWork($user_id)
     {
@@ -569,6 +589,7 @@ class TK_GProject
      * Return TRUE when user can vote project ELSE
      *
      * @param int $user_id
+     * @return bool
      */
     public function userCanVote($user_id)
     {
@@ -595,6 +616,7 @@ class TK_GProject
      * Return TRUE when user can revote project
      *
      * @param int $user_id
+     * @return bool
      */
     public function userCanRevote($user_id)
     {
@@ -650,6 +672,20 @@ class TK_GProject
                 'id' => 'tkgp_parent_id',
                 'type' => 'text',
                 'options' => array()
+            ),
+            array(
+                'label' => _x('Priority', 'Project Settings', 'tkgp'),
+                'desc' => _x('Priority of the project. The lower the number, the higher the priority.',
+                    'Project Settings', 'tkgp'),
+                'id' => 'tkgp_priority',
+                'type' => 'number',
+                'value' => 50,
+                'properties' => array(
+                    'min' => 1,
+                    'step' => 1,
+                    'max' => 100,
+                    'required' => null
+                )
             ),
             array(
                 'label' => _x('Type', 'Project Settings', 'tkgp'),

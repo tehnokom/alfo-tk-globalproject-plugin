@@ -53,6 +53,7 @@ class TK_GPage
      * @var string
      */
     private $sql_src = '';
+
     /**
      * A numerically indexed array of project row objects
      * @var array
@@ -140,10 +141,15 @@ class TK_GPage
             foreach ($args as $val) {
                 switch ($val) {
                     case 'priority':
+                        unset($this->sql_src['order_by']);
+                        $this->sql_src['tables'][] = "tkgp_projects pr";
+                        $this->sql_src['tables_links'][] = "pr.`post_id` = p.`id`";
+                        $this->sql_src['order_by'] = array("(100 - pr.`priority`) DESC", "p.`post_date` DESC");
                         break;
 
                     case 'popularity':
-                        continue;
+                        unset($this->sql_src['order_by']);
+                        $this->sql_src['order_by'][] = "get_project_popularity(p.`id`,0) DESC";
                         break;
 
                     case 'date':

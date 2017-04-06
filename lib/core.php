@@ -115,9 +115,10 @@ function tkgp_show_metabox_settings()
     echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="' . wp_create_nonce(basename(__FILE__) . '_settings') . '" />
 <table class="form-table">';
 
+    $project = new TK_GProject($post->ID);
+
     foreach (TK_GProject::getProjectFields() as $field) {
         $current_val = '';
-        $project = new TK_GProject($post->ID);
 
         echo '<tr>
 	<th><label for="' . $field['id'] . '">' . $field['label'] . '</label></th>
@@ -126,6 +127,10 @@ function tkgp_show_metabox_settings()
             case 'radio': //Переключатель
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? '1' : $current_val;
+                break;
+
+            case 'number':
+                $current_val = $project->priority;
                 break;
 
             case 'select': //Выпадающее меню
@@ -229,6 +234,7 @@ function tkgp_save_post_meta($post_id)
         return $post_id;
     }
 
+    $project = new TK_GProject($post_id);
     $vote_updates = array();
     $fields = array_merge(TK_GProject::getProjectFields(), TK_GVote::getVotesFields());
 
@@ -301,7 +307,6 @@ function tkgp_save_post_meta($post_id)
                 break;
 
             case 'tkgp_parent_id':
-                $project = new TK_GProject($post_id);
                 $old = $project->getParentProject();
 
                 if (!empty($_POST[$field['id']])) {
@@ -324,6 +329,17 @@ function tkgp_save_post_meta($post_id)
                     $old->deleteChildLink($project->project_id);
                 }
 
+                break;
+
+            case 'tkgp_priority':
+                if(!empty($_POST['tkgp_priority'])) {
+                    $old = $project->priority;
+                    $new = $_POST['tkgp_priority'];
+
+                    if($old != $new) {
+                        $project->setProjectPriority($new);
+                    }
+                }
                 break;
 
             default:
