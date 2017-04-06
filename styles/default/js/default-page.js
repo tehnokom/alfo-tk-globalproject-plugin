@@ -10,7 +10,7 @@ $j(document).ready(function ($j) {
 });
 
 function tk_filter_init() {
-    tk_filter_state = {sort_by: 'date', order_by: 'desc'};
+    tk_filter_state = {sort_by: 'priority', order_by: 'desc'};
     tk_filter_reset();
     $j('#tk-filter-order select').on('change', tk_select_handler);
 }
@@ -46,6 +46,7 @@ function tk_hide_filter_buttons() {
 
 function tk_filter_handler() {
     if($j(this).hasClass('tk-filter-ok')) {
+        tk_show_modal_animete($j('.tk-projects-list'));
         tk_filter_state = tk_filters_state();
         tk_hide_filter_buttons();
         var sort = $j('#tk-filter-order select[name="sort_by"]');
@@ -67,6 +68,7 @@ function tk_filter_handler() {
             })
             .fail(function (jqXHR, textStatus) {
                 console.log("Request failed: " + textStatus);
+                tk_hide_modal_animate();
             });
     } else {
         tk_filter_reset();

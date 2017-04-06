@@ -2,8 +2,12 @@
 define('TKGP_STYLE_DIR', plugin_dir_path(__FILE__));
 define('TKGP_STYLE_URL', plugin_dir_url(__FILE__));
 
-wp_register_style('default-page-css', TKGP_STYLE_URL . 'css/default-page.css', array('tkgp_general'));
-wp_register_script('default-page-js', TKGP_STYLE_URL . 'js/default-page.js', array('jquery', 'tkgp_js_general'));
+wp_register_style('default-page-css', TKGP_STYLE_URL . 'css/default-page.css', array('tkgp_general','modal-windows-css'));
+wp_register_style('modal-windows-css', TKGP_STYLE_URL . 'css/modal-windows.css');
+wp_register_script('modal-windows-js', TKGP_STYLE_URL . 'js/modal-windows.js', array('jquery'));
+wp_register_script('default-page-js', TKGP_STYLE_URL . 'js/default-page.js', array('jquery',
+    'tkgp_js_general',
+    'modal-windows-js'));
 
 wp_enqueue_style('default-page-css');
 wp_enqueue_script('default-page-js');

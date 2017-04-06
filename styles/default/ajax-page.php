@@ -8,6 +8,8 @@ if(!empty($_POST['sort_by'])) {
     }
 
     $page->quiery($filters);
+} else {
+    $page->quiery(array('sort_by' => array('priority'), 'order_by' => array('desc')));
 }
 
 $page->createPage();

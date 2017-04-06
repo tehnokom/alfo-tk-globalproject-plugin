@@ -75,16 +75,6 @@ function tk_update_tab(html, args) {
         .find(a_selector).on('click', tk_tab_handler);
 }
 
-function tk_show_modal_animete(target_object) {
-    if (typeof target_object === 'object') {
-        var modal_div = "<div class=\"tk-modal-wall\"><div class=\"tk-modal-box\"><div class=\"tk-modal-container\"><center><img src=\"" +
-            tkgp_js_vars.plug_url + '/images/load.gif' +
-            "\" style=\"max-width: 32px;\"></center></div></div></div>";
-
-        $j(target_object).append(modal_div);
-    }
-}
-
 function tk_number_format(src, decimal, separator) {
     decimal = decimal === undefined ? 3 : parseInt(decimal);
     separator = separator === undefined ? ' ' : separator;
@@ -105,14 +95,4 @@ function tk_number_format(src, decimal, separator) {
     out = dec.length > 1 ? out + '.' + dec[1] : out;
 
     return out;
-}
-
-function tk_hide_modal_animate(target_object) {
-    if (typeof target_object) {
-        var modal = $j(target_object).find('.tk-modal-wall');
-
-        if (modal.length > 0) {
-            $j(target_object).find('.tk-modal-wall').remove();
-        }
-    }
 }

@@ -59,6 +59,7 @@
 /*------------------------------------------*/
 .tk-projects-list, .tk-panel {
     display: table-cell;
+    position: relative;
 }
 
 .tk-panel {
