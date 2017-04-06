@@ -22,7 +22,7 @@ img {
     width: 100%;
 }
 
-.tk-logo-cell1 > div > div {
+.tk-logo-cell1 > div > div:not(.tk-modal-wall) {
     display: table-row;
 }
 
@@ -43,7 +43,7 @@ img {
         width: 30%;
     }
 
-    .tk-logo-cell2 > div {
+    .tk-logo-cell2 > div:not(.tk-modal-wall) {
         display: table;
         padding: 10px 10px 10px 10px;
         width: 100%;
@@ -81,7 +81,7 @@ img {
         width: 40%;
     }
 
-    .tk-logo-cell2 > div {
+    .tk-logo-cell2 > divdiv:not(.tk-modal-wall) {
         display: table;
         padding: 3px;
         width: 100%;
@@ -103,7 +103,7 @@ img {
     }
 }
 
-.tk-logo-cell2 > div > div {
+.tk-logo-cell2 > div:not(.tk-modal-wall) > div {
     display: table-row;
 }
 

@@ -7,6 +7,10 @@ var $j = jQuery.noConflict();
 $j(document).ready(function ($j) {
     $j('.tkgp_vote_block').on('tkgp_vote_updated', tk_vote_update);
     $j('.tk-tabs > a[href^=#tk-tab]').on('click', tk_tab_handler);
+    $j(document).on('tkgp_send_vote_request', tk_animate_start);
+    $j(document).on('tkgp_send_reset_vote_request', tk_animate_start);
+    $j('.tkgp_vote_block').on('tkgp_vote_updated', tk_animate_stop);
+
 
     if (location.hash !== '') {
         var cur_tab = location.hash.match(/#tk-tab[\d]+/).toString().replace(/[^\d]+/, '');
@@ -19,6 +23,14 @@ $j(document).ready(function ($j) {
         tk_tab_handler('1');
     }
 });
+
+function tk_animate_start() {
+    tk_show_modal_animete($j('.tk-logo-cell2'));
+}
+
+function tk_animate_stop() {
+    tk_hide_modal_animate($j('.tk-logo-cell2'));
+}
 
 function tk_tab_handler(tab_number) {
     var tab_num = typeof tab_number !== 'object' ?
@@ -46,7 +58,7 @@ function tk_tab_handler(tab_number) {
     }
 }
 
-function tk_vote_update(event, res) {
+function tk_vote_update(event, res, message) {
     var percent = 100.0 * res.approval_votes / res.target_votes;
     var new_content = res.new_content.length != 0 ? res.new_content : '<div class="tkgp_button tk-supported"><a>' + tkl10n.you_supported + '</a></div>';
 

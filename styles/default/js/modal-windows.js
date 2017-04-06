@@ -23,3 +23,11 @@ function tk_hide_modal_animate(target_object) {
         }
     }
 }
+
+function tk_show_modal_animate_handler(event, obj) {
+    tk_show_modal_animete(obj);
+}
+
+function tk_hide_modal_animate_handler(event, obj) {
+    tk_hide_modal_animate(obj);
+}
