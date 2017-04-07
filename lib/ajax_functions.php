@@ -139,7 +139,10 @@ function tkgp_ajax_user_vote()
         $vote = $project->getVote();
         $user_id = get_current_user_id();
 
-        if (!$project->userCanVote($user_id)) {
+        if (!$vote->enabled) {
+            //голосование выключено
+            $message = _x('Voting was disabled', 'Project Vote', 'tkgp');
+        } else if (!$project->userCanVote($user_id)) {
             //пользователь не имеет права голосовать
             $message = _x('You have no rights to vote', 'Project Vote', 'tkgp');
         } else {
@@ -169,7 +172,10 @@ function tkgp_ajax_reset_user_vote()
         $vote = new TK_GVote(intval($_POST['post_id']));
         $user_id = get_current_user_id();
 
-        if (!$project->userCanRevote($user_id)) {
+        if (!$vote->enabled) {
+            //голосование выключено
+            $message = _x('Voting was disabled', 'Project Vote', 'tkgp');
+        } else if (!$project->userCanRevote($user_id)) {
             //пользователь не имеет права сбрасывать голос
             $message = _x('You can not cancel your vote', 'Project Vote', 'tkgp');
         } elseif ($vote->userCanVote($user_id)) {

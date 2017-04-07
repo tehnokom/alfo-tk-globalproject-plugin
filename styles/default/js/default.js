@@ -9,8 +9,6 @@ $j(document).ready(function ($j) {
     $j('.tk-tabs > a[href^=#tk-tab]').on('click', tk_tab_handler);
     $j(document).on('tkgp_send_vote_request', tk_animate_start);
     $j(document).on('tkgp_send_reset_vote_request', tk_animate_start);
-    $j('.tkgp_vote_block').on('tkgp_vote_updated', tk_animate_stop);
-
 
     if (location.hash !== '') {
         var cur_tab = location.hash.match(/#tk-tab[\d]+/).toString().replace(/[^\d]+/, '');
@@ -59,21 +57,33 @@ function tk_tab_handler(tab_number) {
 }
 
 function tk_vote_update(event, res, message) {
-    var percent = 100.0 * res.approval_votes / res.target_votes;
-    var new_content = res.new_content.length != 0 ? res.new_content : '<div class="tkgp_button tk-supported"><a>' + tkl10n.you_supported + '</a></div>';
+    if(message === undefined) {
+        tk_animate_stop();
+        var percent = 100.0 * res.approval_votes / res.target_votes;
+        var new_content = res.new_content.length != 0 ? res.new_content : '<div class="tkgp_button tk-supported"><a>' + tkl10n.you_supported + '</a></div>';
 
-    if (percent && percent < 0.75) {
-        percent = '2px';
-    } else if (percent > 100) {
-        percent = 100 + '%';
+        if (percent && percent < 0.75) {
+            percent = '2px';
+        } else if (percent > 100) {
+            percent = 100 + '%';
+        } else {
+            percent += '%';
+        }
+
+        $j(event).find('.tkgp_vote_buttons').replaceWith(new_content);
+        $j(event).find('.tk-approval-votes').text(tk_number_format(res.approval_votes));
+        $j(event).find('.tk-target-votes').text(tk_number_format(res.target_votes));
+        $j(event).find('.tk-pb-approved').css('width', percent);
+        tkgp_connect_vote_buttons();
     } else {
-        percent += '%';
+        var color = message.status ? '#028709' : '#ff3a00';
+        var img_url = tkgp_js_vars.plug_url + (message.status ? '/images/ok_status.png'
+                : '/images/err_status.png');
+        tk_modal_box_container($j('.tk-logo-cell2'))
+            .replaceWith("<div><center><img src=\"" + img_url + "\"></center></div>" +
+                "<div style='color: " + color + "; text-shadow: 0 0 5px #fff;'>" + message.message + "</div>");
+        setTimeout(tk_vote_update, 2000, this, res);
     }
-
-    $j(this).find('.tkgp_vote_buttons').replaceWith(new_content);
-    $j(this).find('.tk-approval-votes').text(tk_number_format(res.approval_votes));
-    $j(this).find('.tk-target-votes').text(tk_number_format(res.target_votes));
-    $j(this).find('.tk-pb-approved').css('width', percent);
 }
 
 function tk_update_tab(html, args) {

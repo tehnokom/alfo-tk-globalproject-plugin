@@ -1,7 +1,8 @@
 var $j = jQuery.noConflict();
 
 $j(document).ready(function ($j) {
-    tkgp_js_init();
+    tkgp_connect_edit_buttons();
+    tkgp_connect_vote_buttons();
     tkgp_image_preload();
 });
 
@@ -11,10 +12,13 @@ function tkgp_image_preload() {
     });
 }
 
-function tkgp_js_init() {
+function tkgp_connect_edit_buttons() {
+    $j('.tkgp_edit_button').on('click', tkgp_handler_edit_project);
+}
+
+function tkgp_connect_vote_buttons() {
     $j('.tkgp_vote_buttons div.tkgp_button_vote').on('click', tkgp_handler_vote);
     $j('.tkgp_vote_buttons div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
-    $j('.tkgp_edit_button').on('click', tkgp_handler_edit_project);
 }
 
 function tkgp_is_JSON(str) {
@@ -99,7 +103,7 @@ function tkgp_handler_vote_result(result, args) {
         }
     })
         .done(function (new_html) {
-            $j(document).trigger('tkgp_success_vote_status_request');
+            $j(document).trigger('tkgp_success_vote_status_request', [result]);
             tkgp_update_vote(args.vote_id, new_html, result);
         })
         .fail(function (jqXHR, textStatus) {
@@ -118,7 +122,6 @@ function tkgp_update_vote(vote_id, result, message) {
         location.reload();
     } else {
             vr.trigger('tkgp_vote_updated', [res, mes]); //event generated when vote status updated
-            tkgp_js_init();
     }
 }
 
