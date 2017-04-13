@@ -14,6 +14,15 @@
     .tk-page-target, .tk-subprojects {
         font-size: 13px;
     }
+
+    .tk-panel {
+        display: table-cell;
+        position: relative;
+    }
+
+    .tk-mobile-button {
+        display: none;
+    }
 }
 
 .tk-page-title, .tk-page-target, .tk-page-sub {
@@ -31,6 +40,14 @@
 @media screen and (max-width: 600px) {
     .tk-page-target {
         font-size: 14px;
+    }
+
+    .tk-panel {
+        display: none;
+    }
+
+    .tk-mobile-button {
+        display: table;
     }
 }
 
@@ -57,7 +74,7 @@
 }
 
 /*------------------------------------------*/
-.tk-projects-list, .tk-panel {
+.tk-projects-list {
     display: table-cell;
     position: relative;
 }
@@ -79,6 +96,11 @@
     box-shadow: 0 0 10px rgba(204,204,204,0.85);
 }
 
+#tk-mobile-filters .tk-filter-box {
+    background: #fff;
+    padding: 3px;
+}
+
 .tk-title {
     text-align: center;
     vertical-align: middle;
@@ -87,13 +109,13 @@
     padding-bottom: 5px;
 }
 
-#tk-filter-order {
+.tk-filter-order {
     position: relative;
     border: 1px solid #ddd;
     padding: 10px 2px 2px 2px;
 }
 
-#tk-filter-order > label[for="tk-filter-order"] {
+.tk-filter-order > label[for="tk-filter-order"] {
     position: absolute;
     top: -10px;
     left: 5px;
@@ -102,26 +124,60 @@
 }
 
 /*------------------------------------------*/
-#tk-filter-buttons {
+.tk-filter-buttons {
     position: absolute;
     border-radius: 3px;
-    background: rgba(228, 210, 18, 0.33);
+    background: rgba(176, 219, 243, 0.7);
+    box-shadow: 0 0 15px rgba(204,204,204,0.85);
     padding: 2px;
-    z-index: 100;
+    z-index: 1000;
     opacity: 1;
 }
 
-#tk-filter-buttons > div {
+.tk-filter-buttons > div {
     display: table-cell;
     padding: 5px;
 }
 
 .tk-button {
     padding: 5px;
-    border: 1px solid #ccc;
+    min-height: 31px;
+    border: 1px solid #6B6B6B;
     border-radius: 3px;
+    text-align: center;
+    font-weight: bolder;
+    cursor: pointer;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
 }
 
 .tk-button:active {
     box-shadow: inset 0 0 2px #ccc;
+}
+
+#tk-page-more {
+    color: rgb(132, 132, 132);
+}
+
+/*------------------------------------------*/
+.tk-mobile-button {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    padding: 5px;
+    width: 48px;
+    height: 48px;
+    background: rgba(0,182,0, 0.7);
+    text-align: center;
+    opacity: 0;
+    z-index: 101;
+}
+
+.tk-mobile-button >div {
+    display: table-cell;
+    vertical-align: middle;
+    color: white;
+    width: 100%;
+    height: 100%;
 }

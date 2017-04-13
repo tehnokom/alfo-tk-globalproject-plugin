@@ -66,7 +66,7 @@ class TK_GPage
 
         $this->wpdb = $wpdb;
         $this->wpdb->enable_nulls = true;
-        $this->max_projects = 25;
+        $this->max_projects = 10;
         $this->max_links = 10;
 
         $this->sql_src = array(
@@ -90,7 +90,7 @@ class TK_GPage
      * Creates a list of projects for the page
      *
      * @param $page_num integer Page Number
-     * @param $ptype integer Page type
+     * @param $project_type integer Page type
      */
     public function createPage($page_num = 1, $project_type = 3)
     {
@@ -103,7 +103,7 @@ class TK_GPage
 
         while (count($this->projects) < $this->max_projects) {
             $res = $this->wpdb->get_results($this->wpdb->prepare($sql, $project_type,
-                $this->max_projects, $offset), OBJECT);
+                $this->max_projects + 1, $offset), OBJECT);
 
             if (empty($res)) {
                 $this->last_offset;
@@ -119,6 +119,14 @@ class TK_GPage
                 }
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMore()
+    {
+        return (count($this->projects) > $this->max_projects);
     }
 
     /**
@@ -234,7 +242,7 @@ class TK_GPage
      */
     public function nextProject()
     {
-        if (++$this->cur_project_idx <= count($this->projects)) {
+        if (++$this->cur_project_idx < count($this->projects)) {
             $project = new TK_GProject($this->projects[$this->cur_project_idx - 1]);
             if ($project->isValid()) {
                 $this->cur_project = $project;

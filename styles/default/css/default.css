@@ -276,7 +276,9 @@ img {
 .tk-news-unit {
     display: table;
     margin-bottom: 10px;
-    border-bottom: 1px solid rgba(204, 204, 204, 0.6);
+    padding: 5px;
+    border: 1px solid rgba(204, 204, 204, 0.6);
+    border-radius: 5px;
     overflow: hidden;
     width: 100%;
 }
@@ -299,7 +301,7 @@ img {
 
 .tk-news-title > div {
     vertical-align: middle;
-    padding: 5px 0 0 0;
+    /*padding: 5px 0 0 0;*/
 }
 
 .tk-news-footer > div {
@@ -321,8 +323,16 @@ img {
     display: table-row !important;
 }
 
+.tk-bp-xprofile {
+    border-bottom: 1px solid rgba(204, 204, 204, 0.6);
+}
+
 .tk-bp-avatar {
     min-width: 52px;
+}
+
+.tk-bp-avatar img {
+    border-radius: 3px;
 }
 
 .tk-bp-title {

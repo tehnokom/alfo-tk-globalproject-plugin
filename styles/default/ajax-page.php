@@ -1,9 +1,9 @@
 <?php
 $page = new TK_GPage();
 
-if(!empty($_POST['sort_by'])) {
+if (!empty($_POST['sort_by'])) {
     $filters = array('sort_by' => explode(',', $_POST['sort_by']));
-    if(!empty($_POST['order_by'])) {
+    if (!empty($_POST['order_by'])) {
         $filters['order_by'] = explode(',', $_POST['order_by']);
     }
 
@@ -12,7 +12,8 @@ if(!empty($_POST['sort_by'])) {
     $page->quiery(array('sort_by' => array('priority'), 'order_by' => array('desc')));
 }
 
-$page->createPage();
+$page_num = empty($_POST['page']) ? 1 : intval($_POST['page']);
+$page->createPage($page_num);
 
 while ($page->nextProject()) {
     $project = $page->project();
@@ -50,6 +51,12 @@ while ($page->nextProject()) {
         }
         ?>
     </div>
+    <?php
+}
+
+if ($page->hasMore()) {
+    ?>
+    <div id="tk-page-more" class="tk-button"><?php echo _x('More', 'Default style','tk-style'); ?></div>
     <?php
 }
 ?>

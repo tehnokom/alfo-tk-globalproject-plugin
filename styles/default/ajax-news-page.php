@@ -33,10 +33,10 @@ if ($news->isValid()) {
                                 </div>
                             </div>
                         </div>
-                        <div class="tk-bp-title tk-news-title">
-                            <div>
-                                <h2><?php the_title(); ?></h2>
-                            </div>
+                    </div>
+                    <div class="tk-bp-title tk-news-title">
+                        <div>
+                            <h2><?php the_title(); ?></h2>
                         </div>
                     </div>
                 <?php } else { //если не включен BP?>

@@ -26,7 +26,7 @@ get_header();
             <div class="tk-title">
                 <h4><?php echo _x('Filters', 'Default style', 'tk-style'); ?></h4>
             </div>
-            <div id="tk-filter-order">
+            <div class="tk-filter-order">
                 <label for="tk-filter-order"><?php echo _x('Sorting', 'Default style', 'tk-style'); ?></label>
                 <select name="sort_by">
                     <option value="priority"><?php echo _x('by proirity', 'Default style', 'tk-style'); ?></option>
@@ -41,6 +41,7 @@ get_header();
             </div>
         </div>
     </div>
+    <div class="tk-mobile-button"><div>Ф</div></div>
 </div>
 <?php
 get_footer();
