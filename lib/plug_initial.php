@@ -1,7 +1,7 @@
 <?php
 function tkgp_check_version()
 {
-    $cur_version = '0.17';
+    $cur_version = '0.18';
     $installed_version = tkgp_prepare_version(get_option('tkgp_db_version'));
 
     if (empty($installed_version)) {
@@ -144,6 +144,30 @@ function tkgp_db_install($cur_version)
         dbDelta($sql);
     }
 
+    $table_name = $wpdb->prefix . 'tkgp_tasks';
+    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+        $sql = "CREATE TABLE {$table_name} ( `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+                  `post_id` BIGINT(20) UNSIGNED NOT NULL ,
+                  `title` VARCHAR(512) NULL , 
+                  `description` MEDIUMTEXT NULL DEFAULT NULL , 
+                  `status` TINYINT UNSIGNED NOT NULL DEFAULT '0' , 
+                  `type` TINYINT(3) UNSIGNED NOT NULL DEFAULT '1' , 
+                  `creation_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+                  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+                  `last_update_user` BIGINT(20) UNSIGNED NULL DEFAULT NULL , 
+                  `start_date` DATE NULL DEFAULT NULL , 
+                  `end_date` DATETIME NULL DEFAULT NULL , 
+                  `actual_end_date` DATETIME NULL DEFAULT NULL ,
+                  `internal_id` INTEGER UNSIGNED NOT NULL DEFAULT '1',
+                  PRIMARY KEY (`id`), 
+                  INDEX `type_idx` (`type`), 
+                  UNIQUE `task_unique` (`post_id`, `title`)){$charset_collate};";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        dbDelta($sql);
+    }
+
     if ($wpdb->get_var("SHOW FUNCTION STATUS LIKE 'get_wp_localize'") != 'get_wp_localize') {
         $sql = "CREATE FUNCTION `get_wp_localize`(`wp_data` TEXT CHARSET utf8, `wp_lang` VARCHAR(4) CHARSET utf8) 
                     RETURNS TEXT CHARSET utf8 NOT DETERMINISTIC READS SQL DATA SQL SECURITY INVOKER 
@@ -280,7 +304,27 @@ function tkgp_db_update($installed_version, $cur_version)
 									ADD COLUMN `priority` TINYINT unsigned DEFAULT 50 AFTER `news_id`;"
             ),
             'ver_after' => '0.17'
-        )
+        ),
+        '0.17' => array(
+            'sql' => array("CREATE TABLE `{$wpdb->prefix}tkgp_tasks` ( `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT , 
+                  `post_id` BIGINT(20) UNSIGNED NOT NULL ,
+                  `title` VARCHAR(512) NULL , 
+                  `description` MEDIUMTEXT NULL DEFAULT NULL , 
+                  `status` TINYINT UNSIGNED NOT NULL DEFAULT '0' , 
+                  `type` TINYINT(3) UNSIGNED NOT NULL DEFAULT '1' , 
+                  `creation_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+                  `last_update` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+                  `last_update_user` BIGINT(20) UNSIGNED NULL DEFAULT NULL , 
+                  `start_date` DATE NULL DEFAULT NULL , 
+                  `end_date` DATETIME NULL DEFAULT NULL , 
+                  `actual_end_date` DATETIME NULL DEFAULT NULL , 
+                  `internal_id` INTEGER UNSIGNED NOT NULL DEFAULT '1',
+                  PRIMARY KEY (`id`), 
+                  INDEX `type_idx` (`type`), 
+                  UNIQUE `task_unique` (`post_id`, `title`))
+                  DEFAULT CHARACTER SET {$wpdb->charset} COLLATE {$wpdb->collate};"
+            ),
+            'ver_after' => '0.18'),
     );
 
     if (!empty($patches[$installed_version])) {

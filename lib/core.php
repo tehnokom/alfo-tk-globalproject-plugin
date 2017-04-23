@@ -7,6 +7,7 @@ require_once(TKGP_ROOT . 'lib/page.php');
 require_once(TKGP_ROOT . 'lib/project.php');
 require_once(TKGP_ROOT . 'lib/vote.php');
 require_once(TKGP_ROOT . 'lib/news.php');
+require_once(TKGP_ROOT . 'lib/task.php');
 
 /**
  * Создание типа проектов
