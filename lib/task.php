@@ -13,13 +13,13 @@ class TK_GTask
         $this->wpdb = $wpdb;
         $this->wpdb->enable_nulls = true;
 
-        $query = $this->wpdb->prepare("SELECT post_id, status, type, start_date, end_date, actual_end_date
+        $query = $this->wpdb->prepare("SELECT post_id, title, description, status, type, start_date, end_date, actual_end_date
         FROM {$this->wpdb->prefix}tkgp_tasks WHERE id = %d", $task_id);
         $result = $this->wpdb->get_results($query, ARRAY_A);
 
         if (!empty($result)) {
             $this->opts['task_id'] = $task_id;
-            $this->opts = array_merge($this->opts, $result);
+            $this->opts = array_merge($this->opts, $result[0]);
         }
     }
 
@@ -123,7 +123,8 @@ WHERE post_id = %d AND title = %s", $project_id, $fields['title']);
                                         'parent_type' => $parent_task->type,
                                         'child_id' => $task_id,
                                         'child_type' => $task->type),
-                                    array('%d','%s','%d','%d'));
+                                    array('%d','%s','%d','%d')
+                                );
                             }
 
                             return $task;
@@ -140,7 +141,7 @@ WHERE post_id = %d AND title = %s", $project_id, $fields['title']);
      * Returns TRUE when this Task has children tasks
      * @return bool
      */
-    public function hasChildren()
+    public function have_children()
     {
         if($this->isValid()) {
             $query = $this->wpdb->prepare("SELECT 1 FROM {$this->wpdb->prefix}tkgp_tasks_links
@@ -152,9 +153,58 @@ WHERE parent_id = %d parent_type = %d", $this->task_id, $this->type);
         return false;
     }
 
-    public function getChildTasks()
+    /**
+     * Returns array with ID of children tasks
+     * @return array
+     */
+    public function get_children()
     {
+        $sql = $this->wpdb->prepare("SELECT * FROM (SELECT t.id, t.type, l.parent_id, l.parent_type, t.internal_id 
+FROM `{$this->wpdb->prefix}tkgp_tasks` t 
+LEFT JOIN `{$this->wpdb->prefix}tkgp_tasks_links` l ON (l.child_id = t.id AND l.child_type = t.type) 
+WHERE t.post_id = %d AND t.id <> %d
+UNION
+SELECT tt.id, tt.type, ll.parent_id, ll.parent_type, tt.internal_id 
+FROM `{$this->wpdb->prefix}tkgp_tasks` tt 
+INNER JOIN `{$this->wpdb->prefix}tkgp_tasks_links` ll ON (ll.child_id = tt.id AND ll.child_type = tt.type) 
+WHERE tt.post_id = %d AND tt.id <> %d) o
+ORDER BY o.`internal_id`;",
+            $this->post_id,
+            $this->task_id,
+            $this->post_id,
+            $this->task_id);
 
+        $res = $this->wpdb->get_results($sql, ARRAY_A);
+        return (!empty($res) ? $this->buildTreeTasks($res) : array());
+    }
+
+    protected function buildTreeTasks(&$data, $max_level = 7, $current_level = 1, $parent_id = 0)
+    {
+        $parent_id = !$parent_id ? $this->task_id : $parent_id;
+        $out = array();
+
+        if (is_array($data)) {
+            foreach ($data as $key => $task) {
+                if (intval($task['parent_id']) === $parent_id) {
+                    $out['id_' . $task['id']] = $task;
+                    unset($data[$key]);
+
+                    if ($current_level < $max_level) {
+                        $childs = $this->buildTreeTasks($data,
+                            $max_level,
+                            $current_level + 1,
+                            intval($task['id']));
+
+                        if (!empty($childs)) {
+                            $out['id_' . $task['id']]['childs'] = $childs;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return $out;
     }
 }
 

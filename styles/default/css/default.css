@@ -338,3 +338,40 @@ img {
 .tk-bp-title {
     margin-left: auto;
 }
+
+/*----------------------------------*/
+
+.tk-tasks-list {
+    /*border: 1px solid #ccc;*/
+}
+
+.tk-tasks-list, .tk-tasks-list ul {
+    margin-top: 5px;
+    min-height: 10px;
+}
+
+.tk-tasks-list li {
+    padding: 7px;
+    border-top: 2px groove #cccccc;
+}
+
+.tk-task-desc {
+    padding-left: 5px;
+}
+
+.tk-tasks-list li:last-child {
+    border-bottom: 2px groove #cccccc;
+}
+
+.tk-task-type-2 {
+    background: #fff8c1;
+}
+
+.tk-task-type-3 {
+    background: #dcffca;
+}
+
+.tk-task-empty {
+    background: #fff;
+    border: 1px dotted #AAAAAA;
+}

@@ -200,6 +200,31 @@ function tkgp_ajax_get_target(handler) {
         type: 'POST',
         data: {
             action: 'tkgp_get_project_target',
+            post_id: tkgp_js_vars.post_id
+        }
+    })
+        .done(function (html) {
+            if (typeof handler === 'function') {
+                if (args !== undefined) {
+                    handler(html, args);
+                } else {
+                    handler(html);
+                }
+            }
+        })
+        .fail(function (jqXHR, textStatus) {
+            console.log("Request failed: " + textStatus);
+        });
+}
+
+function tkgp_ajax_get_tasks(handler) {
+    var args = arguments[1];
+
+    $j.ajax({
+        url: tkgp_js_vars.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'tkgp_get_project_tasks',
             post_id: tkgp_js_vars.post_id,
         }
     })

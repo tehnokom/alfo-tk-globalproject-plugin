@@ -14,7 +14,7 @@ $j(document).ready(function ($j) {
         var cur_tab = location.hash.match(/#tk-tab[\d]+/).toString().replace(/[^\d]+/, '');
 
         if (cur_tab) {
-            $j('.tk-tabs > a[href=#tk-tab' + cur_tab + ']').click();
+            //$j('.tk-tabs > a[href=#tk-tab' + cur_tab + ']').click();
             tk_tab_handler(cur_tab);
         }
     } else {
@@ -47,6 +47,10 @@ function tk_tab_handler(tab_number) {
 
             case '2':
                 tkgp_ajax_get_target(tk_update_tab, {tab_num: tab_num});
+                break;
+
+            case '3':
+                tkgp_ajax_get_tasks(tk_update_tab, {tab_num: tab_num});
                 break;
 
             default:
@@ -95,6 +99,10 @@ function tk_update_tab(html, args) {
         .append('<input name="tk-tab-status" type="hidden" value="loaded"/>')
         .append(html)
         .find(a_selector).on('click', tk_tab_handler);
+
+    if(args.tab_num === '3') {
+        tk_tasks_tool_init();
+    }
 }
 
 function tk_number_format(src, decimal, separator) {
