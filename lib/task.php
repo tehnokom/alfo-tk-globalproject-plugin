@@ -13,12 +13,12 @@ class TK_GTask
         $this->wpdb = $wpdb;
         $this->wpdb->enable_nulls = true;
 
-        $query = $this->wpdb->prepare("SELECT post_id, title, description, status, type, start_date, end_date, actual_end_date
+        $query = $this->wpdb->prepare("SELECT id, post_id, title, description, status, type, start_date, end_date, actual_end_date
         FROM {$this->wpdb->prefix}tkgp_tasks WHERE id = %d", $task_id);
         $result = $this->wpdb->get_results($query, ARRAY_A);
 
         if (!empty($result)) {
-            $this->opts['task_id'] = $task_id;
+            $this->opts['task_id'] = $result[0]['id'];
             $this->opts = array_merge($this->opts, $result[0]);
         }
     }

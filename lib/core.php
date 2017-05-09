@@ -172,7 +172,18 @@ function tkgp_show_metabox_steps()
     ?>
     <input type="hidden" name="tkgp_meta_steps_nonce"
            value="<?php echo wp_create_nonce(basename(__FILE__) . '_steps'); ?>"/>
-
+    <?php
+    require_once (TKGP_ROOT . 'lib/admin-tasks.php');
+    ?>
+    <div id="tkgp_tasks_editor_form">
+    <?php
+    wp_editor('', 'tkgp_task_editor', array(
+        'editor_class' => 'requiredField',
+        'textarea_rows' => '6',
+        'media_buttons' => false,
+        'teeny' => true));
+    ?>
+    </div>
     <?php
 }
 

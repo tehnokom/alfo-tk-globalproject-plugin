@@ -326,7 +326,6 @@ add_action('wp_ajax_tkgp_get_project_target', 'tkgp_get_project_target');
 add_action('wp_ajax_nopriv_tkgp_get_project_target', 'tkgp_get_project_target');
 add_action('wp_ajax_tkgp_get_projects', 'tkgp_get_projects');
 add_action('wp_ajax_nopriv_tkgp_get_projects', 'tkgp_get_projects');
-add_action('wp_ajax_tkgp_get_tasks', 'tkgp_get_project_tasks');
+add_action('wp_ajax_tkgp_get_project_tasks', 'tkgp_get_tasks');
 add_action('wp_ajax_nopriv_tkgp_get_project_tasks', 'tkgp_get_tasks');
-
 ?>

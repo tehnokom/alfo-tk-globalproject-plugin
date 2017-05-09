@@ -54,7 +54,7 @@ function tk_add_modal_window(id, content,target_object) {
 }
 
 function tk_modal_window_handler(event) {
-    var target = $j(event.target)
+    var target = $j(event.target);
     if(target.hasClass('tk-modal-wall') || target.hasClass('tk-modal-box')) {
         $j(this).hide();
     }

@@ -64,7 +64,8 @@ function tkgp_js_registry()
 
 function tkgp_admin_css_registry()
 {
-    wp_register_style('tkgp_admin', TKGP_URL . 'css/tkgp_admin.css');
+    wp_register_style('tkgp-modal-windows-css', TKGP_URL . 'css/tkgp-modal-windows.css');
+    wp_register_style('tkgp_admin', TKGP_URL . 'css/tkgp_admin.css', array('tkgp-modal-windows-css'));
     wp_register_style('jquery-ui', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
     wp_enqueue_style('jquery-ui');
     wp_enqueue_style('tkgp_admin');
@@ -72,9 +73,11 @@ function tkgp_admin_css_registry()
 
 function tkgp_admin_js_registry()
 {
-    wp_register_script('tkgp_js_admin', TKGP_URL . 'js/tkgp_admin.js');
-    wp_enqueue_script('jquery');
-    wp_enqueue_script('jquery-ui-datepicker');
+    wp_register_script('tkgp_modal_windows', TKGP_URL . 'js/tkgp-modal-windows.js', array('jquery'));
+    wp_register_script('tkgp_js_admin', TKGP_URL . 'js/tkgp_admin.js', array('jquery',
+        'tkgp_modal_windows',
+        'jquery-ui-sortable',
+        'jquery-ui-datepicker'));
     wp_enqueue_script('tkgp_js_admin');
     wp_localize_script('tkgp_js_admin', 'tkgp_i18n',
         array('vote_reset' => __('You want to definitely reset the voting results?', 'tkgp'),

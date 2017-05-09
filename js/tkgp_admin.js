@@ -20,7 +20,7 @@ $j(document).ready(function ($j) {
         $j(".tkgp_user_add").on('click', tkgp_handler_add_user);
         $j(".tkgp_user").on('click', tkgp_handler_del_user);
 
-        if ($j(".tkgp_radio li input[type='radio'][name='ptype']:checked").length == 0) {
+        if ($j(".tkgp_radio li input[type='radio'][name='ptype']:checked").length === 0) {
             $j(".tkgp_radio li input[type='radio'][name='ptype'][checked='true']")
                 .addClass('tkgp_radio_checked')
                 .trigger('click');
@@ -34,9 +34,10 @@ $j(document).ready(function ($j) {
         $j(".required_field").attr('required', 'required'); //обязательность поля "Цель проекта"
         $j("input[type='submit']").on('mousedown', function () {
             tinyMCE.triggerSave();
-        }); //сохранение изменени из визуального редактора в textarea
+        }); //сохранение изменений из визуального редактора в textarea
 
         tkgp_target_move();
+        tkgp_tasks_init();
     }
 );
 
@@ -89,7 +90,7 @@ function tkgp_handler_select_radio() {
 
 function tkgp_handler_search(e) {
     if (/*$j(this).val().length >= 2 &&*/ e.keyCode !== 27) {
-        if ($j(this).val().length == 0) {
+        if ($j(this).val().length === 0) {
             tkgp_show_search_result('');
             return;
         }
@@ -146,7 +147,7 @@ function tkgp_hide_user_modal() {
 }
 
 function tkgp_handler_add_user() {
-    if ($j('#tkgp_modal_user').length == 0) {
+    if ($j('#tkgp_modal_user').length === 0) {
         $j.post(ajaxurl, {action: 'tkgp_get_user', post_id: tkgp_url_vars()['post']},
             function (resp) {
                 var $j = jQuery.noConflict();
@@ -193,9 +194,29 @@ function tkgp_handler_del_user() {
         }
     } else { //нельзя удалять единственного
         alert(tkgp_i18n.delete_single_manager);
-        return;
     }
+}
 
-    //$j(parent).remove('#manager-1');
+function tkgp_tasks_init() {
+    $j('.tkgp_tasks').sortable({items: "li:not(.tkgp_tasks_tool)",
+        connectWith: ".tkgp_tasks",
+        dropOnEmpty: true,
+        update: tkgp_task_sort_change,
+        placeholder: "tkgp_task_empty"});
+
+    tkgp_tasks_add_buttons();
+}
+
+function tkgp_tasks_add_buttons(obj) {
+    obj = obj === undefined ? $j('.tkgp_tasks').parent() : obj;
+
+    if( typeof obj === 'object') {
+        $j(obj).children('ul.tkgp_tasks').append('<li class="tkgp_tasks_tool"><div>' +
+            '<div class="tkgp_circle_button">+</div>' +
+            '</div></li>');
+    }
+}
+
+function tkgp_task_sort_change(e, ui) {
 
 }
