@@ -76,21 +76,27 @@ class TK_GTask
                     case 'title':
                         $field_type[] = '%s';
                         $fields[$key] = $value;
+                        break;
                     case 'description':
                         $field_type[] = '%s';
                         $fields[$key] = $value;
+                        break;
                     case 'type':
                         $field_type[] = '%s';
                         $fields[$key] = $value;
+                        break;
                     case 'status':
                         $field_type[] = '%d';
                         $fields[$key] = $value;
+                        break;
                     case 'start_date':
                         $field_type[] = '%s';
                         $fields[$key] = $value;
+                        break;
                     case 'end_date':
                         $field_type[] = '%s';
                         $fields[$key] = $value;
+                        break;
                     case 'actual_end_date':
                         $field_type[] = '%s';
                         $fields[$key] = $value;
@@ -99,39 +105,40 @@ class TK_GTask
                     default:
                         continue;
                 }
+            }
+            file_put_contents(__FILE__ . '.log', serialize($fields) . serialize($field_type));
+            if (!empty($fields['title'])) {
+                global $wpdb;
+                $wpdb->enable_nulls = true;
 
-                if (!empty($fields['title'])) {
-                    global $wpdb;
-                    $wpdb->enable_nulls = true;
+                $fields['post_id'] = $project_id;
+                $field_type[] = '%d';
+                $res = $wpdb->insert("{$wpdb->prefix}tkgp_tasks", $fields, $field_type);
 
-                    $fields['post_id'] = $project_id;
-                    $field_type[] = '%d';
-                    $res = $wpdb->insert("{$wpdb->prefix}tkgp_tasks", $fields, $field_type);
-
-                    if ($res) {
-                        $query = $wpdb->prepare("SELECT id FROM {$wpdb->prefix}tkgp_tasks 
+                if ($res) {
+                    $query = $wpdb->prepare("SELECT id FROM {$wpdb->prefix}tkgp_tasks 
 WHERE post_id = %d AND title = %s", $project_id, $fields['title']);
 
-                        $task_id = $wpdb->get_var($query);
-                        $task = new TK_GTask($task_id);
-                        if ($task->isValid()) {
+                    $task_id = $wpdb->get_var($query);
+                    $task = new TK_GTask($task_id);
+                    if ($task->isValid()) {
 
-                            $parent_task = new TK_GTask($parent_id);
-                            if($parent_task->isValid()) {
-                                $wpdb->insert("{$wpdb->prefix}tkgp_tasks_links",
-                                    array('parent_id' => $parent_id,
-                                        'parent_type' => $parent_task->type,
-                                        'child_id' => $task_id,
-                                        'child_type' => $task->type),
-                                    array('%d','%s','%d','%d')
-                                );
-                            }
-
-                            return $task;
+                        $parent_task = new TK_GTask($parent_id);
+                        if ($parent_task->isValid()) {
+                            $wpdb->insert("{$wpdb->prefix}tkgp_tasks_links",
+                                array('parent_id' => $parent_id,
+                                    'parent_type' => $parent_task->type,
+                                    'child_id' => $task_id,
+                                    'child_type' => $task->type),
+                                array('%d', '%s', '%d', '%d')
+                            );
                         }
+
+                        return $task;
                     }
                 }
             }
+
         }
 
         return null;

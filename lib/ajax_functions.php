@@ -314,6 +314,24 @@ function tkgp_get_tasks()
     wp_die();
 }
 
+function tkgp_task_save()
+{
+    if (!empty($_POST['post_id']) && is_admin()) {
+        if(empty($_POST['task_id'])) {
+            $task = TK_GTask::createTask($_POST['post_id'],
+                array('title' => $_POST['title'],
+                    'description' => $_POST['desc']),
+                $_POST['parent_id']);
+
+            if($task) {
+                echo 'Ok';
+            }
+        }
+    }
+
+    wp_die();
+}
+
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');
 add_action('wp_ajax_tkgp_user_vote', 'tkgp_ajax_user_vote');
 add_action('wp_ajax_tkgp_get_vote_status', 'tkgp_ajax_get_vote_status');
@@ -328,4 +346,5 @@ add_action('wp_ajax_tkgp_get_projects', 'tkgp_get_projects');
 add_action('wp_ajax_nopriv_tkgp_get_projects', 'tkgp_get_projects');
 add_action('wp_ajax_tkgp_get_project_tasks', 'tkgp_get_tasks');
 add_action('wp_ajax_nopriv_tkgp_get_project_tasks', 'tkgp_get_tasks');
+add_action('wp_ajax_tkgp_task_save', 'tkgp_task_save');
 ?>

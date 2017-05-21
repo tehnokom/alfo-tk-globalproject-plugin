@@ -14,13 +14,10 @@ if($tasks->isValid() && $post->post_status !== "auto-draft") {
             <li data-tkgp-task-type="<?php echo $task->type; ?>">
                 <input type="hidden" name="tkgp_task_id" value="<?php echo $task->task_id; ?>" />
                 <div style="width: 100%;">
-                    <input class="tkgp_task_mlang" type="text" name="tkgp_task_title_<?php echo $task->task_id; ?>"
-                        value="<?php echo $task->title; ?>">
+                    <h3><?php echo $task->title; ?></h3>
                 </div>
                 <div>
-                    <textarea class="tkgp_task_mlang" name="tkgp_task_desc_<?php echo $task->task_id; ?>">
-                        <?php echo $task->description; ?>
-                    </textarea>
+                    <?php echo $task->description; ?>
                 </div>
                 <ul class="tkgp_tasks">
                     <?php
@@ -32,14 +29,10 @@ if($tasks->isValid() && $post->post_status !== "auto-draft") {
                                 <input type="hidden" name="tkgp_task_id" value="<?php echo $child->task_id; ?>" />
                                 <input type="hidden" name="tkgp_task_parent" value="<?php echo $task->task_id; ?>" />
                                 <div style="width: 100%;">
-                                    <input class="tkgp_task_mlang" type="text"
-                                           name="tkgp_task_title_<?php echo $child->task_id; ?>"
-                                           value="<?php echo $child->title; ?>" />
+                                    <h4><?php echo $child->title; ?></h4>
                                 </div>
                                 <div>
-                                    <textarea class="tkgp_task_mlang" name="tkgp_task_desc_<?php echo $child->task_id; ?>">
-                                        <?php echo $child->description; ?>
-                                    </textarea>
+                                    <?php echo $child->description; ?>
                                 </div>
                                 <ul class="tkgp_tasks">
                                 </ul>

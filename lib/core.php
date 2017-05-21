@@ -176,6 +176,9 @@ function tkgp_show_metabox_steps()
     require_once (TKGP_ROOT . 'lib/admin-tasks.php');
     ?>
     <div id="tkgp_tasks_editor_form">
+        <input type="hidden" name="tkgp_task_id" val=""/>
+        <input type="hidden" name="tkgp_parent_task_id" val=""/>
+        <input type="text" name="tkgp_task_title" class="tkgp_task_mlang" />
     <?php
     wp_editor('', 'tkgp_task_editor', array(
         'editor_class' => 'requiredField',
@@ -183,6 +186,7 @@ function tkgp_show_metabox_steps()
         'media_buttons' => false,
         'teeny' => true));
     ?>
+        <div class="tkgp_button button tkgp_task_ok"><a>Ok</a></div>
     </div>
     <?php
 }

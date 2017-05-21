@@ -205,6 +205,8 @@ function tkgp_tasks_init() {
         placeholder: "tkgp_task_empty"});
 
     tkgp_tasks_add_buttons();
+    $j('.tkgp_button.tkgp_task_ok').on('click',tkgp_task_save_handler);
+
 }
 
 function tkgp_tasks_add_buttons(obj) {
@@ -219,4 +221,60 @@ function tkgp_tasks_add_buttons(obj) {
 
 function tkgp_task_sort_change(e, ui) {
 
+}
+
+function tkgp_task_save_handler() {
+    var task_id = $j(this).parent().children('input[name="tkgp_task_id"]').val();
+    var parent_id = $j(this).parent().children('input[name="tkgp_parent_task_id"]').val();
+    tkgp_task_translate_compile('tkgp_task_title');
+    tkgp_task_translate_compile('tkgp_task_editor');
+    var title = $j('input[name="tkgp_task_title"]').val();
+    var desc = $j('textarea[name="tkgp_task_editor"]').text();
+
+    $j.post(ajaxurl, {
+            action: 'tkgp_task_save',
+            post_id: tkgp_url_vars()['post'],
+            task_id: task_id,
+            paretn_id: parent_id,
+            title: title,
+            desc: desc
+        },
+        function (resp) {
+            alert(resp);
+        }
+    );
+}
+
+function tkgp_task_translate_compile(name) {
+    var field_type = $j('[name="' + name + '"]').prop('tagName');
+    var objts = $j('input[name^="qtranslate-fields[' + name + ']"]');
+    var cnt = objts.length;
+    var cur_lang = $j('li.qtranxs-lang-switch.active').attr('lang');
+
+    if(cnt) {
+        var content = '';
+
+        for(var i = 0; i < cnt; ++i) {
+            var regexp = new RegExp('(qtranslate-fields\\[' + name + '\\])','g');
+            var cur_tag = $j(objts[i]).attr('name').replace(regexp,'')
+                .replace(/[\[\]]/g,'');
+            if(cur_tag === 'qtranslate-separator') {
+                continue;
+            }
+
+            content += '[:' + cur_tag + ']' + (cur_tag === cur_lang ?
+                    (field_type === 'TEXTAREA' ? tinyMCE.get(name).getContent({format: "text"})
+                        : $j('[name="' + name + '"]').val())
+                : $j('input[name^="qtranslate-fields[' + name + ']['+ cur_tag + ']"]').val());
+
+        }
+        content += '[:]';
+
+        if(field_type === 'TEXTAREA') {
+            $j('textarea[name=' + name + ']').text(content);
+        } else {
+            $j('input[name=' + name + ']').val(content);
+        }
+
+    }
 }
