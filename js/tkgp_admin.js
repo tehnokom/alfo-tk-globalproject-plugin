@@ -36,13 +36,20 @@ $j(document).ready(function ($j) {
             tinyMCE.triggerSave();
         }); //сохранение изменений из визуального редактора в textarea
 
-        tkgp_target_move();
-        tkgp_tasks_init();
+        tkgp_target_move(); //перемещаем поле Цели
+        tkgp_tasks_init(); //инициализируем задачи
+        //обработчики на кнопки задач - пока вынес из tkgp_task_init
+        $j('.tkgp_button.tkgp_task_ok').on('click',tkgp_task_save_handler);
+        $j('.tkgp_button.tkgp_task_cancel').on('click',tkgp_task_editor_hide);
+
+        if(window.location.hash.length) { //перематываем к задачам после добавления задачи
+            setTimeout(function(){window.location.hash = window.location.hash},1000);
+        }
     }
 );
 
 function tkgp_target_move() {
-    row = $j("label[for='ptarget']").parent("th").parent("tr");
+    var row = $j("label[for='ptarget']").parent("th").parent("tr");
     $j("#wp-content-wrap").before('<h3 id="wp-ptarget-header"></h3>');
     $j("label[for='ptarget']").append(':').detach().appendTo("#wp-ptarget-header");
     $j("#wp-ptarget-wrap").detach().insertBefore("#wp-content-wrap");
@@ -61,7 +68,7 @@ function tkgp_url_vars() {
     var out = {};
 
     for (var i = 0; i < pair.length; ++i) {
-        if (pair[i] != '') {
+        if (pair[i] !== '') {
             out[pair[i].split('=')[0]] = pair[i].split('=')[1];
         }
     }
@@ -122,7 +129,8 @@ function tkgp_handler_add_selected() {
     for (var i = 0; i < selected.length; i++) {
         var cur = selected[i];
         var display_name = ($j(cur).parents('tr').find('td:first-child')).text();
-        var output = '<div class="button tkgp_user"><a id="tkgp_user">' + display_name + '</a><input type="hidden" name="manager' + (i + offset) + '" value="' + cur.value + '"></div>';
+        var output = '<div class="button tkgp_user"><a id="tkgp_user">' + display_name +
+            '</a><input type="hidden" name="manager' + (i + offset) + '" value="' + cur.value + '"></div>';
         $j('.tkgp_user_add').before(output);
     }
     $j(".tkgp_user").off('click', tkgp_handler_del_user);
@@ -205,18 +213,42 @@ function tkgp_tasks_init() {
         placeholder: "tkgp_task_empty"});
 
     tkgp_tasks_add_buttons();
-    $j('.tkgp_button.tkgp_task_ok').on('click',tkgp_task_save_handler);
-
 }
 
 function tkgp_tasks_add_buttons(obj) {
     obj = obj === undefined ? $j('.tkgp_tasks').parent() : obj;
 
     if( typeof obj === 'object') {
-        $j(obj).children('ul.tkgp_tasks').append('<li class="tkgp_tasks_tool"><div>' +
-            '<div class="tkgp_circle_button">+</div>' +
-            '</div></li>');
+        /*$j(obj).children('ul.tkgp_tasks').append('<li class="tkgp_tasks_tool"><div>' +
+            '<div class="tkgp_circle_button tkgp_task_add_btn">+</div>' +
+            '</div></li>');*/
+
+        $j('.tkgp_task_add_btn').on('click', tkgp_task_create_handler);
+        $j('.tkgp_task_del_btn').on('click', tkgp_task_delete_handler);
     }
+}
+
+function tkgp_task_create_handler(e) {
+    tkgp_task_editor_hide();
+    var task_edit_form = $j('#tkgp_tasks_editor_form');
+    var parent_id = $j($j(this).parents('li')[1]).children('input[name^="tkgp_task_id"]').val();
+
+    task_edit_form.children('input, textarea').val('');
+    task_edit_form.children('input[name="tkgp_parent_task_id"]').val(parent_id);
+    tinyMCE.get('tkgp_task_editor').setContent('');
+
+    task_edit_form.show();
+}
+
+function tkgp_get_task_data(task_id) {
+    $j.post(ajaxurl, {
+            action: 'tkgp_get_task_data',
+            task_id: task_id
+        },
+        function (resp) {
+            alert($j.parseJSON(resp).data.desc);
+        }
+    );
 }
 
 function tkgp_task_sort_change(e, ui) {
@@ -224,57 +256,99 @@ function tkgp_task_sort_change(e, ui) {
 }
 
 function tkgp_task_save_handler() {
-    var task_id = $j(this).parent().children('input[name="tkgp_task_id"]').val();
-    var parent_id = $j(this).parent().children('input[name="tkgp_parent_task_id"]').val();
-    tkgp_task_translate_compile('tkgp_task_title');
-    tkgp_task_translate_compile('tkgp_task_editor');
-    var title = $j('input[name="tkgp_task_title"]').val();
-    var desc = $j('textarea[name="tkgp_task_editor"]').text();
+    var task_id = $j('#tkgp_tasks_editor_form').children('input[name="tkgp_task_id"]').val();
+    var parent_id = $j('#tkgp_tasks_editor_form').children('input[name="tkgp_parent_task_id"]').val();
+    var title = tkgp_task_field_compile('tkgp_task_title');
+    var desc = tkgp_task_field_compile('tkgp_task_editor');
+    var type = $j('select[name="tkgp_task_type"] :selected').val();
 
     $j.post(ajaxurl, {
             action: 'tkgp_task_save',
             post_id: tkgp_url_vars()['post'],
             task_id: task_id,
-            paretn_id: parent_id,
+            parent_id: parent_id,
             title: title,
-            desc: desc
+            desc: desc,
+            type: type
         },
         function (resp) {
-            alert(resp);
+            var res = $j.parseJSON(resp);
+            if(res.status === 'ok') {
+                tkgp_task_editor_hide();
+                window.location.hash = "#tkgp_task_anchor";
+                window.location.reload();
+            } else {
+                alert('Task creation ERROR!');
+            }
         }
     );
 }
 
-function tkgp_task_translate_compile(name) {
-    var field_type = $j('[name="' + name + '"]').prop('tagName');
-    var objts = $j('input[name^="qtranslate-fields[' + name + ']"]');
-    var cnt = objts.length;
+function tkgp_task_field_compile(name) {
+    var out = {};
     var cur_lang = $j('li.qtranxs-lang-switch.active').attr('lang');
+    var qtrans_tags = $j('input[name^="qtranslate-fields[' + name + ']"]');
 
-    if(cnt) {
-        var content = '';
+    if(qtrans_tags.length) { //обнаружены поля qtranslate-x
+        qtrans_tags.each( //собираем все языки в массив
+            function(i,o){
+                var obj = $j(o);
+                var regexp = new RegExp('(qtranslate-fields\\[' + name + '\\])','g');
+                var key = obj.attr('name').replace(regexp,'').replace(/[\[\]]/g,'');
 
-        for(var i = 0; i < cnt; ++i) {
-            var regexp = new RegExp('(qtranslate-fields\\[' + name + '\\])','g');
-            var cur_tag = $j(objts[i]).attr('name').replace(regexp,'')
-                .replace(/[\[\]]/g,'');
-            if(cur_tag === 'qtranslate-separator') {
-                continue;
+                if(key === 'qtranslate-separator') {
+                    return;
+                }
+
+                var cur_content = '';
+                if(key === cur_lang) { //если текущий редактируемый язык
+                    //берем из самого поля ввода/редактора
+                    cur_content = $j('*[name="' + name + '"]').prop('tagName') === 'TEXTAREA' ?
+                        tinyMCE.get(name).getContent({format: 'text'})
+                        : $j('*[name="' + name + '"]').val();
+                } else {
+                    cur_content = obj.val();
+                }
+
+                if(!cur_content.length) {
+                    return;
+                }
+
+                out[key] = cur_content;
             }
+        );
 
-            content += '[:' + cur_tag + ']' + (cur_tag === cur_lang ?
-                    (field_type === 'TEXTAREA' ? tinyMCE.get(name).getContent({format: "text"})
-                        : $j('[name="' + name + '"]').val())
-                : $j('input[name^="qtranslate-fields[' + name + ']['+ cur_tag + ']"]').val());
-
-        }
-        content += '[:]';
-
-        if(field_type === 'TEXTAREA') {
-            $j('textarea[name=' + name + ']').text(content);
-        } else {
-            $j('input[name=' + name + ']').val(content);
-        }
-
+    } else { //если не обнаружены поля qtranslate-x
+        var field = $j('*[name="' + name + '"]');
+        out = field.prop('tagName') === 'TEXAREA' ?
+            field.text()
+            : field.val();
     }
+
+    return JSON.stringify(out);
+}
+
+function tkgp_task_editor_hide() {
+    $j('#tkgp_tasks_editor_form').hide();
+}
+
+function tkgp_task_delete_handler() {
+    var task_id = $j($j(this).parents('li')[1]).children('input[name^="tkgp_task_id"]').val();
+
+    $j.post(ajaxurl, {
+            action: 'tkgp_task_delete',
+            post_id: tkgp_url_vars()['post'],
+            task_id: task_id
+        },
+        function (resp) {
+            var res = $j.parseJSON(resp);
+            if(res.status === 'ok') {
+                tkgp_task_editor_hide();
+                window.location.hash = "#tkgp_task_anchor";
+                window.location.reload();
+            } else {
+                alert(res.msg);
+            }
+        }
+    );
 }

@@ -101,7 +101,7 @@ function tk_update_tab(html, args) {
         .find(a_selector).on('click', tk_tab_handler);
 
     if(args.tab_num === '3') {
-        tk_tasks_tool_init();
+        //tk_tasks_tool_init();
     }
 }
 

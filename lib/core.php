@@ -170,23 +170,30 @@ function tkgp_show_metabox_settings()
 function tkgp_show_metabox_steps()
 {
     ?>
-    <input type="hidden" name="tkgp_meta_steps_nonce"
-           value="<?php echo wp_create_nonce(basename(__FILE__) . '_steps'); ?>"/>
-    <?php
-    require_once (TKGP_ROOT . 'lib/admin-tasks.php');
-    ?>
-    <div id="tkgp_tasks_editor_form">
+    <div id="tkgp_task_frame">
+        <a name="tkgp_task_anchor"></a>
+        <?php require_once (TKGP_ROOT . 'lib/admin-tasks.php'); ?>
+    </div>
+    <div id="tkgp_tasks_editor_form"
+         style="padding:5px;margin-top:20px;border:1px solid #ccc;background: #ccc;" hidden="hidden">
         <input type="hidden" name="tkgp_task_id" val=""/>
         <input type="hidden" name="tkgp_parent_task_id" val=""/>
-        <input type="text" name="tkgp_task_title" class="tkgp_task_mlang" />
-    <?php
-    wp_editor('', 'tkgp_task_editor', array(
-        'editor_class' => 'requiredField',
-        'textarea_rows' => '6',
-        'media_buttons' => false,
-        'teeny' => true));
-    ?>
-        <div class="tkgp_button button tkgp_task_ok"><a>Ok</a></div>
+        <select name="tkgp_task_type" style="display: block;">
+            <option value="2"><?php echo _x('Stage', 'Project Tasks', 'tkgp'); ?></option>
+            <option value="3"><?php echo _x('Task', 'Project Tasks', 'tkgp'); ?></option>
+        </select>
+        <input type="text" name="tkgp_task_title" class="tkgp_task_mlang"/>
+        <?php
+        wp_editor('', 'tkgp_task_editor', array(
+            'editor_class' => 'requiredField',
+            'textarea_rows' => '6',
+            'media_buttons' => false,
+            'teeny' => true));
+        ?>
+        <div style="text-align:right;margin-top: 5px;">
+            <div class="tkgp_button button tkgp_task_ok"><a><?php echo __('Apply'); ?></a></div>
+            <div class="tkgp_button button tkgp_task_cancel"><a><?php echo __('Cancel'); ?></a></div>
+        </div>
     </div>
     <?php
 }

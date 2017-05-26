@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-06 09:21+0000\n"
+"POT-Creation-Date: 2017-05-26 09:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -30,102 +30,112 @@ msgstr ""
 msgid "You can not drop a single manager."
 msgstr ""
 
-#: lib/core.php:19
+#: lib/core.php:21
 msgctxt "tk_project"
 msgid "Projects"
 msgstr ""
 
-#: lib/core.php:20
+#: lib/core.php:22
 msgctxt "tk_project_singular"
 msgid "Projects"
 msgstr ""
 
-#: lib/core.php:21
+#: lib/core.php:23
 msgctxt "tk_project"
 msgid "Create new"
 msgstr ""
 
-#: lib/core.php:22
+#: lib/core.php:24
 msgctxt "tk_project"
 msgid "Create new project"
 msgstr ""
 
-#: lib/core.php:23
+#: lib/core.php:25
 msgctxt "tk_project"
 msgid "Edit project"
 msgstr ""
 
-#: lib/core.php:24
+#: lib/core.php:26
 msgctxt "tk_project"
 msgid "New project"
 msgstr ""
 
-#: lib/core.php:25
+#: lib/core.php:27
 msgctxt "tk_project"
 msgid "View project"
 msgstr ""
 
-#: lib/core.php:26
+#: lib/core.php:28
 msgctxt "tk_project"
 msgid "Search project"
 msgstr ""
 
-#: lib/core.php:27
+#: lib/core.php:29
 msgctxt "tk_project"
 msgid "Project not found"
 msgstr ""
 
-#: lib/core.php:28
+#: lib/core.php:30
 msgctxt "tk_project"
 msgid "Project not found in Trash"
 msgstr ""
 
-#: lib/core.php:30
+#: lib/core.php:32
 msgctxt "tk_project"
 msgid "TehnoKom Global Project system type"
 msgstr ""
 
-#: lib/core.php:51
+#: lib/core.php:53
 msgctxt "Taxonomy General Name"
 msgid "Categories of Projects"
 msgstr ""
 
-#: lib/core.php:52
+#: lib/core.php:54
 msgctxt "Taxonomy Singular Name"
 msgid "Categories of Projects"
 msgstr ""
 
-#: lib/core.php:86
+#: lib/core.php:88
 msgctxt "tk_meta"
 msgid "Settings of Project"
 msgstr ""
 
-#: lib/core.php:93
+#: lib/core.php:95
 msgctxt "tk_meta"
 msgid "Plane of Project"
 msgstr ""
 
-#: lib/core.php:100
+#: lib/core.php:102
 msgctxt "tk_meta"
 msgid "Votes"
 msgstr ""
 
-#: lib/core.php:398
+#: lib/core.php:182
+msgctxt "Project Tasks"
+msgid "Stage"
+msgstr ""
+
+#: lib/core.php:183
+msgctxt "Project Tasks"
+msgid "Task"
+msgstr ""
+
+#: lib/core.php:422
 msgctxt "tk_project"
 msgid "TK Projects"
 msgstr ""
 
-#: lib/core.php:399
+#: lib/core.php:423
 msgctxt "tk_project"
 msgid "TK Projects Settings"
 msgstr ""
 
-#: lib/core.php:493 lib/core.php:513 lib/ajax_functions.php:57
+#: lib/core.php:517 lib/core.php:537 lib/ajax_functions.php:57
 msgctxt "Project Settings"
 msgid "Add"
 msgstr ""
 
-#: lib/core.php:500
+#: lib/core.php:524
 msgctxt "Project Settings"
 msgid "Groups are not supported."
 msgstr ""
@@ -140,7 +150,7 @@ msgctxt "Project Settings"
 msgid "Users"
 msgstr ""
 
-#: lib/ajax_functions.php:112 lib/ajax_functions.php:241
+#: lib/ajax_functions.php:112 lib/ajax_functions.php:247
 msgctxt "Project Vote"
 msgid "Operation is not allowed"
 msgstr ""
@@ -150,154 +160,69 @@ msgctxt "Project Vote"
 msgid "Voting does not exist or is hidden"
 msgstr ""
 
-#: lib/ajax_functions.php:144
+#: lib/ajax_functions.php:144 lib/ajax_functions.php:177
 msgctxt "Project Vote"
-msgid "You have no rights to vote"
+msgid "Voting was disabled"
 msgstr ""
 
 #: lib/ajax_functions.php:147
 msgctxt "Project Vote"
+msgid "You have no rights to vote"
+msgstr ""
+
+#: lib/ajax_functions.php:150
+msgctxt "Project Vote"
 msgid "Your vote has been counted"
 msgstr ""
 
-#: lib/ajax_functions.php:148
+#: lib/ajax_functions.php:151
 msgctxt "Project Vote"
 msgid "Your vote was not counted"
 msgstr ""
 
-#: lib/ajax_functions.php:174
+#: lib/ajax_functions.php:180
 msgctxt "Project Vote"
 msgid "You can not cancel your vote"
 msgstr ""
 
-#: lib/ajax_functions.php:177
+#: lib/ajax_functions.php:183
 msgctxt "Project Vote"
 msgid "You may not vote"
 msgstr ""
 
-#: lib/ajax_functions.php:180
+#: lib/ajax_functions.php:186
 msgctxt "Project Vote"
 msgid "Your vote has been reset"
 msgstr ""
 
-#: lib/ajax_functions.php:181
+#: lib/ajax_functions.php:187
 msgctxt "Project Vote"
 msgid "Your vote was not reset"
 msgstr ""
 
-#: lib/ajax_functions.php:208
+#: lib/ajax_functions.php:214
 msgctxt "Project Vote"
 msgid "You do not have access to the data of voting"
 msgstr ""
 
-#: lib/ajax_functions.php:254
+#: lib/ajax_functions.php:260
 msgctxt "Project Edit"
 msgid "You do not have permission to edit project"
 msgstr ""
 
-#: lib/vote.php:109
-msgctxt "Project Settings"
-msgid "Enable Vote"
+#: lib/ajax_functions.php:368
+msgctxt "Project Tasks"
+msgid "Access denaided."
 msgstr ""
 
-#: lib/vote.php:110
-msgctxt "Project Settings"
-msgid "Enable/Disable vote for this project."
+#: lib/ajax_functions.php:376
+msgctxt "Project Tasks"
+msgid "Task marked as deleted."
 msgstr ""
 
-#: lib/vote.php:115
-msgctxt "Project Settings"
-msgid "Enable"
-msgstr ""
-
-#: lib/vote.php:119
-msgctxt "Project Settings Type"
-msgid "Disable"
-msgstr ""
-
-#: lib/vote.php:125
-msgctxt "Project Settings"
-msgid "Vote for approval"
-msgstr ""
-
-#: lib/vote.php:126
-msgctxt "Project Settings"
-msgid "Number of votes in which the project is considered approved."
-msgstr ""
-
-#: lib/vote.php:138
-msgctxt "Project Settings"
-msgid "Start date"
-msgstr ""
-
-#: lib/vote.php:139
-msgctxt "Project Settings"
-msgid "The date of commencement of voting."
-msgstr ""
-
-#: lib/vote.php:146
-msgctxt "Project Settings"
-msgid "End date"
-msgstr ""
-
-#: lib/vote.php:147
-msgctxt "Project Settings"
-msgid "The data of the end of voting."
-msgstr ""
-
-#: lib/vote.php:152
-msgctxt "Project Settings"
-msgid "Allow to vote against"
-msgstr ""
-
-#: lib/vote.php:153
-msgctxt "Project Settings"
-msgid "It allows users to vote against the project."
-msgstr ""
-
-#: lib/vote.php:160
-msgctxt "Project Settings"
-msgid "Allow re-vote"
-msgstr ""
-
-#: lib/vote.php:161
-msgctxt "Project Settings"
-msgid "Users can reset their vote and vote again, or not to vote :)"
-msgstr ""
-
-#: lib/vote.php:169
-msgctxt "Project Settings"
-msgid "Reset voting results"
-msgstr ""
-
-#: lib/vote.php:170
-msgctxt "Project Settings"
-msgid "Reset voting results."
-msgstr ""
-
-#: lib/vote.php:602
-msgctxt "Project Vote"
-msgid "Voting status"
-msgstr ""
-
-#: lib/vote.php:656
-msgctxt "Project Vote"
-msgid "Vote"
-msgstr ""
-
-#: lib/vote.php:661
-msgctxt "Project Vote"
-msgid "Support"
-msgstr ""
-
-#: lib/vote.php:667
-msgctxt "Project Vote"
-msgid "Against"
-msgstr ""
-
-#: lib/vote.php:692
-msgctxt "Project Vote"
-msgid "Reset my vote"
+#: lib/ajax_functions.php:378
+msgctxt "Project Tasks"
+msgid "Task not found."
 msgstr ""
 
 #: lib/project.php:670
@@ -545,6 +470,116 @@ msgstr ""
 #: lib/project.php:882
 msgctxt "Project l10n"
 msgid "Parent project"
+msgstr ""
+
+#: lib/admin-tasks.php:68
+msgctxt "Project Settings"
+msgid "Functionality will be available after saving the current project."
+msgstr ""
+
+#: lib/vote.php:109
+msgctxt "Project Settings"
+msgid "Enable Vote"
+msgstr ""
+
+#: lib/vote.php:110
+msgctxt "Project Settings"
+msgid "Enable/Disable vote for this project."
+msgstr ""
+
+#: lib/vote.php:115
+msgctxt "Project Settings"
+msgid "Enable"
+msgstr ""
+
+#: lib/vote.php:119
+msgctxt "Project Settings Type"
+msgid "Disable"
+msgstr ""
+
+#: lib/vote.php:125
+msgctxt "Project Settings"
+msgid "Vote for approval"
+msgstr ""
+
+#: lib/vote.php:126
+msgctxt "Project Settings"
+msgid "Number of votes in which the project is considered approved."
+msgstr ""
+
+#: lib/vote.php:138
+msgctxt "Project Settings"
+msgid "Start date"
+msgstr ""
+
+#: lib/vote.php:139
+msgctxt "Project Settings"
+msgid "The date of commencement of voting."
+msgstr ""
+
+#: lib/vote.php:146
+msgctxt "Project Settings"
+msgid "End date"
+msgstr ""
+
+#: lib/vote.php:147
+msgctxt "Project Settings"
+msgid "The data of the end of voting."
+msgstr ""
+
+#: lib/vote.php:152
+msgctxt "Project Settings"
+msgid "Allow to vote against"
+msgstr ""
+
+#: lib/vote.php:153
+msgctxt "Project Settings"
+msgid "It allows users to vote against the project."
+msgstr ""
+
+#: lib/vote.php:160
+msgctxt "Project Settings"
+msgid "Allow re-vote"
+msgstr ""
+
+#: lib/vote.php:161
+msgctxt "Project Settings"
+msgid "Users can reset their vote and vote again, or not to vote :)"
+msgstr ""
+
+#: lib/vote.php:169
+msgctxt "Project Settings"
+msgid "Reset voting results"
+msgstr ""
+
+#: lib/vote.php:170
+msgctxt "Project Settings"
+msgid "Reset voting results."
+msgstr ""
+
+#: lib/vote.php:602
+msgctxt "Project Vote"
+msgid "Voting status"
+msgstr ""
+
+#: lib/vote.php:656
+msgctxt "Project Vote"
+msgid "Vote"
+msgstr ""
+
+#: lib/vote.php:661
+msgctxt "Project Vote"
+msgid "Support"
+msgstr ""
+
+#: lib/vote.php:667
+msgctxt "Project Vote"
+msgid "Against"
+msgstr ""
+
+#: lib/vote.php:692
+msgctxt "Project Vote"
+msgid "Reset my vote"
 msgstr ""
 
 #. Name of the plugin

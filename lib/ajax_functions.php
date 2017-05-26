@@ -41,7 +41,7 @@ function tkgp_print_form($type)
 
     switch ($type) {
         case 'users':
-            echo '<input id="tkgp_search" type="text"'
+            echo '<input id="tkgp_search" type="text" '
                 . 'placeholder="' . _x('Search...', 'Project Settings', 'tkgp') . '">'
                 . '</div>
         		<div class="container">
@@ -316,18 +316,97 @@ function tkgp_get_tasks()
 
 function tkgp_task_save()
 {
+    $out = array('status' => 'error');
     if (!empty($_POST['post_id']) && is_admin()) {
+        $title = tkgp_qtranslatex_compile($_POST['title']);
+        $desc = tkgp_qtranslatex_compile($_POST['desc']);
+
         if(empty($_POST['task_id'])) {
             $task = TK_GTask::createTask($_POST['post_id'],
-                array('title' => $_POST['title'],
-                    'description' => $_POST['desc']),
+                array('title' => $title,
+                    'description' => $desc,
+                    'type' => $_POST['type'],
+                    'status' => 1,
+                    ),
                 $_POST['parent_id']);
 
             if($task) {
-                echo 'Ok';
+                $out['status'] = 'ok';
             }
         }
     }
+
+    echo json_encode($out);
+
+    wp_die();
+}
+
+/**
+ * Returns string for qtranslate-x
+ *
+ * @param array $args
+ * @return string
+ */
+function tkgp_qtranslatex_compile($args) {
+    $out = '';
+    $in = json_decode(str_replace('\"','"', $args), true);
+
+    if(is_array($in) && !empty($in)) {
+        foreach ($in as $key => $val) {
+            $out .= "[:$key]$val";
+        }
+
+        $out .= strlen($out) > 5 ? '[:]' : '';
+        $out = str_replace('\n',"\n", $out);
+    }
+
+    return $out;
+}
+
+function tkgp_task_delete() {
+    $out = array('status' => 'error',
+        'msg' => _x('Access denaided.', 'Project Tasks', 'tkgp'));
+
+    if (!empty($_POST['task_id']) && is_admin()) {
+        $task = new TK_GTask($_POST['task_id']);
+
+        if($task && $task->post_id == $_POST['post_id']) {
+            $task->setStatus(4);
+            $out['status'] = 'ok';
+            $out['msg'] = _x('Task marked as deleted.', 'Project Tasks', 'tkgp');
+        } else {
+            $out['msg'] = _x('Task not found.', 'Project Tasks', 'tkgp');
+        }
+    }
+
+    echo json_encode($out);
+
+    wp_die();
+}
+
+function tkgp_get_task_data()
+{
+    $out = array('status' => 'error',
+        'msg' => 'Access denaided.',
+        'data' => null);
+
+    if (!empty($_POST['task_id']) && is_admin()) {
+        $task = new TK_GTask($_POST['task_id']);
+
+        if ($task) {
+            $out['status'] = 'ok';
+            unset($out['msk']);
+            $out['data'] = array(
+                    'title' => $task->title,
+                    'desc' => $task->description,
+                    'type' => $task->type,
+                    'status' => $task->status
+            );
+        }
+
+    }
+
+    echo json_encode($out);
 
     wp_die();
 }
@@ -347,4 +426,6 @@ add_action('wp_ajax_nopriv_tkgp_get_projects', 'tkgp_get_projects');
 add_action('wp_ajax_tkgp_get_project_tasks', 'tkgp_get_tasks');
 add_action('wp_ajax_nopriv_tkgp_get_project_tasks', 'tkgp_get_tasks');
 add_action('wp_ajax_tkgp_task_save', 'tkgp_task_save');
+add_action('wp_ajax_tkgp_get_task_data', 'tkgp_get_task_data');
+add_action('wp_ajax_tkgp_task_delete', 'tkgp_task_delete');
 ?>

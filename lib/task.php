@@ -16,10 +16,11 @@ class TK_GTask
         $query = $this->wpdb->prepare("SELECT id, post_id, title, description, status, type, start_date, end_date, actual_end_date
         FROM {$this->wpdb->prefix}tkgp_tasks WHERE id = %d", $task_id);
         $result = $this->wpdb->get_results($query, ARRAY_A);
-
         if (!empty($result)) {
-            $this->opts['task_id'] = $result[0]['id'];
-            $this->opts = array_merge($this->opts, $result[0]);
+            $src = !empty($result[0]) ? $result[0] : $result;
+            $this->opts['task_id'] = $src['id'];
+            unset($src['id']);
+            $this->opts = array_merge($this->opts, $src);
         }
     }
 
@@ -56,6 +57,24 @@ class TK_GTask
         return isset($this->opts['task_id']);
     }
 
+    public function setStatus($status)
+    {
+        if(!empty($status) && is_numeric($status)
+            && intval($status) !== intval($this->status)) {
+
+            $res = $this->wpdb->update("{$this->wpdb->prefix}tkgp_tasks",
+                array('status' => $status),
+                array('id' => $this->task_id),
+                array('%d'),
+                array('%d')
+            );
+
+            return boolval($res);
+        }
+
+        return false;
+    }
+
     /**
      * Creates a new Task for a Project
      * @param int $project_id
@@ -86,6 +105,7 @@ class TK_GTask
                         $fields[$key] = $value;
                         break;
                     case 'status':
+                        //0 - черновик, 1 - опубликовано, 4 - удалено
                         $field_type[] = '%d';
                         $fields[$key] = $value;
                         break;
@@ -106,7 +126,7 @@ class TK_GTask
                         continue;
                 }
             }
-            file_put_contents(__FILE__ . '.log', serialize($fields) . serialize($field_type));
+
             if (!empty($fields['title'])) {
                 global $wpdb;
                 $wpdb->enable_nulls = true;
@@ -123,7 +143,8 @@ WHERE post_id = %d AND title = %s", $project_id, $fields['title']);
                     $task = new TK_GTask($task_id);
                     if ($task->isValid()) {
 
-                        $parent_task = new TK_GTask($parent_id);
+                        $parent_task = new TK_GTask(intval($parent_id));
+
                         if ($parent_task->isValid()) {
                             $wpdb->insert("{$wpdb->prefix}tkgp_tasks_links",
                                 array('parent_id' => $parent_id,

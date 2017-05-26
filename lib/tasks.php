@@ -14,6 +14,8 @@ class TK_GTasks
 
     protected $cur_child;
 
+    protected $status_list;
+
     public function __construct($project_id)
     {
         $this->project = new TK_GProject($project_id);
@@ -32,20 +34,44 @@ class TK_GTasks
         return !($this->project === null);
     }
 
+    public function setStatuses($status = array()) {
+        if(empty($status)) {
+            $this->status_list = "BETWEEN 0 AND 9";
+        } else if(is_array($status)) {
+            $this->status_list = "IN (";
+            foreach ($status as $val) {
+                if(is_numeric($val)) {
+                    $this->status_list .= "$val,";
+                }
+            }
+
+            $this->status_list = trim($this->status_list,",");
+            $this->status_list .= ")";
+        } else if(is_numeric($status)) {
+            $this->status_list = "= $status";
+        }
+    }
+
     public function createPage($page_num = 1) {
         if($this->isValid()) {
             $this->cur_task = 0;
+
+            if(empty($this->status_list)) {
+                $this->setStatuses();
+            }
 
             $sql = $this->wpdb->prepare("SELECT * FROM (SELECT t.id, t.type, l.parent_id, l.parent_type, t.internal_id 
 FROM `{$this->wpdb->prefix}tkgp_tasks` t 
 LEFT JOIN `{$this->wpdb->prefix}tkgp_tasks_links` l ON (l.child_id = t.id AND l.child_type = t.type) 
 WHERE t.post_id = %d
+AND t.status {$this->status_list}
 UNION
 SELECT tt.id, tt.type, ll.parent_id, ll.parent_type, tt.internal_id 
 FROM `{$this->wpdb->prefix}tkgp_tasks` tt 
 INNER JOIN `{$this->wpdb->prefix}tkgp_tasks_links` ll ON (ll.child_id = tt.id AND ll.child_type = tt.type) 
-WHERE tt.post_id = %d) o
-ORDER BY o.`internal_id`;",
+WHERE tt.post_id = %d
+AND tt.status {$this->status_list}) o
+ORDER BY o.`internal_id` ASC;",
                 intval($this->project->project_id),
                 intval($this->project->project_id));
 
