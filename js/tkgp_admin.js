@@ -39,11 +39,13 @@ $j(document).ready(function ($j) {
         tkgp_target_move(); //перемещаем поле Цели
         tkgp_tasks_init(); //инициализируем задачи
         //обработчики на кнопки задач - пока вынес из tkgp_task_init
-        $j('.tkgp_button.tkgp_task_ok').on('click',tkgp_task_save_handler);
-        $j('.tkgp_button.tkgp_task_cancel').on('click',tkgp_task_editor_hide);
+        $j('.tkgp_button.tkgp_task_ok').on('click', tkgp_task_save_handler);
+        $j('.tkgp_button.tkgp_task_cancel').on('click', tkgp_task_editor_hide);
 
-        if(window.location.hash.length) { //перематываем к задачам после добавления задачи
-            setTimeout(function(){window.location.hash = window.location.hash},1000);
+        if (window.location.hash.length) { //перематываем к задачам после добавления задачи
+            setTimeout(function () {
+                window.location.hash = window.location.hash
+            }, 1000);
         }
     }
 );
@@ -206,11 +208,13 @@ function tkgp_handler_del_user() {
 }
 
 function tkgp_tasks_init() {
-    $j('.tkgp_tasks').sortable({items: "li:not(.tkgp_tasks_tool)",
+    $j('.tkgp_tasks').sortable({
+        items: "li:not(.tkgp_tasks_tool)",
         connectWith: ".tkgp_tasks",
         dropOnEmpty: true,
         update: tkgp_task_sort_change,
-        placeholder: "tkgp_task_empty"});
+        placeholder: "tkgp_task_empty"
+    });
 
     tkgp_tasks_add_buttons();
 }
@@ -218,12 +222,13 @@ function tkgp_tasks_init() {
 function tkgp_tasks_add_buttons(obj) {
     obj = obj === undefined ? $j('.tkgp_tasks').parent() : obj;
 
-    if( typeof obj === 'object') {
+    if (typeof obj === 'object') {
         /*$j(obj).children('ul.tkgp_tasks').append('<li class="tkgp_tasks_tool"><div>' +
-            '<div class="tkgp_circle_button tkgp_task_add_btn">+</div>' +
-            '</div></li>');*/
+         '<div class="tkgp_circle_button tkgp_task_add_btn">+</div>' +
+         '</div></li>');*/
 
         $j('.tkgp_task_add_btn').on('click', tkgp_task_create_handler);
+        $j('.tkgp_task_edit_btn').on('click', tkgp_task_edit_handler);
         $j('.tkgp_task_del_btn').on('click', tkgp_task_delete_handler);
     }
 }
@@ -238,17 +243,6 @@ function tkgp_task_create_handler(e) {
     tinyMCE.get('tkgp_task_editor').setContent('');
 
     task_edit_form.show();
-}
-
-function tkgp_get_task_data(task_id) {
-    $j.post(ajaxurl, {
-            action: 'tkgp_get_task_data',
-            task_id: task_id
-        },
-        function (resp) {
-            alert($j.parseJSON(resp).data.desc);
-        }
-    );
 }
 
 function tkgp_task_sort_change(e, ui) {
@@ -273,7 +267,7 @@ function tkgp_task_save_handler() {
         },
         function (resp) {
             var res = $j.parseJSON(resp);
-            if(res.status === 'ok') {
+            if (res.status === 'ok') {
                 tkgp_task_editor_hide();
                 window.location.hash = "#tkgp_task_anchor";
                 window.location.reload();
@@ -289,19 +283,19 @@ function tkgp_task_field_compile(name) {
     var cur_lang = $j('li.qtranxs-lang-switch.active').attr('lang');
     var qtrans_tags = $j('input[name^="qtranslate-fields[' + name + ']"]');
 
-    if(qtrans_tags.length) { //обнаружены поля qtranslate-x
+    if (qtrans_tags.length) { //обнаружены поля qtranslate-x
         qtrans_tags.each( //собираем все языки в массив
-            function(i,o){
+            function (i, o) {
                 var obj = $j(o);
-                var regexp = new RegExp('(qtranslate-fields\\[' + name + '\\])','g');
-                var key = obj.attr('name').replace(regexp,'').replace(/[\[\]]/g,'');
+                var regexp = new RegExp('(qtranslate-fields\\[' + name + '\\])', 'g');
+                var key = obj.attr('name').replace(regexp, '').replace(/[\[\]]/g, '');
 
-                if(key === 'qtranslate-separator') {
+                if (key === 'qtranslate-separator') {
                     return;
                 }
 
                 var cur_content = '';
-                if(key === cur_lang) { //если текущий редактируемый язык
+                if (key === cur_lang) { //если текущий редактируемый язык
                     //берем из самого поля ввода/редактора
                     cur_content = $j('*[name="' + name + '"]').prop('tagName') === 'TEXTAREA' ?
                         tinyMCE.get(name).getContent({format: 'text'})
@@ -310,7 +304,7 @@ function tkgp_task_field_compile(name) {
                     cur_content = obj.val();
                 }
 
-                if(!cur_content.length) {
+                if (!cur_content.length) {
                     return;
                 }
 
@@ -332,6 +326,31 @@ function tkgp_task_editor_hide() {
     $j('#tkgp_tasks_editor_form').hide();
 }
 
+function tkgp_task_edit_handler() {
+    var task_id = $j($j(this).parents('li')[0]).children('input[name^="tkgp_task_id"]').val();
+
+    $j.post(ajaxurl, {
+            action: 'tkgp_get_task_data',
+            post_id: tkgp_url_vars()['post'],
+            task_id: task_id
+        },
+        function (resp) {
+            var res = $j.parseJSON(resp);
+            if (res.status === 'ok') {
+                var task_edit_form = $j('#tkgp_tasks_editor_form');
+                task_edit_form.children('input[name="tkgp_task_id"]').val(task_id);
+                task_edit_form.children('select[name="tkgp_task_type"]').val(res.data.type);
+                tkgp_task_editor_hide();
+                tkgp_set_qtranslatex_fields('tkgp_task_title', res.data.title);
+                tkgp_set_qtranslatex_fields('tkgp_task_editor', res.data.desc);
+                task_edit_form.show();
+            } else {
+                alert(res.msg);
+            }
+        }
+    );
+}
+
 function tkgp_task_delete_handler() {
     var task_id = $j($j(this).parents('li')[1]).children('input[name^="tkgp_task_id"]').val();
 
@@ -342,7 +361,8 @@ function tkgp_task_delete_handler() {
         },
         function (resp) {
             var res = $j.parseJSON(resp);
-            if(res.status === 'ok') {
+            if (res.status === 'ok') {
+                var task_edit_form = $j('#tkgp_tasks_editor_form');
                 tkgp_task_editor_hide();
                 window.location.hash = "#tkgp_task_anchor";
                 window.location.reload();
@@ -351,4 +371,66 @@ function tkgp_task_delete_handler() {
             }
         }
     );
+}
+
+function tkgp_set_qtranslatex_fields(name, qtransx_string) {
+    var langs = tkgp_parse_qtranslatex(qtransx_string);
+    var cur_lang = $j('li.qtranxs-lang-switch.active').attr('lang');
+
+    var lang_fields = $j('input[name^="qtranslate-fields[' + name + ']"]');
+    lang_fields.each(function(index,field){
+        var cur_field = $j(field);
+        var lang_tag = cur_field.attr('name').replace('qtranslate-fields[' + name + ']','')
+            .replace(/[\[\]]/g,'');
+
+        if(lang_tag !== 'qtranslate-separator') {
+            var content = langs.hasOwnProperty(lang_tag) ? langs[lang_tag] : '';
+            cur_field.val(content);
+
+            if (cur_lang === lang_tag) {
+                var input = $j('*[name="' + name + '"]');
+
+                if (input.prop('tagName') === 'TEXTAREA') {
+                    tinyMCE.get(name).setContent(langs[lang_tag].replace(/\r?\n/g,'<br>'));
+                } else {
+                    input.val(langs[lang_tag]);
+                }
+            }
+        }
+    });
+
+    /*for (var lang in langs) {
+        if (langs.hasOwnProperty(lang)) {
+            var field = $j('input[name="qtranslate-fields[' + name + '][' + lang + ']"]');
+            if (field.length) {
+                field.val(langs[lang]);
+            }
+
+            if (cur_lang === lang) {
+                var input = $j('*[name="' + name + '"]');
+
+                if (input.prop('tagName') === 'TEXTAREA') {
+                    tinyMCE.get(name).setContent(langs[lang].replace(/\r?\n/g,'<br>'));
+                } else {
+                    input.val(langs[lang]);
+                }
+            }
+        }
+    }*/
+}
+
+function tkgp_parse_qtranslatex(string) {
+    var out = {};
+    string = string.replace('[:]', '');
+
+    while (string.search(/\[:[a-z]{2}\]/g) !== -1) {
+        var lang = string.substr(0, 5).replace(/[\[:\]]/g, '');
+        string = string.substr(5);
+        var end = string.search(/\[:[a-z]{2}\]/g);
+        end = end === -1 ? undefined : end - 1;
+        out[lang] = string.substr(0, end);
+        string = end === undefined ? '' : string.substr(end + 1);
+    }
+
+    return out;
 }

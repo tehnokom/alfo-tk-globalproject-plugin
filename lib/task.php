@@ -76,6 +76,80 @@ class TK_GTask
     }
 
     /**
+     * Sets the specified fields to the specified values
+     * @param array $args
+     * @return bool
+     */
+    public function setFields($args)
+    {
+        $check_res = self::checkFields($args);
+
+        if(!empty($check_res['fields'])) {
+            unset($check_res['fields']['id']);
+            $res = $this->wpdb->update("{$this->wpdb->prefix}tkgp_tasks",$check_res['fields'],
+                array('id' => $this->task_id),
+                $check_res['types'],
+                array('%d'));
+
+            return boolval($res);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks the fields for the structure of the task data
+     * @param $args
+     * @return array
+     */
+    protected static function checkFields($args)
+    {
+       $fields = array();
+       $types = array();
+
+       if(is_array($args) && !empty($args)) {
+           foreach ($args as $key => $value) {
+               switch ($key) {
+                   case 'title':
+                       $types[] = '%s';
+                       $fields[$key] = $value;
+                       break;
+                   case 'description':
+                       $types[] = '%s';
+                       $fields[$key] = $value;
+                       break;
+                   case 'type':
+                       $types[] = '%s';
+                       $fields[$key] = $value;
+                       break;
+                   case 'status':
+                       //0 - черновик, 1 - опубликовано, 4 - удалено
+                       $types[] = '%d';
+                       $fields[$key] = $value;
+                       break;
+                   case 'start_date':
+                       $types[] = '%s';
+                       $fields[$key] = $value;
+                       break;
+                   case 'end_date':
+                       $types[] = '%s';
+                       $fields[$key] = $value;
+                       break;
+                   case 'actual_end_date':
+                       $types[] = '%s';
+                       $fields[$key] = $value;
+                       break;
+
+                   default:
+                       continue;
+               }
+           }
+       }
+
+       return array('fields' => $fields, 'types' => $types);
+    }
+
+    /**
      * Creates a new Task for a Project
      * @param int $project_id
      * @param array $data
@@ -87,10 +161,11 @@ class TK_GTask
         $project = new TK_GProject($project_id);
 
         if ($project->isValid() && is_array($data)) {
-            $fields = array();
-            $field_type = array();
+            $check_res = self::checkFields($data);
+            $fields = $check_res['fields'];
+            $field_type = $check_res['types'];
 
-            foreach ($data as $key => $value) {
+            /*foreach ($data as $key => $value) {
                 switch ($key) {
                     case 'title':
                         $field_type[] = '%s';
@@ -125,7 +200,7 @@ class TK_GTask
                     default:
                         continue;
                 }
-            }
+            }*/
 
             if (!empty($fields['title'])) {
                 global $wpdb;

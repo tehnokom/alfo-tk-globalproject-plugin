@@ -333,6 +333,20 @@ function tkgp_task_save()
             if($task) {
                 $out['status'] = 'ok';
             }
+        } else {
+            $edit_task = new TK_GTask(intval($_POST['task_id']));
+            file_put_contents(__FILE__.'.log',serialize($_POST)."\r\n\r\n",FILE_APPEND);
+            if($edit_task) {
+                $data = array(
+                    'title' => $title,
+                    'description' => $desc,
+                    'type' => $_POST['type']
+                );
+
+                if($edit_task->setFields($data)) {
+                    $out['status'] = 'ok';
+                }
+            }
         }
     }
 
@@ -395,7 +409,7 @@ function tkgp_get_task_data()
 
         if ($task) {
             $out['status'] = 'ok';
-            unset($out['msk']);
+            unset($out['msg']);
             $out['data'] = array(
                     'title' => $task->title,
                     'desc' => $task->description,
