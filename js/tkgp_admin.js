@@ -398,25 +398,6 @@ function tkgp_set_qtranslatex_fields(name, qtransx_string) {
             }
         }
     });
-
-    /*for (var lang in langs) {
-        if (langs.hasOwnProperty(lang)) {
-            var field = $j('input[name="qtranslate-fields[' + name + '][' + lang + ']"]');
-            if (field.length) {
-                field.val(langs[lang]);
-            }
-
-            if (cur_lang === lang) {
-                var input = $j('*[name="' + name + '"]');
-
-                if (input.prop('tagName') === 'TEXTAREA') {
-                    tinyMCE.get(name).setContent(langs[lang].replace(/\r?\n/g,'<br>'));
-                } else {
-                    input.val(langs[lang]);
-                }
-            }
-        }
-    }*/
 }
 
 function tkgp_parse_qtranslatex(string) {

@@ -165,43 +165,6 @@ class TK_GTask
             $fields = $check_res['fields'];
             $field_type = $check_res['types'];
 
-            /*foreach ($data as $key => $value) {
-                switch ($key) {
-                    case 'title':
-                        $field_type[] = '%s';
-                        $fields[$key] = $value;
-                        break;
-                    case 'description':
-                        $field_type[] = '%s';
-                        $fields[$key] = $value;
-                        break;
-                    case 'type':
-                        $field_type[] = '%s';
-                        $fields[$key] = $value;
-                        break;
-                    case 'status':
-                        //0 - черновик, 1 - опубликовано, 4 - удалено
-                        $field_type[] = '%d';
-                        $fields[$key] = $value;
-                        break;
-                    case 'start_date':
-                        $field_type[] = '%s';
-                        $fields[$key] = $value;
-                        break;
-                    case 'end_date':
-                        $field_type[] = '%s';
-                        $fields[$key] = $value;
-                        break;
-                    case 'actual_end_date':
-                        $field_type[] = '%s';
-                        $fields[$key] = $value;
-                        break;
-
-                    default:
-                        continue;
-                }
-            }*/
-
             if (!empty($fields['title'])) {
                 global $wpdb;
                 $wpdb->enable_nulls = true;

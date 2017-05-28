@@ -159,9 +159,29 @@ img {
 }
 
 /*------------------------*/
+#projektoj-centro { float: left;  width: 560px; }
 
+#projektoj-dekstre { float: right; width: 250px; }
+
+#projektoj-dekstre-1 { padding: 10px; margin-top: 10px; border: 1px solid #dfdfdf; border-radius: 5px;}
+
+#projektoj-dekstre-1, #projektoj-centro { margin-top: 10px;}
+
+{
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 0 #fff;
+    -moz-box-shadow: 0 1px 0 #fff;
+    box-shadow: 0 1px 0 #fff;
+}
+
+.tk-block {border: 1px solid #dfdfdf; border-radius: 5px; padding: 10px; margin-bottom: 10px;}
+/*------------------------*/
 .tk-target, .tk-subprojects, .tk-parent-project, .tk-hint {
-    margin-top: 15px;
+    /*margin-top: 15px;*/
     font-size: 13px;
 }
 
@@ -176,7 +196,7 @@ img {
 
 /*------------------------*/
 .tk-tabs {
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     font-size: 13px;
 }
 
@@ -206,6 +226,7 @@ img {
 .tk-tabs > div {
     padding: 10px 0 5px 0;
     position: relative;
+    min-height: 150px;
 }
 
 #tk-tab2, #tk-tab3, #tk-tab4, #tk-tab5, .tk-tabs > div,

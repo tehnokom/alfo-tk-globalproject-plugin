@@ -335,7 +335,6 @@ function tkgp_task_save()
             }
         } else {
             $edit_task = new TK_GTask(intval($_POST['task_id']));
-            file_put_contents(__FILE__.'.log',serialize($_POST)."\r\n\r\n",FILE_APPEND);
             if($edit_task) {
                 $data = array(
                     'title' => $title,

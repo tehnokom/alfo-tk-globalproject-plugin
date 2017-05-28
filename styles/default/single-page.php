@@ -115,70 +115,105 @@ get_header();
     </div>
 </div>
 <!--End Logo-->
-<!--Start Hint-->
-<div class="tk-hint">
-    <h2><?php echo TK_GProject::l10n('hint'); ?></h2>
-    <?php echo apply_filters("the_content", TK_GProject::l10n('hint_text')); ?>
-</div>
-<!--End Hint-->
-<!--Start Target-->
-<div class="tk-target">
-    <h2><?php TK_GProject::the_l10n('target'); ?></h2>
-    <?php echo apply_filters("the_content", $project->target); ?>
-</div>
-<!--End Target-->
-<!--Start Parent Project-->
-<?php
-$parent_project = $project->getParentProject();
-
-if (!empty($parent_project)) {
-    ?>
-    <div class="tk-parent-project">
-        <h2><?php TK_GProject::the_l10n('parent_project'); ?></h2>
-        <ul>
-            <li><a href="<?php echo $parent_project->permalink; ?>"><?php echo $parent_project->title; ?></a></li>
-        </ul>
+<!--Start Central-->
+<div id="projektoj-centro">
+    <!--Start Block_1-->
+    <div class="tk-block">
+        <!--Start Hint-->
+        <div class="tk-hint">
+            <h2><?php echo TK_GProject::l10n('hint'); ?></h2>
+            <?php echo apply_filters("the_content", TK_GProject::l10n('hint_text')); ?>
+        </div>
+        <!--End Hint-->
     </div>
-    <?php
-}
-?>
-<!--End Parent Project-->
-<!--Start Subprojects-->
-<?php
-$subprojects = $project->getChildProjects();
-
-if (!empty($subprojects)) {
-    ?>
-    <div class="tk-subprojects">
-        <h2><?php TK_GProject::the_l10n('subprojects'); ?></h2>
-        <ul>
-            <?php
-            foreach ($subprojects as $cur) {
-                $li = "<li><a href=\"{$cur->permalink}\">{$cur->title}</a></li>";
-                echo $li;
-            }
-            ?>
-        </ul>
+    <!--End Block_1-->
+    <!--Start Block_2-->
+    <div class="tk-block">
+    <!--Start Target-->
+    <div class="tk-target">
+        <h2><?php TK_GProject::the_l10n('target'); ?></h2>
+        <?php echo apply_filters("the_content", $project->target); ?>
     </div>
+    <!--End Target-->
+    </div>
+    <!--End Block_2-->
+    <!--Start Block_3-->
+    <div class="tk-block">
+    <!--Start Parent Project-->
     <?php
-}
-?>
-<!--End Subprojects-->
-<!--Start Tabs-->
-<div class="tk-tabs">
-    <br id="tk-tab2"/><br id="tk-tab3"/><br id="tk-tab4"/><br id="tk-tab5"/>
-    <a href="#tk-tab1"><?php TK_GProject::the_l10n('news'); ?></a><a
-            href="#tk-tab2"><?php TK_GProject::the_l10n('description'); ?></a><a
-            href="#tk-tab3"><?php TK_GProject::the_l10n('tasks'); ?></a><a
-            href="#tk-tab4"><?php TK_GProject::the_l10n('answers'); ?></a><a
-            href="#tk-tab5"><?php TK_GProject::the_l10n('team'); ?></a>
-    <div></div>
-    <div></div>
-    <div><?php TK_GProject::the_l10n('no_tasks'); ?></div>
-    <div><?php TK_GProject::the_l10n('no_answers'); ?></div>
-    <div><?php TK_GProject::the_l10n('no_information'); ?></div>
+    $parent_project = $project->getParentProject();
+
+    if (!empty($parent_project)) {
+        ?>
+        <div class="tk-parent-project">
+            <h2><?php TK_GProject::the_l10n('parent_project'); ?></h2>
+            <ul>
+                <li><a href="<?php echo $parent_project->permalink; ?>"><?php echo $parent_project->title; ?></a></li>
+            </ul>
+        </div>
+        <?php
+    }
+    ?>
+    <!--End Parent Project-->
+    <!--Start Subprojects-->
+    <?php
+    $subprojects = $project->getChildProjects();
+
+    if (!empty($subprojects)) {
+        ?>
+        <div class="tk-subprojects">
+            <h2><?php TK_GProject::the_l10n('subprojects'); ?></h2>
+            <ul>
+                <?php
+                foreach ($subprojects as $cur) {
+                    $li = "<li><a href=\"{$cur->permalink}\">{$cur->title}</a></li>";
+                    echo $li;
+                }
+                ?>
+            </ul>
+        </div>
+        <?php
+    }
+    ?>
+    <!--End Subprojects-->
+    </div>
+    <!--End Block_3-->
+    <!--Start Block_4-->
+    <div class="tk-block">
+        <!--Start Tabs-->
+        <div class="tk-tabs">
+            <br id="tk-tab2"/><br id="tk-tab3"/><br id="tk-tab4"/><br id="tk-tab5"/>
+            <a href="#tk-tab1"><?php TK_GProject::the_l10n('news'); ?></a><a
+                    href="#tk-tab2"><?php TK_GProject::the_l10n('description'); ?></a><a
+                    href="#tk-tab3"><?php TK_GProject::the_l10n('tasks'); ?></a><a
+                    href="#tk-tab4"><?php TK_GProject::the_l10n('answers'); ?></a><a
+                    href="#tk-tab5"><?php TK_GProject::the_l10n('team'); ?></a>
+            <div></div>
+            <div></div>
+            <div><?php TK_GProject::the_l10n('no_tasks'); ?></div>
+            <div><?php TK_GProject::the_l10n('no_answers'); ?></div>
+            <div style="padding: 10px;">
+                <strong>Администраторы:</strong>
+
+                <ul style="margin-top:10px;list-style: square;">
+                    <li><a href="https://tehnokom.su/uzantoj/vladimir-levadnij/">Владимир Левадный</a></li>
+                    <li><a href="https://tehnokom.su/uzantoj/sergej/">Сергей Лавренюк</a></li>
+                    <li><a href="https://tehnokom.su/uzantoj/aleksandr/">Александр Мальцев</a></li>
+                    <li><a href="https://tehnokom.su/uzantoj/ra9oaj/">Равиль Сарваритдинов</a></li>
+                </ul>
+            </div>
+        </div>
+        <!--End Tabs-->
+    </div>
 </div>
-<!--End Tabs-->
+<!--End Central-->
+<!--Satrt Widgets-->
+<div id="projektoj-dekstre">
+    <div id="projektoj-dekstre-1">
+        <?php dynamic_sidebar( 'projektoj-dekstre-1' ); ?>
+    </div>
+</div>
+<!--End Widgets-->
 <?php
 get_footer();
 ?>
