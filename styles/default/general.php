@@ -43,7 +43,7 @@ if (!empty($parent_project) || !empty($subprojects)) {
 <!--End Subprojects-->
 <!--News Start-->
 <div class="tk-block">
-    <h2>
+    <h2 style="font-size: 16px;">
         <?php TK_GProject::the_l10n('news'); ?>
     </h2>
 </div>

@@ -66,7 +66,7 @@ class TK_GPage
 
         $this->wpdb = $wpdb;
         $this->wpdb->enable_nulls = true;
-        $this->max_projects = 10;
+        $this->max_projects = 15;
         $this->max_links = 10;
 
         $this->sql_src = array(
@@ -132,7 +132,7 @@ class TK_GPage
     /**
      * Allows you to specify query and field parameters
      */
-    public function quiery($args)
+    public function query($args)
     {
         if (is_array($args)) {
             foreach ($args as $key => $val) {
@@ -242,7 +242,9 @@ class TK_GPage
      */
     public function nextProject()
     {
-        if (++$this->cur_project_idx < count($this->projects)) {
+        $max_projects = count($this->projects);
+        $max_projects = $max_projects <= $this->max_projects ? $max_projects + 1 : $max_projects;
+        if (++$this->cur_project_idx < $max_projects) {
             $project = new TK_GProject($this->projects[$this->cur_project_idx - 1]);
             if ($project->isValid()) {
                 $this->cur_project = $project;

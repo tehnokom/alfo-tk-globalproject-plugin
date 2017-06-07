@@ -7,9 +7,9 @@ if (!empty($_POST['sort_by'])) {
         $filters['order_by'] = explode(',', $_POST['order_by']);
     }
 
-    $page->quiery($filters);
+    $page->query($filters);
 } else {
-    $page->quiery(array('sort_by' => array('priority'), 'order_by' => array('desc')));
+    $page->query(array('sort_by' => array('priority'), 'order_by' => array('desc')));
 }
 
 $page_num = empty($_POST['page']) ? 1 : intval($_POST['page']);
