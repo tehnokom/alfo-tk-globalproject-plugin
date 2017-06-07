@@ -34,15 +34,15 @@ if ($news->isValid()) {
                             </div>
                         </div>
                     </div>
-                    <div class="tk-bp-title tk-news-title">
+                    <!--<div class="tk-bp-title tk-news-title">
                         <div>
                             <h2><?php the_title(); ?></h2>
                         </div>
-                    </div>
+                    </div>-->
                 <?php } else { //если не включен BP?>
-                    <div class="tk-news-title">
+                    <!--<div class="tk-news-title">
                         <div><h2><?php the_title(); ?></h2></div>
-                    </div>
+                    </div>-->
                     <div class="tk-news-meta">
                         <div><?php echo get_the_date('l, j F Y'); ?></div>
                     </div>

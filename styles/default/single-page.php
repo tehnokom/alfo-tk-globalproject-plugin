@@ -19,6 +19,15 @@ wp_enqueue_style('default.css');
 wp_enqueue_script('default.js');
 wp_localize_script('default.js', 'tkl10n', array('you_supported' => TK_GProject::l10n('you_supported')));
 
+function tk_current_subpage($name) {
+    if(get_query_var('tksubpage') === $name) {
+        echo 'class="current selected"';
+        return true;
+    }
+
+    return false;
+}
+
 global $post, $wp_query;
 
 $project = new TK_GProject($post->ID);
@@ -55,7 +64,7 @@ get_header();
                 <div class="tk-title"><h2><?php echo $project->title; ?></h2></div>
             </div>
             <div>
-                <div class="tk-social">#<?php echo $project->internal_id; ?></div>
+                <div class="tk-target"><?php echo apply_filters("the_content", $project->target); ?></div>
             </div>
         </div>
     </div>
@@ -115,105 +124,78 @@ get_header();
     </div>
 </div>
 <!--End Logo-->
-<!--Start Central-->
-<div id="projektoj-centro">
-    <!--Start Block_1-->
-    <div class="tk-block">
-        <!--Start Hint-->
-        <div class="tk-hint">
-            <h2><?php echo TK_GProject::l10n('hint'); ?></h2>
-            <?php echo apply_filters("the_content", TK_GProject::l10n('hint_text')); ?>
-        </div>
-        <!--End Hint-->
+<!--Start Hint-->
+<div class="tk-hint">
+    <div>
+        <?php echo TK_GProject::l10n('hint_text'); ?>
     </div>
-    <!--End Block_1-->
-    <!--Start Block_2-->
-    <div class="tk-block">
-    <!--Start Target-->
-    <div class="tk-target">
-        <h2><?php TK_GProject::the_l10n('target'); ?></h2>
-        <?php echo apply_filters("the_content", $project->target); ?>
-    </div>
-    <!--End Target-->
-    </div>
-    <!--End Block_2-->
-    <!--Start Block_3-->
-    <div class="tk-block">
-    <!--Start Parent Project-->
-    <?php
-    $parent_project = $project->getParentProject();
-
-    if (!empty($parent_project)) {
-        ?>
-        <div class="tk-parent-project">
-            <h2><?php TK_GProject::the_l10n('parent_project'); ?></h2>
-            <ul>
-                <li><a href="<?php echo $parent_project->permalink; ?>"><?php echo $parent_project->title; ?></a></li>
-            </ul>
-        </div>
-        <?php
-    }
-    ?>
-    <!--End Parent Project-->
-    <!--Start Subprojects-->
-    <?php
-    $subprojects = $project->getChildProjects();
-
-    if (!empty($subprojects)) {
-        ?>
-        <div class="tk-subprojects">
-            <h2><?php TK_GProject::the_l10n('subprojects'); ?></h2>
-            <ul>
-                <?php
-                foreach ($subprojects as $cur) {
-                    $li = "<li><a href=\"{$cur->permalink}\">{$cur->title}</a></li>";
-                    echo $li;
-                }
-                ?>
-            </ul>
-        </div>
-        <?php
-    }
-    ?>
-    <!--End Subprojects-->
-    </div>
-    <!--End Block_3-->
-    <!--Start Block_4-->
-    <div class="tk-block">
-        <!--Start Tabs-->
-        <div class="tk-tabs">
-            <br id="tk-tab2"/><br id="tk-tab3"/><br id="tk-tab4"/><br id="tk-tab5"/>
-            <a href="#tk-tab1"><?php TK_GProject::the_l10n('news'); ?></a><a
-                    href="#tk-tab2"><?php TK_GProject::the_l10n('description'); ?></a><a
-                    href="#tk-tab3"><?php TK_GProject::the_l10n('tasks'); ?></a><a
-                    href="#tk-tab4"><?php TK_GProject::the_l10n('answers'); ?></a><a
-                    href="#tk-tab5"><?php TK_GProject::the_l10n('team'); ?></a>
-            <div></div>
-            <div></div>
-            <div><?php TK_GProject::the_l10n('no_tasks'); ?></div>
-            <div><?php TK_GProject::the_l10n('no_answers'); ?></div>
-            <div style="padding: 10px;">
-                <strong>Администраторы:</strong>
-
-                <ul style="margin-top:10px;list-style: square;">
-                    <li><a href="https://tehnokom.su/uzantoj/vladimir-levadnij/">Владимир Левадный</a></li>
-                    <li><a href="https://tehnokom.su/uzantoj/sergej/">Сергей Лавренюк</a></li>
-                    <li><a href="https://tehnokom.su/uzantoj/aleksandr/">Александр Мальцев</a></li>
-                    <li><a href="https://tehnokom.su/uzantoj/ra9oaj/">Равиль Сарваритдинов</a></li>
-                </ul>
-            </div>
-        </div>
-        <!--End Tabs-->
-    </div>
+    <div><a class="tk-hide-hint" href="javascript:void(0);">X</a></div>
 </div>
-<!--End Central-->
-<!--Satrt Widgets-->
-<div id="projektoj-dekstre">
-    <div id="projektoj-dekstre-1">
-        <?php dynamic_sidebar( 'projektoj-dekstre-1' ); ?>
-    </div>
+<!--End Hint-->
+<!--Start Nav-->
+<div class="tk-nav">
+    <ul>
+        <li <?php tk_current_subpage('') ?> >
+            <a href="<?php echo $project->permalink; ?>"><?php echo _x('General', 'Default style', 'tk-style'); ?></a>
+        </li>
+        <li <?php tk_current_subpage('informo') ?> >
+            <a href="<?php echo $project->permalink . '/informo'; ?>">
+                <?php echo _x('Information', 'Default style', 'tk-style'); ?>
+            </a>
+        </li>
+        <li <?php tk_current_subpage('taskoj') ?> >
+            <a href="<?php echo $project->permalink . '/taskoj'; ?>">
+                <?php echo _x('Tasks', 'Default style', 'tk-style'); ?>
+            </a>
+        </li>
+        <li <?php tk_current_subpage('teamo') ?> >
+            <a href="<?php echo $project->permalink . '/teamo'; ?>">
+                <?php echo _x('Team', 'Default style', 'tk-style'); ?>
+            </a>
+        </li>
+        <li <?php tk_current_subpage('statistiko') ?> >
+            <a href="<?php echo $project->permalink . '/statistiko'; ?>">
+                <?php echo _x('Statistics', 'Default style', 'tk-style'); ?>
+            </a>
+        </li>
+        <?php if(tkgp_is_user_role('administrator') || tkgp_is_user_role('editor')) {
+            ?>
+        <li <?php tk_current_subpage('administrado') ?> >
+            <a href="<?php echo $project->permalink . '/administrado'; ?>">
+                <?php echo _x('Control', 'Default style', 'tk-style'); ?>
+            </a>
+        </li>
+        <?php
+        }
+        ?>
+    </ul>
 </div>
-<!--End Widgets-->
+<!--End Nav-->
 <?php
+$require_page = '';
+switch (get_query_var('tksubpage')) {
+    case 'informo':
+        $require_page = TKGP_STYLE_DIR . 'info.php';
+        break;
+
+    case 'taskoj':
+        $require_page = TKGP_STYLE_DIR . 'ajax-tasks.php';
+        break;
+
+    case 'teamo':
+        $require_page = TKGP_STYLE_DIR . 'ajax-team.php';
+        break;
+
+    case 'statistiko':
+    case 'administrado':
+        $require_page = TKGP_STYLE_DIR . 'statistic.php';
+        break;
+
+    default:
+        $require_page = TKGP_STYLE_DIR . 'general.php';
+        break;
+}
+require_once ($require_page);
+
 get_footer();
 ?>

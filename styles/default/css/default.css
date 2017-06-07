@@ -146,7 +146,7 @@ img {
     float: none !important;
     color: white;
     width: 100%;
-    height: 75%;
+    height: 70%;
 }
 
 .tk-social {
@@ -165,7 +165,7 @@ img {
 
 #projektoj-dekstre-1 { padding: 10px; margin-top: 10px; border: 1px solid #dfdfdf; border-radius: 5px;}
 
-#projektoj-dekstre-1, #projektoj-centro { margin-top: 10px;}
+/*#projektoj-dekstre-1, #projektoj-centro { margin-top: 10px;}*/
 
 {
     -webkit-border-radius: 5px;
@@ -178,14 +178,73 @@ img {
     box-shadow: 0 1px 0 #fff;
 }
 
-.tk-block {border: 1px solid #dfdfdf; border-radius: 5px; padding: 10px; margin-bottom: 10px;}
+.tk-block {border: 1px solid #dfdfdf; border-radius: 5px; padding: 10px; margin-top: 10px;}
 /*------------------------*/
-.tk-target, .tk-subprojects, .tk-parent-project, .tk-hint {
+.tk-hint {
+    display: table;
+    margin-top: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #f08b30;
+    color: white;
+}
+
+.tk-hint > div {
+    display: table-cell;
+}
+
+.tk-hint > div:nth-child(1) {
+    width: 95%;
+}
+
+.tk-hint > div:nth-child(2) {
+    width: 4%;
+    padding: 5px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.tk-hint > div:nth-child(2) a {
+    text-decoration: none;
+    color: white;
+}
+
+.tk-nav {
+    margin-top: 5px;
+}
+
+.tk-nav li {
+    display: inline-block;
+    margin: 5px 5px 0 0 !important;
+}
+
+.tk-nav li a {
+    display: inline-block;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: black !important;
+}
+
+.tk-nav li.current a{
+    background: #007BAC;
+    border-color: #007BAC;
+    color: white !important;
+}
+
+
+.tk-subprojects, .tk-parent-project, .tk-hint {
     /*margin-top: 15px;*/
     font-size: 13px;
 }
 
-.tk-target h2, .tk-subprojects h2, .tk-parent-project h2, .tk-hint h2 {
+.tk-target {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.tk-target h2, .tk-subprojects h2, .tk-parent-project h2 {
     font-size: 16px;
 }
 
@@ -196,7 +255,6 @@ img {
 
 /*------------------------*/
 .tk-tabs {
-    /*margin-top: 20px;*/
     font-size: 13px;
 }
 
@@ -296,7 +354,7 @@ img {
 /*----------------------------------*/
 .tk-news-unit {
     display: table;
-    margin-bottom: 10px;
+    margin-top: 10px;
     padding: 5px;
     border: 1px solid rgba(204, 204, 204, 0.6);
     border-radius: 5px;

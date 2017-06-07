@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Default Style for TK Global Projects\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-06 09:22+0000\n"
-"PO-Revision-Date: 2017-04-06 09:23+0000\n"
-"Last-Translator: Сарваритдинов Равиль <ra9oaj@mail.ru>\n"
+"POT-Creation-Date: 2017-06-07 06:19+0000\n"
+"PO-Revision-Date: 2017-06-07 07:02+0000\n"
+"Last-Translator: Равиль <ra9oaj@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10 >= 2 && "
@@ -14,42 +14,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: styles/default/page.php:23
+#: styles/default/single-page.php:139
+msgctxt "Default style"
+msgid "General"
+msgstr "Главная"
+
+#: styles/default/single-page.php:143
+msgctxt "Default style"
+msgid "Information"
+msgstr "Информация"
+
+#: styles/default/single-page.php:148
+msgctxt "Default style"
+msgid "Tasks"
+msgstr "Задачи"
+
+#: styles/default/single-page.php:153
+msgctxt "Default style"
+msgid "Team"
+msgstr "Команда"
+
+#: styles/default/single-page.php:158
+msgctxt "Default style"
+msgid "Statistics"
+msgstr "Статистика"
+
+#: styles/default/single-page.php:165
+msgctxt "Default style"
+msgid "Control"
+msgstr "Управление"
+
+#: styles/default/ajax-page.php:59
+msgctxt "Default style"
+msgid "More"
+msgstr "Ещё"
+
+#: styles/default/page.php:27
 msgctxt "Default style"
 msgid "Filters"
 msgstr "Фильтры"
 
-#: styles/default/page.php:26
+#: styles/default/page.php:30
 msgctxt "Default style"
 msgid "Sorting"
 msgstr "Сортировка"
 
-#: styles/default/page.php:28
+#: styles/default/page.php:32
 msgctxt "Default style"
 msgid "by proirity"
 msgstr "по приоритету"
 
-#: styles/default/page.php:29
+#: styles/default/page.php:33
 msgctxt "Default style"
 msgid "by popularity"
 msgstr "по популярности"
 
-#: styles/default/page.php:30
+#: styles/default/page.php:34
 msgctxt "Default style"
 msgid "by date"
 msgstr "по дате"
 
-#: styles/default/page.php:31
+#: styles/default/page.php:35
 msgctxt "Default style"
 msgid "by title"
 msgstr "по названию"
 
-#: styles/default/page.php:34
+#: styles/default/page.php:38
 msgctxt "Default style"
 msgid "DESC"
 msgstr "по убыванию"
 
-#: styles/default/page.php:35
+#: styles/default/page.php:39
 msgctxt "Default style"
 msgid "ASC"
 msgstr "по возрастанию"

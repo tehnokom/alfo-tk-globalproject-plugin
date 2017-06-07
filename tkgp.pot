@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-26 09:07+0000\n"
+"POT-Creation-Date: 2017-06-07 08:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -30,112 +30,112 @@ msgstr ""
 msgid "You can not drop a single manager."
 msgstr ""
 
-#: lib/core.php:21
-msgctxt "tk_project"
-msgid "Projects"
-msgstr ""
-
 #: lib/core.php:22
-msgctxt "tk_project_singular"
+msgctxt "tk_project"
 msgid "Projects"
 msgstr ""
 
 #: lib/core.php:23
-msgctxt "tk_project"
-msgid "Create new"
+msgctxt "tk_project_singular"
+msgid "Projects"
 msgstr ""
 
 #: lib/core.php:24
 msgctxt "tk_project"
-msgid "Create new project"
+msgid "Create new"
 msgstr ""
 
 #: lib/core.php:25
 msgctxt "tk_project"
-msgid "Edit project"
+msgid "Create new project"
 msgstr ""
 
 #: lib/core.php:26
 msgctxt "tk_project"
-msgid "New project"
+msgid "Edit project"
 msgstr ""
 
 #: lib/core.php:27
 msgctxt "tk_project"
-msgid "View project"
+msgid "New project"
 msgstr ""
 
 #: lib/core.php:28
 msgctxt "tk_project"
-msgid "Search project"
+msgid "View project"
 msgstr ""
 
 #: lib/core.php:29
 msgctxt "tk_project"
-msgid "Project not found"
+msgid "Search project"
 msgstr ""
 
 #: lib/core.php:30
 msgctxt "tk_project"
+msgid "Project not found"
+msgstr ""
+
+#: lib/core.php:31
+msgctxt "tk_project"
 msgid "Project not found in Trash"
 msgstr ""
 
-#: lib/core.php:32
+#: lib/core.php:33
 msgctxt "tk_project"
 msgid "TehnoKom Global Project system type"
 msgstr ""
 
-#: lib/core.php:53
+#: lib/core.php:54
 msgctxt "Taxonomy General Name"
 msgid "Categories of Projects"
 msgstr ""
 
-#: lib/core.php:54
+#: lib/core.php:55
 msgctxt "Taxonomy Singular Name"
 msgid "Categories of Projects"
 msgstr ""
 
-#: lib/core.php:88
+#: lib/core.php:89
 msgctxt "tk_meta"
 msgid "Settings of Project"
 msgstr ""
 
-#: lib/core.php:95
+#: lib/core.php:96
 msgctxt "tk_meta"
 msgid "Plane of Project"
 msgstr ""
 
-#: lib/core.php:102
+#: lib/core.php:103
 msgctxt "tk_meta"
 msgid "Votes"
 msgstr ""
 
-#: lib/core.php:182
+#: lib/core.php:183
 msgctxt "Project Tasks"
 msgid "Stage"
 msgstr ""
 
-#: lib/core.php:183
+#: lib/core.php:184
 msgctxt "Project Tasks"
 msgid "Task"
 msgstr ""
 
-#: lib/core.php:422
+#: lib/core.php:403
 msgctxt "tk_project"
 msgid "TK Projects"
 msgstr ""
 
-#: lib/core.php:423
+#: lib/core.php:404
 msgctxt "tk_project"
 msgid "TK Projects Settings"
 msgstr ""
 
-#: lib/core.php:517 lib/core.php:537 lib/ajax_functions.php:57
+#: lib/core.php:498 lib/core.php:518 lib/ajax_functions.php:57
 msgctxt "Project Settings"
 msgid "Add"
 msgstr ""
 
-#: lib/core.php:524
+#: lib/core.php:505
 msgctxt "Project Settings"
 msgid "Groups are not supported."
 msgstr ""
@@ -210,17 +210,17 @@ msgctxt "Project Edit"
 msgid "You do not have permission to edit project"
 msgstr ""
 
-#: lib/ajax_functions.php:368
+#: lib/ajax_functions.php:381
 msgctxt "Project Tasks"
 msgid "Access denaided."
 msgstr ""
 
-#: lib/ajax_functions.php:376
+#: lib/ajax_functions.php:389
 msgctxt "Project Tasks"
 msgid "Task marked as deleted."
 msgstr ""
 
-#: lib/ajax_functions.php:378
+#: lib/ajax_functions.php:391
 msgctxt "Project Tasks"
 msgid "Task not found."
 msgstr ""
@@ -362,7 +362,7 @@ msgstr ""
 
 #: lib/project.php:798
 msgctxt "Project l10n"
-msgid "Answers"
+msgid "Questions and answers"
 msgstr ""
 
 #: lib/project.php:802
@@ -472,7 +472,7 @@ msgctxt "Project l10n"
 msgid "Parent project"
 msgstr ""
 
-#: lib/admin-tasks.php:68
+#: lib/admin-tasks.php:79
 msgctxt "Project Settings"
 msgid "Functionality will be available after saving the current project."
 msgstr ""

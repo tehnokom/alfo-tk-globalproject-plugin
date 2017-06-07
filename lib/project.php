@@ -795,7 +795,7 @@ class TK_GProject
                 break;
 
             case 'answers':
-                $out = _x('Answers', 'Project l10n', 'tkgp');
+                $out = _x('Questions and answers', 'Project l10n', 'tkgp');
                 break;
 
             case 'team':

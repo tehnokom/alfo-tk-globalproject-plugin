@@ -1,3 +1,4 @@
+<div class="tk-block">
 <?php
 $tasks = new TK_GTasks(intval($_POST['post_id']));
 if ($tasks->isValid()) {
@@ -48,3 +49,4 @@ if ($tasks->isValid()) {
     }
 }
 ?>
+</div>

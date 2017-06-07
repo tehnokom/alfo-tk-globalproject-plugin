@@ -6,21 +6,15 @@ var $j = jQuery.noConflict();
 
 $j(document).ready(function ($j) {
     $j('.tkgp_vote_block').on('tkgp_vote_updated', tk_vote_update);
-    $j('.tk-tabs > a[href^=#tk-tab]').on('click', tk_tab_handler);
     $j(document).on('tkgp_send_vote_request', tk_animate_start);
     $j(document).on('tkgp_send_reset_vote_request', tk_animate_start);
 
-    if (location.hash !== '') {
-        var cur_tab = location.hash.match(/#tk-tab[\d]+/).toString().replace(/[^\d]+/, '');
-
-        if (cur_tab) {
-            //$j('.tk-tabs > a[href=#tk-tab' + cur_tab + ']').click();
-            tk_tab_handler(cur_tab);
-        }
-    } else {
-        tk_tab_handler('1');
-    }
+    $j('.tk-hide-hint').on('click', tk_hide_hint);
 });
+
+function tk_hide_hint() {
+    $j('.tk-hint').hide();
+}
 
 function tk_animate_start() {
     tk_show_modal_animete($j('.tk-logo-cell2'));
@@ -28,36 +22,6 @@ function tk_animate_start() {
 
 function tk_animate_stop() {
     tk_hide_modal_animate($j('.tk-logo-cell2'));
-}
-
-function tk_tab_handler(tab_number) {
-    var tab_num = typeof tab_number !== 'object' ?
-        tab_number :
-        $j(this).attr('href').replace(/[^\d]+/, '');
-
-    var tab_object = $j('.tk-tabs > div:nth-of-type(' + tab_num + ')');
-
-    if (!tab_object.find('input[name=tk-tab-status]').length) {
-        tk_show_modal_animete($j('.tk-tabs > div:nth-of-type(' + tab_num + ')'));
-
-        switch (tab_num) {
-            case '1':
-                tkgp_ajax_get_news(tk_update_tab, {tab_num: tab_num});
-                break;
-
-            case '2':
-                tkgp_ajax_get_target(tk_update_tab, {tab_num: tab_num});
-                break;
-
-            case '3':
-                tkgp_ajax_get_tasks(tk_update_tab, {tab_num: tab_num});
-                break;
-
-            default:
-                setTimeout(tk_hide_modal_animate, 500, $j('.tk-tabs > div:nth-of-type(' + tab_num + ')'));
-                break;
-        }
-    }
 }
 
 function tk_vote_update(event, res, message) {
@@ -87,21 +51,6 @@ function tk_vote_update(event, res, message) {
             .replaceWith("<div><center><img src=\"" + img_url + "\"></center></div>" +
                 "<div style='color: " + color + "; text-shadow: 0 0 5px #fff;'>" + message.message + "</div>");
         setTimeout(tk_vote_update, 2000, this, res);
-    }
-}
-
-function tk_update_tab(html, args) {
-    var a_selector = 'a[href*="' + location.pathname + '#tk-tab"]' +
-        ', a[href*="' + location.hostname + '"][href*=#tk-tab], a[href^=#tk-tab]';
-
-    $j('.tk-tabs > div:nth-of-type(' + args.tab_num + ')')
-        .empty()
-        .append('<input name="tk-tab-status" type="hidden" value="loaded"/>')
-        .append(html)
-        .find(a_selector).on('click', tk_tab_handler);
-
-    if(args.tab_num === '3') {
-        //tk_tasks_tool_init();
     }
 }
 

@@ -3,6 +3,7 @@ if (!defined('TKGP_ROOT') || !defined('TKGP_URL')) {
     exit;
 }
 
+require_once(TKGP_ROOT . 'lib/common.php');
 require_once(TKGP_ROOT . 'lib/page.php');
 require_once(TKGP_ROOT . 'lib/project.php');
 require_once(TKGP_ROOT . 'lib/vote.php');
@@ -172,7 +173,7 @@ function tkgp_show_metabox_steps()
     ?>
     <div id="tkgp_task_frame">
         <a name="tkgp_task_anchor"></a>
-        <?php require_once (TKGP_ROOT . 'lib/admin-tasks.php'); ?>
+        <?php require_once(TKGP_ROOT . 'lib/admin-tasks.php'); ?>
     </div>
     <div id="tkgp_tasks_editor_form"
          style="padding:5px;margin-top:20px;border:1px solid #ccc;background: #ccc;" hidden="hidden">
@@ -356,11 +357,11 @@ function tkgp_save_post_meta($post_id)
                 break;
 
             case 'tkgp_priority':
-                if(!empty($_POST['tkgp_priority'])) {
+                if (!empty($_POST['tkgp_priority'])) {
                     $old = $project->priority;
                     $new = $_POST['tkgp_priority'];
 
-                    if($old != $new) {
+                    if ($old != $new) {
                         $project->setProjectPriority($new);
                     }
                 }
@@ -392,26 +393,6 @@ function tkgp_save_post_meta($post_id)
     }
 
     return $post_id;
-}
-
-/**
- * Looking at all the keys in the array pattern returns an array with the pairs 'key' => 'value' of all the found keys.
- *
- * @param string Template string
- * @param array $target_array Array for search
- * @return array
- */
-function tkgp_array_search($key_template, $target_array)
-{
-    $out = array();
-
-    foreach ($target_array as $key => $value) {
-        if (preg_match($key_template, $key)) {
-            $out[$key] = $value;
-        }
-    }
-
-    return $out;
 }
 
 /**
@@ -608,8 +589,46 @@ function tkgp_exclude_categories($args, $taxonomies)
     return $args;
 }
 
+function tkgp_check_subpages()
+{
+    global $wp, $wp_query, $post;
+
+    if (!empty($wp->query_vars['tksubpage']) && !empty($post)) {
+        switch ($wp->query_vars['tksubpage']) {
+            case 'informo':
+            case 'statistiko':
+            case 'taskoj':
+            case 'administrado':
+            case 'teamo':
+                break;
+            default:
+                //если подстраница неверна, перенаправляем на 404
+                $wp_query->set_404();
+                status_header(404);
+                get_template_part(404);
+                exit();
+                break;
+        }
+    }
+}
+
+function tkgp_subpages_rewrite()
+{
+    global $wp_rewrite;
+    $slug = TK_GProject::slug;
+
+    add_rewrite_tag('%tksubpage%', '([^&]+)');
+    add_rewrite_rule('^' . $slug . '/([^/]+)/([^/]+)/?',
+        'index.php?post_type=' . $slug . '&name=$matches[1]&tksubpage=$matches[2]',
+        'top');
+    add_rewrite_endpoint('tksubpage', EP_PERMALINK | EP_PAGES);
+    $wp_rewrite->flush_rules();
+}
+
 add_action('init', 'tkgp_create_type');
 add_action('init', 'tkgp_create_taxonomy');
+add_action('init', 'tkgp_subpages_rewrite');
+add_action('template_redirect', 'tkgp_check_subpages');
 add_action('admin_menu', 'tkgp_create_plugin_options');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
 //add_filter('the_content', 'tkgp_content');
