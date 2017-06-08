@@ -167,45 +167,45 @@ img {
 
 /*#projektoj-dekstre-1, #projektoj-centro { margin-top: 10px;}*/
 
-{
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 1px 0 #fff;
-    -moz-box-shadow: 0 1px 0 #fff;
-    box-shadow: 0 1px 0 #fff;
-}
-
 .tk-block {border: 1px solid #dfdfdf; border-radius: 5px; padding: 10px; margin-top: 10px;}
 /*------------------------*/
+.tk-hint.tk-hidden {
+    max-height: 0px !important;
+}
+
 .tk-hint {
+    overflow: hidden;
+    max-height: 150px;
+    transition: 1.5s;
+    transition-delay: 0s;
+}
+
+.tk-hint > div {
     display: table;
     margin-top: 10px;
     padding: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid #c36e22;
     border-radius: 5px;
     background: #f08b30;
     color: white;
 }
 
-.tk-hint > div {
+.tk-hint > div > div {
     display: table-cell;
 }
 
-.tk-hint > div:nth-child(1) {
+.tk-hint > div > div:nth-child(1) {
     width: 95%;
 }
 
-.tk-hint > div:nth-child(2) {
+.tk-hint > div > div:nth-child(2) {
     width: 4%;
     padding: 5px;
     text-align: center;
     vertical-align: middle;
 }
 
-.tk-hint > div:nth-child(2) a {
+.tk-hint > div > div:nth-child(2) a {
     text-decoration: none;
     color: white;
 }
@@ -217,6 +217,16 @@ img {
 .tk-nav li {
     display: inline-block;
     margin: 5px 5px 0 0 !important;
+}
+
+.tk-nav li a:hover {
+    background-color: #eee;
+    border-color: #bbb;
+}
+
+.tk-nav li a:active {
+    background-color: #ddd;
+    border-color: #aaa;
 }
 
 .tk-nav li a {

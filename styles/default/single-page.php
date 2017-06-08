@@ -6,7 +6,7 @@
 define('TKGP_STYLE_DIR', plugin_dir_path(__FILE__));
 define('TKGP_STYLE_URL', plugin_dir_url(__FILE__));
 
-wp_register_style('default.css', TKGP_STYLE_URL . 'css/default.css', array('tkgp_general','modal-windows-css'));
+wp_register_style('default.css', TKGP_STYLE_URL . 'css/default.css', array('tkgp_general', 'modal-windows-css'));
 wp_register_style('modal-windows-css', TKGP_STYLE_URL . 'css/modal-windows.css');
 wp_register_script('modal-windows-js', TKGP_STYLE_URL . 'js/modal-windows.js', array('jquery'));
 wp_register_script('tasks-tool-js', TKGP_STYLE_URL . 'js/tasks-tool.js', array('jquery-ui-sortable'));
@@ -19,8 +19,9 @@ wp_enqueue_style('default.css');
 wp_enqueue_script('default.js');
 wp_localize_script('default.js', 'tkl10n', array('you_supported' => TK_GProject::l10n('you_supported')));
 
-function tk_current_subpage($name) {
-    if(get_query_var('tksubpage') === $name) {
+function tk_current_subpage($name)
+{
+    if (get_query_var('tksubpage') === $name) {
         echo 'class="current selected"';
         return true;
     }
@@ -127,9 +128,11 @@ get_header();
 <!--Start Hint-->
 <div class="tk-hint">
     <div>
-        <?php echo TK_GProject::l10n('hint_text'); ?>
+        <div>
+            <?php echo TK_GProject::l10n('hint_text'); ?>
+        </div>
+        <div><a class="tk-hide-hint" href="javascript:void(0);">X</a></div>
     </div>
-    <div><a class="tk-hide-hint" href="javascript:void(0);">X</a></div>
 </div>
 <!--End Hint-->
 <!--Start Nav-->
@@ -158,14 +161,14 @@ get_header();
                 <?php echo _x('Statistics', 'Default style', 'tk-style'); ?>
             </a>
         </li>
-        <?php if(tkgp_is_user_role('administrator') || tkgp_is_user_role('editor')) {
+        <?php if (tkgp_is_user_role('administrator') || tkgp_is_user_role('editor')) {
             ?>
-        <li <?php tk_current_subpage('administrado') ?> >
-            <a href="<?php echo $project->permalink . '/administrado'; ?>">
-                <?php echo _x('Control', 'Default style', 'tk-style'); ?>
-            </a>
-        </li>
-        <?php
+            <li <?php tk_current_subpage('administrado') ?> >
+                <a href="<?php echo $project->permalink . '/administrado'; ?>">
+                    <?php echo _x('Control', 'Default style', 'tk-style'); ?>
+                </a>
+            </li>
+            <?php
         }
         ?>
     </ul>
@@ -195,7 +198,7 @@ switch (get_query_var('tksubpage')) {
         $require_page = TKGP_STYLE_DIR . 'general.php';
         break;
 }
-require_once ($require_page);
+require_once($require_page);
 
 get_footer();
 ?>

@@ -10,10 +10,11 @@ $j(document).ready(function ($j) {
     $j(document).on('tkgp_send_reset_vote_request', tk_animate_start);
 
     $j('.tk-hide-hint').on('click', tk_hide_hint);
+   // $j('.tk-hint').css('max-height', $j('.tk-hint').height());
 });
 
 function tk_hide_hint() {
-    $j('.tk-hint').hide();
+    $j('.tk-hint').addClass('tk-hidden');
 }
 
 function tk_animate_start() {
