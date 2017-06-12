@@ -620,7 +620,7 @@ function tkgp_subpages_rewrite()
     add_rewrite_rule('^' . $slug . '/([^/]+)/([^/]+)/?',
         'index.php?post_type=' . $slug . '&name=$matches[1]&tksubpage=$matches[2]',
         'top');
-    add_rewrite_endpoint('tksubpage', EP_PERMALINK | EP_PAGES);
+
     $wp_rewrite->flush_rules();
 }
 

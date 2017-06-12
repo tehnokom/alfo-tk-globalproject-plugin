@@ -167,7 +167,7 @@ class TK_GPage
 
                     case 'title':
                         unset($this->sql_src['order_by']);
-                        $lang = function_exists(qtranxf_getLanguage) ? qtranxf_getLanguage() : '';
+                        $lang = function_exists('qtranxf_getLanguage') ? qtranxf_getLanguage() : '';
                         $this->sql_src['order_by'][] = !empty($lang) ? "get_wp_localize(p.`post_title`,'{$lang}') ASC"
                             : 'p.`post_title` ASC';
                         break;
@@ -263,6 +263,18 @@ class TK_GPage
     public function project()
     {
         return is_object($this->cur_project) ? $this->cur_project : null;
+    }
+
+    public static function getTotalProjectCount()
+    {
+        global $wpdb;
+        $slug = TK_GProject::slug;
+
+        $sql = $wpdb->prepare("SELECT COUNT(*) FROM `{$wpdb->prefix}posts` 
+WHERE `post_type` = '{$slug}' AND `post_status` = 'publish'");
+        $res = $wpdb->get_var($sql);
+
+        return intval($res);
     }
 }
 
