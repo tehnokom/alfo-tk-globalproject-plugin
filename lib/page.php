@@ -270,8 +270,8 @@ class TK_GPage
         global $wpdb;
         $slug = TK_GProject::slug;
 
-        $sql = $wpdb->prepare("SELECT COUNT(*) FROM `{$wpdb->prefix}posts` 
-WHERE `post_type` = '{$slug}' AND `post_status` = 'publish'");
+        $sql = "SELECT COUNT(*) FROM `{$wpdb->prefix}posts` 
+WHERE `post_type` = '{$slug}' AND `post_status` = 'publish'";
         $res = $wpdb->get_var($sql);
 
         return intval($res);
