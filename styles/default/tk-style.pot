@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-07 06:19+0000\n"
+"POT-Creation-Date: 2017-06-21 13:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -13,6 +13,46 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
+
+#: styles/default/ajax-page.php:59
+msgctxt "Default style"
+msgid "More"
+msgstr ""
+
+#: styles/default/statistic.php:9
+msgctxt "Default style"
+msgid "The page is under construction"
+msgstr ""
+
+#: styles/default/single-page.php:146
+msgctxt "Default style"
+msgid "General"
+msgstr ""
+
+#: styles/default/single-page.php:150
+msgctxt "Default style"
+msgid "Information"
+msgstr ""
+
+#: styles/default/single-page.php:155
+msgctxt "Default style"
+msgid "Tasks"
+msgstr ""
+
+#: styles/default/single-page.php:160
+msgctxt "Default style"
+msgid "Team"
+msgstr ""
+
+#: styles/default/single-page.php:165
+msgctxt "Default style"
+msgid "Statistics"
+msgstr ""
+
+#: styles/default/single-page.php:172
+msgctxt "Default style"
+msgid "Control"
+msgstr ""
 
 #: styles/default/page.php:27
 msgctxt "Default style"
@@ -52,39 +92,4 @@ msgstr ""
 #: styles/default/page.php:39
 msgctxt "Default style"
 msgid "ASC"
-msgstr ""
-
-#: styles/default/single-page.php:139
-msgctxt "Default style"
-msgid "General"
-msgstr ""
-
-#: styles/default/single-page.php:143
-msgctxt "Default style"
-msgid "Information"
-msgstr ""
-
-#: styles/default/single-page.php:148
-msgctxt "Default style"
-msgid "Tasks"
-msgstr ""
-
-#: styles/default/single-page.php:153
-msgctxt "Default style"
-msgid "Team"
-msgstr ""
-
-#: styles/default/single-page.php:158
-msgctxt "Default style"
-msgid "Statistics"
-msgstr ""
-
-#: styles/default/single-page.php:165
-msgctxt "Default style"
-msgid "Control"
-msgstr ""
-
-#: styles/default/ajax-page.php:59
-msgctxt "Default style"
-msgid "More"
 msgstr ""

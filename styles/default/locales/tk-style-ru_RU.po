@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Default Style for TK Global Projects\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-07 06:19+0000\n"
-"PO-Revision-Date: 2017-06-07 07:02+0000\n"
+"POT-Creation-Date: 2017-06-21 13:07+0000\n"
+"PO-Revision-Date: 2017-06-21 13:07+0000\n"
 "Last-Translator: Равиль <ra9oaj@mail.ru>\n"
 "Language-Team: Russian\n"
 "Language: ru-RU\n"
@@ -14,40 +14,45 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco - https://localise.biz/"
 
-#: styles/default/single-page.php:139
+#: styles/default/statistic.php:9
 msgctxt "Default style"
-msgid "General"
-msgstr "Главная"
-
-#: styles/default/single-page.php:143
-msgctxt "Default style"
-msgid "Information"
-msgstr "Информация"
-
-#: styles/default/single-page.php:148
-msgctxt "Default style"
-msgid "Tasks"
-msgstr "Задачи"
-
-#: styles/default/single-page.php:153
-msgctxt "Default style"
-msgid "Team"
-msgstr "Команда"
-
-#: styles/default/single-page.php:158
-msgctxt "Default style"
-msgid "Statistics"
-msgstr "Статистика"
-
-#: styles/default/single-page.php:165
-msgctxt "Default style"
-msgid "Control"
-msgstr "Управление"
+msgid "The page is under construction"
+msgstr "Эта страница находится в стадии разработки"
 
 #: styles/default/ajax-page.php:59
 msgctxt "Default style"
 msgid "More"
 msgstr "Ещё"
+
+#: styles/default/single-page.php:146
+msgctxt "Default style"
+msgid "General"
+msgstr "Главная"
+
+#: styles/default/single-page.php:150
+msgctxt "Default style"
+msgid "Information"
+msgstr "Информация"
+
+#: styles/default/single-page.php:155
+msgctxt "Default style"
+msgid "Tasks"
+msgstr "Задачи"
+
+#: styles/default/single-page.php:160
+msgctxt "Default style"
+msgid "Team"
+msgstr "Команда"
+
+#: styles/default/single-page.php:165
+msgctxt "Default style"
+msgid "Statistics"
+msgstr "Статистика"
+
+#: styles/default/single-page.php:172
+msgctxt "Default style"
+msgid "Control"
+msgstr "Управление"
 
 #: styles/default/page.php:27
 msgctxt "Default style"
