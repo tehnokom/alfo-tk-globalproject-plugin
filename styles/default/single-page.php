@@ -108,11 +108,6 @@ get_header();
                     <img src="<?php echo $project_avatar;?>">
                 </div>
             </div>
-            <div class="tk-label">
-                <div>
-                    <span class="tk-approval-votes"><?php echo number_format($vote->approval_votes, 0, '.', ' '); ?></span>
-                    <?php echo TK_GProject::l10n('supported'); ?></div>
-            </div>
             <div class="tk-progress">
                 <div>
                     <div class="tk-progress-bar">
@@ -121,8 +116,14 @@ get_header();
                 </div>
             </div>
             <div class="tk-label">
-                <div><?php echo TK_GProject::l10n('Needed'); ?>
-                    <span class="tk-target-votes"><?php echo number_format($vote->target_votes, 0, '.', ' '); ?></span>
+                <div>
+                    <span class="tk-target-votes">
+                        <?php
+                        echo number_format($vote->approval_votes, 0, '.', ' ') .
+                            __(' of ' ,'tk-style') .
+                            number_format($vote->target_votes, 0, '.', ' ');
+                        ?>
+                    </span>
                 </div>
             </div>
         </div>
