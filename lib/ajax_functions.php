@@ -321,28 +321,28 @@ function tkgp_task_save()
         $title = tkgp_qtranslatex_compile($_POST['title']);
         $desc = tkgp_qtranslatex_compile($_POST['desc']);
 
-        if(empty($_POST['task_id'])) {
+        if (empty($_POST['task_id'])) {
             $task = TK_GTask::createTask($_POST['post_id'],
                 array('title' => $title,
                     'description' => $desc,
                     'type' => $_POST['type'],
                     'status' => 1,
-                    ),
+                ),
                 $_POST['parent_id']);
 
-            if($task) {
+            if ($task) {
                 $out['status'] = 'ok';
             }
         } else {
             $edit_task = new TK_GTask(intval($_POST['task_id']));
-            if($edit_task) {
+            if ($edit_task) {
                 $data = array(
                     'title' => $title,
                     'description' => $desc,
                     'type' => $_POST['type']
                 );
 
-                if($edit_task->setFields($data)) {
+                if ($edit_task->setFields($data)) {
                     $out['status'] = 'ok';
                 }
             }
@@ -360,30 +360,32 @@ function tkgp_task_save()
  * @param array $args
  * @return string
  */
-function tkgp_qtranslatex_compile($args) {
+function tkgp_qtranslatex_compile($args)
+{
     $out = '';
-    $in = json_decode(str_replace('\"','"', $args), true);
+    $in = json_decode(str_replace('\"', '"', $args), true);
 
-    if(is_array($in) && !empty($in)) {
+    if (is_array($in) && !empty($in)) {
         foreach ($in as $key => $val) {
             $out .= "[:$key]$val";
         }
 
         $out .= strlen($out) > 5 ? '[:]' : '';
-        $out = str_replace('\n',"\n", $out);
+        $out = str_replace('\n', "\n", $out);
     }
 
     return $out;
 }
 
-function tkgp_task_delete() {
+function tkgp_task_delete()
+{
     $out = array('status' => 'error',
-        'msg' => _x('Access denaided.', 'Project Tasks', 'tkgp'));
+        'msg' => _x('Access denied.', 'Project Tasks', 'tkgp'));
 
     if (!empty($_POST['task_id']) && is_admin()) {
         $task = new TK_GTask($_POST['task_id']);
 
-        if($task && $task->post_id == $_POST['post_id']) {
+        if ($task && $task->post_id == $_POST['post_id']) {
             $task->setStatus(4);
             $out['status'] = 'ok';
             $out['msg'] = _x('Task marked as deleted.', 'Project Tasks', 'tkgp');
@@ -400,7 +402,7 @@ function tkgp_task_delete() {
 function tkgp_get_task_data()
 {
     $out = array('status' => 'error',
-        'msg' => 'Access denaided.',
+        'msg' => 'Access denied.',
         'data' => null);
 
     if (!empty($_POST['task_id']) && is_admin()) {
@@ -410,10 +412,10 @@ function tkgp_get_task_data()
             $out['status'] = 'ok';
             unset($out['msg']);
             $out['data'] = array(
-                    'title' => $task->title,
-                    'desc' => $task->description,
-                    'type' => $task->type,
-                    'status' => $task->status
+                'title' => $task->title,
+                'desc' => $task->description,
+                'type' => $task->type,
+                'status' => $task->status
             );
         }
 
@@ -421,6 +423,112 @@ function tkgp_get_task_data()
 
     echo json_encode($out);
 
+    wp_die();
+}
+
+function tkgp_upload_project_images()
+{
+    $out = array('status' => 'error', 'msg' => 'Access denied.');
+    $nonce_action = 'tkgp_upload_images_' . $_POST['post_id'] . '_' . get_current_user_id();
+
+    if (wp_verify_nonce($_POST['tkgp_images_nonce'], $nonce_action)) {
+        $project = new TK_GProject($_POST['post_id']);
+
+        if ($project->isValid()) {
+            $overrides = array('test_form' => false);
+
+            add_filter('upload_dir', 'tkgp_upload_dir');
+
+            foreach ($_FILES as $form => $file) {
+                $error = '';
+
+                if (!tkgp_check_img($form, $file, $error)) {
+                    unlink($file['tmp-name']);
+                    $out['errors'][$file['name']] = $error;
+                    $out['msg'] = 'Bad Image';
+                    unset($_FILES[$form]);
+                    continue;
+                }
+
+                $filename = basename($file['name']);
+                $img_type = '';
+
+                if ($form === 'tkgp_avatar') {
+                    $img_type = 'avatar';
+                } else if ($form === 'tkgp_logo') {
+                    $img_type = 'logo';
+                }
+
+                if (!empty($img_type)) {
+                    $filename = "{$img_type}-{$project->internal_id}." . end(explode(".", $filename));
+                    $file['name'] = $filename;
+                    $cur_img = $project->getProjectImages($img_type);
+
+                    if (is_file($cur_img)) {
+                        wp_delete_file($cur_img);
+                    }
+
+                    if (function_exists('wp_handle_upload')) {
+                        require_once(ABSPATH . 'wp-admin/includes/file.php');
+                    }
+
+                    $real_file = wp_handle_upload($file, $overrides);
+
+                    if (!empty($real_file['file'])) {
+                        $out['status'] = 'ok';
+                        $out['url'] = $project->getProjectImages($img_type);
+                        unset($out['msg']);
+                    }
+                }
+            }
+        }
+    }
+
+    echo json_encode($out);
+    wp_die();
+}
+
+function tkgp_delete_project_images()
+{
+    $out = array('status' => 'error', 'msg' => 'Access denied.');
+    $nonce_action = 'tkgp_upload_images_' . $_POST['post_id'] . '_' . get_current_user_id();
+
+    if (!empty($_POST['image']) && wp_verify_nonce($_POST['tkgp_images_nonce'], $nonce_action)) {
+
+        $project = new TK_GProject($_POST['post_id']);
+
+        if ($project->isValid()) {
+
+
+            $file = '';
+            $img_type = '';
+            switch ($_POST['image']) {
+                case 'tkgp_logo':
+                    $img_type = 'logo';
+                    $file = $project->getLogoPath();
+                    break;
+                case 'tkgp_avatar':
+                    $img_type = 'avatar';
+                    $file = $project->getAvatarPath();
+                    break;
+                default:
+                    $out['msg'] = 'Mismatch of image type';
+                    break;
+            }
+
+            if(!empty($file)) {
+                wp_delete_file($file);
+                $out['status'] = 'ok';
+                unset($out['msg']);
+
+                $default_img = array('path' => TKGP_STYLES_DIR, 'url' => TKGP_STYLES_URL, 'subdir' => 'default/images',
+                    'name' => 'default-logo.jpg');
+                $out['url'] = $project->getProjectImages($img_type, true, $default_img);
+            }
+        }
+    }
+
+    echo json_encode($out);
     wp_die();
 }
 
@@ -441,4 +549,6 @@ add_action('wp_ajax_nopriv_tkgp_get_project_tasks', 'tkgp_get_tasks');
 add_action('wp_ajax_tkgp_task_save', 'tkgp_task_save');
 add_action('wp_ajax_tkgp_get_task_data', 'tkgp_get_task_data');
 add_action('wp_ajax_tkgp_task_delete', 'tkgp_task_delete');
+add_action('wp_ajax_tkgp_upload_image', 'tkgp_upload_project_images');
+add_action('wp_ajax_tkgp_delete_image', 'tkgp_delete_project_images');
 ?>

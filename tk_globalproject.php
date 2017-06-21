@@ -27,7 +27,7 @@
 define('TKGP_ROOT', plugin_dir_path(__FILE__));
 define('TKGP_URL', plugin_dir_url(__FILE__));
 define('TKGP_STYLES_DIR', TKGP_ROOT . 'styles/');
-define('TKGP_STYLES_DIR', TKGP_URL . 'styles/');
+define('TKGP_STYLES_URL', TKGP_URL . 'styles/');
 
 require_once(TKGP_ROOT . 'lib/plug_initial.php');
 require_once(TKGP_ROOT . 'lib/core.php');
@@ -49,17 +49,23 @@ function tkgp_css_registry()
 
 function tkgp_js_registry()
 {
-    wp_register_script('tkgp_js_general', TKGP_URL . 'js/tkgp_general.js', array('jquery'));
+    wp_register_script('tkgp_common_js', TKGP_URL . 'js/common.js');
+    wp_register_script('tkgp_js_general', TKGP_URL . 'js/tkgp_general.js', array('jquery', 'tkgp_common_js'));
     wp_enqueue_script('tkgp_js_general');
     wp_enqueue_media();
-    wp_localize_script('tkgp_js_general', 'tkgp_js_vars',
+    wp_localize_script('tkgp_common_js', 'tkgp_js_vars',
         array('ajax_url' => admin_url('admin-ajax.php'),
             'plug_url' => TKGP_URL,
             'post_id' => get_the_ID(),
             'images' => array('load.gif', 'ok_status.png', 'err_status.png')));
 
-    wp_localize_script('tkgp_js_general', 'tkgp_i18n',
-        array('loading' => __('Loading...', 'tkgp')));
+    wp_localize_script('tkgp_common_js', 'tkgp_i18n',
+        array('loading' => _x('Loading...', 'JS','tkgp'),
+            'big_file' => _x('The file \'%1%\' is too big, it should not be more than ', 'JS', 'tkgp'),
+            'kb' => _x('Kb', 'JS', 'tkgp'),
+            'mb' => _x('Mb', 'JS', 'tkgp'),
+            'not_img' => _x('The file \'%1%\' must be an image', 'JS', 'tkgp')
+        ));
 }
 
 function tkgp_admin_css_registry()
@@ -72,14 +78,21 @@ function tkgp_admin_css_registry()
 
 function tkgp_admin_js_registry()
 {
+    wp_register_script('tkgp_common_js', TKGP_URL . 'js/common.js');
     wp_register_script('tkgp_js_admin', TKGP_URL . 'js/tkgp_admin.js', array('jquery',
         'jquery-ui-sortable',
-        'jquery-ui-datepicker'));
+        'jquery-ui-datepicker',
+        'tkgp_common_js'));
     wp_enqueue_script('tkgp_js_admin');
+
     wp_localize_script('tkgp_js_admin', 'tkgp_i18n',
         array('vote_reset' => __('You want to definitely reset the voting results?', 'tkgp'),
             'delete_manager' => __('You want to delete the manager?', 'tkgp'),
-            'delete_single_manager' => __('You can not drop a single manager.', 'tkgp')
+            'delete_single_manager' => __('You can not drop a single manager.', 'tkgp'),
+            'big_file' => _x('The file \'%1%\' is too big, it should not be more than ', 'JS', 'tkgp'),
+            'kb' => _x('Kb', 'JS', 'tkgp'),
+            'mb' => _x('Mb', 'JS', 'tkgp'),
+            'not_img' => _x('The file \'%1%\' must be an image', 'JS', 'tkgp')
         )
     );
 }

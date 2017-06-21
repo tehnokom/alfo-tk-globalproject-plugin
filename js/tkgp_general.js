@@ -21,15 +21,6 @@ function tkgp_connect_vote_buttons() {
     $j('.tkgp_vote_buttons div.tkgp_button_reset').on('click', tkgp_handler_reset_vote);
 }
 
-function tkgp_is_JSON(str) {
-    try {
-        $j.parseJSON(str);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
-
 function tkgp_handler_vote() {
     var vote = $j(this).children('input[name="user_vote"]').val();
     var vote_id = $j(this).parents().find('input[name="tkgp_vote_id"]').val();
@@ -225,7 +216,7 @@ function tkgp_ajax_get_tasks(handler) {
         type: 'POST',
         data: {
             action: 'tkgp_get_project_tasks',
-            post_id: tkgp_js_vars.post_id,
+            post_id: tkgp_js_vars.post_id
         }
     })
         .done(function (html) {

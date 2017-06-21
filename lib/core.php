@@ -92,6 +92,13 @@ function tkgp_create_meta_box()
         'normal',
         'high');
 
+    add_meta_box('tk_project_meta_images',
+        _x('Logo and Avatar', 'tk_meta', 'tkgp'),
+        'tkgp_show_metabox_images',
+        null,
+        'normal',
+        'high');
+
     add_meta_box('tk_project_meta_steps',
         _x('Plane of Project', 'tk_meta', 'tkgp'),
         'tkgp_show_metabox_steps',
@@ -105,6 +112,11 @@ function tkgp_create_meta_box()
         null,
         'normal',
         'high');
+}
+
+function tkgp_show_metabox_images()
+{
+    require_once (TKGP_ROOT . 'admin/logo-avatar.php');
 }
 
 function tkgp_show_metabox_settings()
@@ -539,19 +551,6 @@ function tkgp_field_html($args, $default_val = '')
     return $html;
 }
 
-
-function tkgp_content($data)
-{
-    global $post;
-
-    if ($post->post_type == TK_GProject::slug) {
-        $project = new TK_GProject($post->ID);
-
-        $data = $project->getProjectContent($data);
-    }
-    return $data;
-}
-
 function tkgp_include_templates($template_path)
 {
     $post_type = get_post_type();
@@ -624,14 +623,32 @@ function tkgp_subpages_rewrite()
     $wp_rewrite->flush_rules();
 }
 
+function tkgp_project_reset_cache()
+{
+    wp_cache_delete('tkgp_total_project_count');
+}
+
+function tkgp_upload_dir($uploads)
+{
+    $project = new TK_GProject($_POST['post_id']);
+
+    $subdir = '/' . TK_GProject::slug . '/' . $project->internal_id;
+
+    $uploads['subdir'] = $subdir;
+    $uploads['path'] = $uploads['basedir'] . $subdir;
+    $uploads['url'] = $uploads['baseurl'] . $subdir;
+
+    return $uploads;
+}
+
 add_action('init', 'tkgp_create_type');
 add_action('init', 'tkgp_create_taxonomy');
 add_action('init', 'tkgp_subpages_rewrite');
 add_action('template_redirect', 'tkgp_check_subpages');
 add_action('admin_menu', 'tkgp_create_plugin_options');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
-//add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);
 add_action('template_include', 'tkgp_include_templates');
+add_action('publish_post', 'tkgp_project_reset_cache');
 add_filter('get_terms_args', 'tkgp_exclude_categories', 10, 2);
 ?>

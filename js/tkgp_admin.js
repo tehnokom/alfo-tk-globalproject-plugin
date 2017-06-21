@@ -47,6 +47,11 @@ $j(document).ready(function ($j) {
                 window.location.hash = window.location.hash
             }, 1000);
         }
+
+        tkgp_enable_ajax_upload('input[name="tkgp_logo"]');
+        tkgp_enable_ajax_upload('input[name="tkgp_avatar"]');
+        $j('#tkgp_del_logo').on('click', tkgp_delete_project_logo);
+        $j('#tkgp_del_avatar').on('click', tkgp_delete_project_avatar);
     }
 );
 

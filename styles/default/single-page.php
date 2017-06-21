@@ -45,9 +45,6 @@ $approval_percent = 100.0 * floatval($vote->approval_votes) / floatval($vote->ta
 $approval_percent = $approval_percent && $approval_percent < 0.75 ? '2px' : $approval_percent . '%';
 
 $upload_dir = wp_upload_dir();
-$logo_file = $upload_dir['basedir'] . "/projektoj/logo-{$project->internal_id}.jpg";
-$logo_file = is_file($logo_file) ? $logo_file : TKGP_STYLE_DIR . 'images/default-logo.jpg';
-$logo_url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $logo_file);
 
 $button_captions = array(
     'approval_title' => TK_GProject::l10n('support_title'),
@@ -55,10 +52,15 @@ $button_captions = array(
     'reset_title' => TK_GProject::l10n('supported_title') . ".\r\n" . TK_GProject::l10n('cancel_support_title')
 );
 
+$project_logo = $project->getLogoUrl(array('path' => TKGP_STYLES_DIR,
+    'url' => TKGP_STYLES_URL, 'subdir' => 'default/images', 'name' => 'default-logo.jpg'));
+$project_avatar = $project->getAvatarUrl(array('path' => TKGP_STYLES_DIR,
+    'url' => TKGP_STYLES_URL, 'subdir' => 'default/images', 'name' => 'default-avatar.jpg'));
+
 get_header();
 ?>
 <!--Start Logo-->
-<div class="tk-logo" style="background: url(<?php echo $logo_url; ?>) no-repeat;">
+<div class="tk-logo" style="background: url(<?php echo $project_logo; ?>) no-repeat;">
     <div class="tk-logo-cell1">
         <div>
             <div>
@@ -101,8 +103,10 @@ get_header();
                     ?>
                 </div>
             </div>
-            <div class="tk-users">
-                <div></div>
+            <div class="tk-project-avatar">
+                <div>
+                    <img src="<?php echo $project_avatar;?>">
+                </div>
             </div>
             <div class="tk-label">
                 <div>

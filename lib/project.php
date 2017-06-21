@@ -658,6 +658,75 @@ class TK_GProject
         return isset($this->project_id);
     }
 
+    public function getLogoPath($default_path = false) {
+        return $this->getProjectImages('logo', false, $default_path);
+    }
+
+    public function getLogoUrl($default_path = false) {
+        return $this->getProjectImages('logo', true, $default_path);
+    }
+
+    public function getAvatarPath($default_path = false) {
+        return $this->getProjectImages('avatar', false, $default_path);
+    }
+
+    public function getAvatarUrl($default_path = false) {
+        return $this->getProjectImages('avatar', true, $default_path);
+    }
+
+    public function getProjectImages($img_type, $return_url = false, $default_img = false)
+    {
+        if($this->isValid()) {
+            $path = wp_get_upload_dir()['basedir'];
+            $url = wp_get_upload_dir()['baseurl'];
+            $subdir = '/' . self::slug . "/{$this->internal_id}";
+            $fl_prefix = '';
+            $filename = '';
+
+            switch ($img_type) {
+                case 'avatar':
+                case 'logo':
+                    $fl_prefix = "{$img_type}-{$this->internal_id}";
+                    break;
+                default:
+                    return false;
+            }
+
+            if(is_dir($path . $subdir)) {
+                $files = scandir($path . $subdir);
+
+                foreach ($files as $cur_file) {
+                    if(is_file("{$path}{$subdir}/{$cur_file}")
+                        && strpos($cur_file, $fl_prefix) === 0) {
+                        $filename = $cur_file;
+                        break;
+                    }
+                }
+
+            }
+
+            if(empty($filename)) {
+                if(!empty($default_img)) {
+                    $path = $default_img['path'];
+                    $url = $default_img['url'];
+                    $subdir = $default_img['subdir'];
+                    $filename = $default_img['name'];
+
+                    if(!is_file("{$path}{$subdir}/{$filename}")) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+
+            $full = ($return_url ? $url : $path) . "{$subdir}/{$filename}";
+            return  $full;
+        }
+
+        return false;
+    }
+
     /**
      * Return array with Project Settings fields
      *
