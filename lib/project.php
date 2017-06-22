@@ -721,6 +721,11 @@ class TK_GProject
             }
 
             $full = ($return_url ? $url : $path) . "{$subdir}/{$filename}";
+
+            if($return_url && is_ssl()) {
+                $full = preg_replace('/^http:/','https:', $full);
+            }
+
             return  $full;
         }
 
