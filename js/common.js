@@ -178,6 +178,9 @@ function tkgp_delete_project_image(img_type, button) {
 
         $j(button).trigger('tkgp_delete_image_request');
 
+        var nonce = $j('input[name="tkgp_images_nonce"]');
+        nonce = nonce === undefined ? '' : nonce.val();
+
         $j.ajax({
             url: tkgp_ajax_url(),
             type: 'POST',
@@ -186,16 +189,19 @@ function tkgp_delete_project_image(img_type, button) {
             data: {
                 action: 'tkgp_delete_image',
                 post_id: tkgp_current_pos_id(),
-                image: 'tkgp_' + img_type
+                image: 'tkgp_' + img_type,
+                tkgp_images_nonce: nonce
             }
         })
             .done(function (result) {
                 if(result.status === 'ok') {
                     $j(button).trigger('tkgp_delete_image_success', [result.url]);
+                    alert('Deleted')
                 } else {
                     console.log("Bad server response: " + result.msg);
                     $j(button).trigger('tkgp_delete_image_failed',
                         [{title: 'Bad server response', error_string: result.msg}]);
+                    alert('Error: ' + result.msg);
                 }
             })
             .fail(function (jqXHR, textStatus) {
