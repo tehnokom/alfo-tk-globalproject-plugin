@@ -3,9 +3,13 @@ if (!defined('TKGP_ROOT') || !defined('TKGP_URL')) {
     exit;
 }
 
+require_once(TKGP_ROOT . 'lib/common.php');
 require_once(TKGP_ROOT . 'lib/page.php');
 require_once(TKGP_ROOT . 'lib/project.php');
 require_once(TKGP_ROOT . 'lib/vote.php');
+require_once(TKGP_ROOT . 'lib/news.php');
+require_once(TKGP_ROOT . 'lib/task.php');
+require_once(TKGP_ROOT . 'lib/tasks.php');
 
 /**
  * Создание типа проектов
@@ -88,6 +92,13 @@ function tkgp_create_meta_box()
         'normal',
         'high');
 
+    add_meta_box('tk_project_meta_images',
+        _x('Logo and Avatar', 'tk_meta', 'tkgp'),
+        'tkgp_show_metabox_images',
+        null,
+        'normal',
+        'high');
+
     add_meta_box('tk_project_meta_steps',
         _x('Plane of Project', 'tk_meta', 'tkgp'),
         'tkgp_show_metabox_steps',
@@ -103,6 +114,11 @@ function tkgp_create_meta_box()
         'high');
 }
 
+function tkgp_show_metabox_images()
+{
+    require_once (TKGP_ROOT . 'admin/logo-avatar.php');
+}
+
 function tkgp_show_metabox_settings()
 {
     global $post;
@@ -114,7 +130,11 @@ function tkgp_show_metabox_settings()
     echo '<input type="hidden" name="tkgp_meta_settings_nonce" value="' . wp_create_nonce(basename(__FILE__) . '_settings') . '" />
 <table class="form-table">';
 
+    $project = new TK_GProject($post->ID);
+
     foreach (TK_GProject::getProjectFields() as $field) {
+        $current_val = '';
+
         echo '<tr>
 	<th><label for="' . $field['id'] . '">' . $field['label'] . '</label></th>
 	<td>';
@@ -124,24 +144,36 @@ function tkgp_show_metabox_settings()
                 $current_val = $current_val == '' ? '1' : $current_val;
                 break;
 
+            case 'number':
+                $current_val = $project->priority;
+                break;
+
             case 'select': //Выпадающее меню
                 $current_val = get_post_meta($post->ID, $field['id'], true);
                 $current_val = $current_val == '' ? '1' : $current_val;
                 break;
 
             case 'select_user':
-                $current_val = get_post_meta($post->ID, $field['id'], true);
-                $current_val = $current_val == '' ? wp_get_current_user()->ID : $current_val;
-                break;
-			
-            default:
-				$current_val = get_post_meta($post->ID, $field['id'], true);
+                if ($project->isValid()) {
+                    $current_val = $project->getManagers();
+                }
                 break;
 
-                
+            case 'text':
+                if ($project->isValid()) {
+                    $current_val = $project->getParentProject();
+                    $current_val = is_object($current_val) ? $current_val->internal_id : '';
+                }
+                break;
+
+            default:
+                $current_val = get_post_meta($post->ID, $field['id'], true);
+                break;
+
+
         }
-		tkgp_display_options_field($field, $current_val);
-		echo '</td>';
+        tkgp_display_options_field($field, $current_val);
+        echo '</td>';
         echo '</tr>';
     }
 
@@ -151,9 +183,31 @@ function tkgp_show_metabox_settings()
 function tkgp_show_metabox_steps()
 {
     ?>
-    <input type="hidden" name="tkgp_meta_steps_nonce"
-           value="<?php echo wp_create_nonce(basename(__FILE__) . '_steps'); ?>"/>
-
+    <div id="tkgp_task_frame">
+        <a name="tkgp_task_anchor"></a>
+        <?php require_once(TKGP_ROOT . 'lib/admin-tasks.php'); ?>
+    </div>
+    <div id="tkgp_tasks_editor_form"
+         style="padding:5px;margin-top:20px;border:1px solid #ccc;background: #ccc;" hidden="hidden">
+        <input type="hidden" name="tkgp_task_id" val=""/>
+        <input type="hidden" name="tkgp_parent_task_id" val=""/>
+        <select name="tkgp_task_type" style="display: block;">
+            <option value="2"><?php echo _x('Stage', 'Project Tasks', 'tkgp'); ?></option>
+            <option value="3"><?php echo _x('Task', 'Project Tasks', 'tkgp'); ?></option>
+        </select>
+        <input type="text" name="tkgp_task_title" class="tkgp_task_mlang"/>
+        <?php
+        wp_editor('', 'tkgp_task_editor', array(
+            'editor_class' => 'requiredField',
+            'textarea_rows' => '6',
+            'media_buttons' => false,
+            'teeny' => true));
+        ?>
+        <div style="text-align:right;margin-top: 5px;">
+            <div class="tkgp_button button tkgp_task_ok"><a><?php echo __('Apply'); ?></a></div>
+            <div class="tkgp_button button tkgp_task_cancel"><a><?php echo __('Cancel'); ?></a></div>
+        </div>
+    </div>
     <?php
 }
 
@@ -162,7 +216,6 @@ function tkgp_show_metabox_votes()
     global $post;
 
     $vote = new TK_GVote($post->ID);
-    $vote_settings = $vote->getVoteSettings();
     ?>
     <input type="hidden" name="tkgp_meta_votes_nonce"
            value="<?php echo wp_create_nonce(basename(__FILE__) . '_votes'); ?>"/>
@@ -170,7 +223,7 @@ function tkgp_show_metabox_votes()
         <?php
         foreach (TK_GVote::getVotesFields() as $field) {
             $cur_id = str_replace('tkgp_vote_', '', $field['id']);
-            $current_val = $vote_settings[$cur_id];
+            $current_val = $vote->$cur_id;
             ?>
             <tr>
                 <th><label for="<?php echo $field['id']; ?>"/><?php echo $field['label']; ?></th>
@@ -210,7 +263,6 @@ function tkgp_show_metabox_votes()
 function tkgp_save_post_meta($post_id)
 {
     if (!wp_verify_nonce($_POST['tkgp_meta_settings_nonce'], basename(__FILE__) . '_settings')
-        || !wp_verify_nonce($_POST['tkgp_meta_steps_nonce'], basename(__FILE__) . '_steps')
         || $_POST['post_type'] != TK_GProject::slug
         || (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
         || !current_user_can('edit_page', $post_id) //проверка на доступ пользователя, потом нужно будет доработать
@@ -218,6 +270,7 @@ function tkgp_save_post_meta($post_id)
         return $post_id;
     }
 
+    $project = new TK_GProject($post_id);
     $vote_updates = array();
     $fields = array_merge(TK_GProject::getProjectFields(), TK_GVote::getVotesFields());
 
@@ -242,13 +295,13 @@ function tkgp_save_post_meta($post_id)
 
                         if ($field['id'] == 'manager') {
                             //тут же добавляем текущий проект к выбранному пользователю
-                            update_user_meta($_POST[$idx], 'tkgp_projects', $post_id);
+                            update_user_meta($_POST[$key], 'tkgp_projects', $post_id);
                         }
                     }
                 }
 
                 if ($old != $new) {
-                    update_post_meta($post_id, $field['id'], $new);
+                    update_post_meta($post_id, 'tkgp_' . $field['id'], $new);
                 }
 
                 break;
@@ -274,11 +327,11 @@ function tkgp_save_post_meta($post_id)
                         $_POST[$field['id']] . ' 00:00:00')->format('YmdHis');
                 }
                 break;
-			
-			case 'tkgp_vote_allow_against':
+
+            case 'tkgp_vote_allow_against':
                 $vote_updates['allow_against'] = (empty($_POST[$field['id']]) ? 0 : 1);
                 break;
-			
+
             case 'tkgp_vote_allow_revote':
                 $vote_updates['allow_revote'] = (empty($_POST[$field['id']]) ? 0 : 1);
                 break;
@@ -289,9 +342,45 @@ function tkgp_save_post_meta($post_id)
                 }
                 break;
 
+            case 'tkgp_parent_id':
+                $old = $project->getParentProject();
+
+                if (!empty($_POST[$field['id']])) {
+                    $prnt = preg_replace('/[^\d]+/', '', $_POST[$field['id']]);
+                    $prnt = TK_GProject::idToPost($prnt);
+                    $prnt = new TK_GProject($prnt);
+                    $new = $prnt->isValid() ? $prnt : null;
+
+                    if (is_object($new)) {
+                        if (is_object($old)) {
+                            if ($new->project_id != $old->project_id) {
+                                $old->deleteChildLink($project->project_id);
+                                $new->createChildLink($project->project_id);
+                            }
+                        } else {
+                            $new->createChildLink($project->project_id);
+                        }
+                    }
+                } else if (is_object($old)) {
+                    $old->deleteChildLink($project->project_id);
+                }
+
+                break;
+
+            case 'tkgp_priority':
+                if (!empty($_POST['tkgp_priority'])) {
+                    $old = $project->priority;
+                    $new = $_POST['tkgp_priority'];
+
+                    if ($old != $new) {
+                        $project->setProjectPriority($new);
+                    }
+                }
+                break;
+
             default:
                 $new = $_POST[$field['id']];
-				
+
                 if ($old != $new) {
                     update_post_meta($post_id, $field['id'], $new);
                 }
@@ -300,8 +389,7 @@ function tkgp_save_post_meta($post_id)
     }
 
     if (!empty($vote_updates)) {
-        global $post;
-        $vote = new TK_GVote($post->ID);
+        $vote = new TK_GVote($post_id);
 
         if (!$vote->voteExists() && $vote_updates['enabled'] == 1) {
             $vote->createVote();
@@ -316,25 +404,6 @@ function tkgp_save_post_meta($post_id)
     }
 
     return $post_id;
-}
-
-/**
- * Looking at all the keys in the array pattern returns an array with the pairs 'key' => 'value' of all the found keys.
- *
- * @param string Template string
- * @param array $target_array Array for search
- */
-function tkgp_array_search($key_template, $target_array)
-{
-    $out = array();
-
-    foreach ($target_array as $key => $value) {
-        if (preg_match($key_template, $key)) {
-            $out[$key] = $value;
-        }
-    }
-
-    return $out;
 }
 
 /**
@@ -364,14 +433,14 @@ function tkgp_option_page()
  */
 function tkgp_display_options_field($args, $default_val = '')
 {
-	if($args['type'] == 'editor') {
-		$settings = $args['properties'];
-		$value = empty($default_val) ? $args['value'] : $default_val;
-		
-		wp_editor($value, $args['id'], $settings);
-	} else {
-    	echo tkgp_field_html($args, $default_val);
-	}
+    if ($args['type'] == 'editor') {
+        $settings = $args['properties'];
+        $value = empty($default_val) ? $args['value'] : $default_val;
+
+        wp_editor($value, $args['id'], $settings);
+    } else {
+        echo tkgp_field_html($args, $default_val);
+    }
 }
 
 /**
@@ -379,13 +448,14 @@ function tkgp_display_options_field($args, $default_val = '')
  *
  * @param array $args
  * @param mixed|array $default_val
+ * @return string
  */
 function tkgp_field_html($args, $default_val = '')
 {
     $html = '';
 
     $properties = '';
-	
+
     if (!empty($args['properties'])) {
         foreach ($args['properties'] as $prop => $val) {
             $properties .= ' ' . $prop . (isset($val) ? ('="' . $val . '"') : '');
@@ -469,45 +539,116 @@ function tkgp_field_html($args, $default_val = '')
             $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '" value="' . $args['value'] . '" ' . $properties . ' />';
             break;
 
-		case 'textarea':
-			$html .= '<textarea name="'. $args['id'] . '" ' . $properties . '>' . $args['value'] . '</textarea>';
-			break;
-		
+        case 'textarea':
+            $html .= '<textarea name="' . $args['id'] . '" ' . $properties . '>' . $args['value'] . '</textarea>';
+            break;
+
         default:
-            $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '"' . $properties . ' value="' . $default_val . '">';
+            $html .= '<input type="' . $args['type'] . '" name="' . $args['id'] . '"' . $properties . ' value="' . $default_val . '" />';
             break;
     }
 
     return $html;
 }
 
-
-function tkgp_content($data)
+function tkgp_include_templates($template_path)
 {
-    global $post;
+    $post_type = get_post_type();
+    //$news_parent_cat_id = get_option('tkgp_news_cat_id');
+
+    if ($post_type == TK_GProject::slug) {
+        if (!is_single()) {
+            $template_path = TKGP_ROOT . 'styles/default/page.php';
+        } else {
+            $template_path = TKGP_ROOT . 'styles/default/single-page.php';
+        }
+    } /*else if($post_type == 'post' && $news_parent_cat_id) {
+		if(!is_single()) {
 			
-    if ($post->post_type == TK_GProject::slug) {
-    	$project = new TK_GProject($post->ID);
-      
-		  $data = $project->getProjectContent($data);
-    }
-    return $data;
+		} else {
+			
+		}
+	}*/
+
+    return $template_path;
 }
 
-function tkgp_include_templates($template_path) {
-	if(get_post_type() == TK_GProject::slug) {
-		if(!is_single()) {
-			$template_path = TKGP_ROOT . 'styles/default/page.php';
-		}
-	}
-	return $template_path;
+function tkgp_exclude_categories($args, $taxonomies)
+{
+    $root_cat_id = get_option('tkgp_news_cat_id');
+
+    if (!is_admin() && !empty($root_cat_id)) {
+        if (array_search('category', $taxonomies) !== false && !empty($args['child_of'])) {
+            if (array_search($root_cat_id, $args['exclude_tree']) === false) {
+                $args['exclude_tree'][] = $root_cat_id;
+            }
+        }
+    }
+    return $args;
+}
+
+function tkgp_check_subpages()
+{
+    global $wp, $wp_query, $post;
+
+    if (!empty($wp->query_vars['tksubpage']) && !empty($post)) {
+        switch ($wp->query_vars['tksubpage']) {
+            case 'informo':
+            case 'statistiko':
+            case 'taskoj':
+            case 'administrado':
+            case 'teamo':
+                break;
+            default:
+                //если подстраница неверна, перенаправляем на 404
+                $wp_query->set_404();
+                status_header(404);
+                get_template_part(404);
+                exit();
+                break;
+        }
+    }
+}
+
+function tkgp_subpages_rewrite()
+{
+    global $wp_rewrite;
+    $slug = TK_GProject::slug;
+
+    add_rewrite_tag('%tksubpage%', '([^&]+)');
+    add_rewrite_rule('^' . $slug . '/([^/]+)/([^/]+)/?',
+        'index.php?post_type=' . $slug . '&name=$matches[1]&tksubpage=$matches[2]',
+        'top');
+
+    $wp_rewrite->flush_rules();
+}
+
+function tkgp_project_reset_cache()
+{
+    wp_cache_delete('tkgp_total_project_count');
+}
+
+function tkgp_upload_dir($uploads)
+{
+    $project = new TK_GProject($_POST['post_id']);
+
+    $subdir = '/' . TK_GProject::slug . '/' . $project->internal_id;
+
+    $uploads['subdir'] = $subdir;
+    $uploads['path'] = $uploads['basedir'] . $subdir;
+    $uploads['url'] = $uploads['baseurl'] . $subdir;
+
+    return $uploads;
 }
 
 add_action('init', 'tkgp_create_type');
 add_action('init', 'tkgp_create_taxonomy');
+add_action('init', 'tkgp_subpages_rewrite');
+add_action('template_redirect', 'tkgp_check_subpages');
 add_action('admin_menu', 'tkgp_create_plugin_options');
 add_action('add_meta_boxes', 'tkgp_create_meta_box');
-add_filter('the_content', 'tkgp_content');
 add_action('save_post', 'tkgp_save_post_meta', 0);
 add_action('template_include', 'tkgp_include_templates');
+add_action('publish_post', 'tkgp_project_reset_cache');
+add_filter('get_terms_args', 'tkgp_exclude_categories', 10, 2);
 ?>

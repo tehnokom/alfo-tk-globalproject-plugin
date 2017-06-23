@@ -1,78 +1,78 @@
 #tkgp_vote_result {
-	display: inline-block;
-	position:relative;
-	border-top: 1px solid #AAA;
-	border-bottom: 1px solid #AAA;
-	width: 99%;
-	margin: 0 0 5px 0;
-	padding: 3px;
-	box-sizing: border-box;
+    display: inline-block;
+    position: relative;
+    border-top: 1px solid #AAA;
+    border-bottom: 1px solid #AAA;
+    width: 99%;
+    margin: 0 0 5px 0;
+    padding: 3px;
+    box-sizing: border-box;
 }
 
 #tkgp_vote_result table tr th {
-	width: 25%;
-	text-align: center;
+    width: 25%;
+    text-align: center;
 }
 
 .tkgp_title, #tkgp_vote_result div:first-child {
-	display: block;
-	margin: 0 auto;
-	text-align: center;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
 }
 
 #tkgp_approval_status {
-	/*float: left;*/
-	width: 75%;
-	height: 12px;
-	background: #EEE;
-	box-shadow: inset 0 0 1px 1px rgba(0,0,0,0.12);
-	border: 1px solid #AAA;
+    /*float: left;*/
+    width: 75%;
+    height: 12px;
+    background: #EEE;
+    box-shadow: inset 0 0 1px 1px rgba(0, 0, 0, 0.12);
+    border: 1px solid #AAA;
 }
 
 #tkgp_approval_desc {
-	display: inline-block; 
-	width: 100%; 
-	float: none; 
-	text-align: center;
+    display: inline-block;
+    width: 100%;
+    float: none;
+    text-align: center;
 }
 
 #tkgp_vote_buttons > div {
-	float:left;
-	width: 50%;
+    float: left;
+    width: 50%;
 }
 
 .tkgp_button, .tkgp_button_reset, .tkgp_edit_button {
-	display: inline-block !important;
-	margin: 0 auto !important;
-	border: 1px solid #ccc;
-	background-color: #f7f7f7;
-	border-bottom: 2px solid #ccc;
-	border-radius: 2px;
-	box-shadow: 0 0 1px 0 #ccc;
-	padding: 4px 8px;
+    display: inline-block !important;
+    margin: 0 auto !important;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    border-bottom: 2px solid #ccc;
+    border-radius: 2px;
+    box-shadow: 0 0 1px 0 #ccc;
+    padding: 4px 8px;
 }
 
 .tkgp_button:hover, .tkgp_button_reset:hover, .tkgp_edit_button:hover {
-	cursor: pointer;
-	border-color: #999;
+    cursor: pointer;
+    border-color: #999;
 }
 
 .tkgp_button:active, .tkgp_button_reset:active, .tkgp_edit_button:active {
-	box-shadow: inset 0 2px 5px -3px rgba(0,0,0,.5);
-	background-color: #eee;
+    box-shadow: inset 0 2px 5px -3px rgba(0, 0, 0, .5);
+    background-color: #eee;
 }
 
 /*-----*/
 .screen-reader-text {
-	position: absolute;
-	margin: -1px;
-	padding: 0;
-	height: 1px;
-	width: 1px;
-	overflow: hidden;
-	clip: rect(0 0 0 0);
-	border: 0;
-	word-wrap: normal !important;
+    position: absolute;
+    margin: -1px;
+    padding: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+    word-wrap: normal !important;
 }
 
 #tkgp_modal_user {
@@ -143,12 +143,12 @@
 }
 
 #tkgp_modal_footer, #tkgp_modal_header {
-	height: 12%;
-	margin-bottom: 5px;
+    height: 12%;
+    margin-bottom: 5px;
 }
 
 #tkgp_add_selected {
-	float: right;
+    float: right;
 }
 
 #tkgp_modal_user th {

@@ -35,15 +35,15 @@ function tkgp_ajax_get_user()
  */
 function tkgp_print_form($type)
 {
-	echo '<div id="tkgp_modal_user">
+    echo '<div id="tkgp_modal_user">
         <div id="tkgp_modal_header">
             <span id="modal_close">x</span>';
-    
-	switch ($type) {
-		case 'users':
-			echo '<input id="tkgp_search" type="text"'
-				. 'placeholder="' . _x('Search...', 'Project Settings', 'tkgp') . '">'
-				. '</div>
+
+    switch ($type) {
+        case 'users':
+            echo '<input id="tkgp_search" type="text" '
+                . 'placeholder="' . _x('Search...', 'Project Settings', 'tkgp') . '">'
+                . '</div>
         		<div class="container">
 					<table>
                 		<tr>
@@ -53,27 +53,27 @@ function tkgp_print_form($type)
             		</table>
         		</div>
         	<div id="tkgp_modal_footer">
-        		<input type="button" id="tkgp_add_selected" class="button" value="' 
-        	. _x('Add', 'Project Settings', 'tkgp') . '">
+        		<input type="button" id="tkgp_add_selected" class="button" value="'
+                . _x('Add', 'Project Settings', 'tkgp') . '">
         	</div>';
-			break;
-		
-		case 'settings':
-			echo '</div>';
-			
-			$post = get_post( $_POST['post_id'], OBJECT, 'edit' );
-			
-			wp_editor($post->post_content, 'editpost');
-			\_WP_Editors::enqueue_scripts();
-			print_footer_scripts();
-    		\_WP_Editors::editor_js();
-			break;
-			
-		default:
-			
-			break;
-	} 
-	
+            break;
+
+        case 'settings':
+            echo '</div>';
+
+            $post = get_post($_POST['post_id'], OBJECT, 'edit');
+
+            wp_editor($post->post_content, 'editpost');
+            \_WP_Editors::enqueue_scripts();
+            print_footer_scripts();
+            \_WP_Editors::editor_js();
+            break;
+
+        default:
+
+            break;
+    }
+
     echo '</div>
     <div id="tkgp_overlay"></div>';
 }
@@ -114,10 +114,10 @@ function tkgp_ajax_policy(&$message)
     }
 
     $project = new TK_GProject(intval($_POST['post_id']));
-    $vote = new TK_GVote(intval($_POST['post_id']));
+    $vote = $project->getVote();
     $user_id = get_current_user_id();
 
-    if (!$vote->voteExists() || $vote->getVoteId() != $_POST['vote_id']) {
+    if (!$vote->voteExists() || $vote->vote_id != $_POST['vote_id']) {
         //не существует такого голосования
         $message = _x('Voting does not exist or is hidden', 'Project Vote', 'tkgp');
     } else {
@@ -136,10 +136,13 @@ function tkgp_ajax_user_vote()
         && wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote')
     ) {
         $project = new TK_GProject(intval($_POST['post_id']));
-        $vote = new TK_GVote(intval($_POST['post_id']));
+        $vote = $project->getVote();
         $user_id = get_current_user_id();
 
-        if (!$project->userCanVote($user_id)) {
+        if (!$vote->enabled) {
+            //голосование выключено
+            $message = _x('Voting was disabled', 'Project Vote', 'tkgp');
+        } else if (!$project->userCanVote($user_id)) {
             //пользователь не имеет права голосовать
             $message = _x('You have no rights to vote', 'Project Vote', 'tkgp');
         } else {
@@ -169,7 +172,10 @@ function tkgp_ajax_reset_user_vote()
         $vote = new TK_GVote(intval($_POST['post_id']));
         $user_id = get_current_user_id();
 
-        if (!$project->userCanRevote($user_id)) {
+        if (!$vote->enabled) {
+            //голосование выключено
+            $message = _x('Voting was disabled', 'Project Vote', 'tkgp');
+        } else if (!$project->userCanRevote($user_id)) {
             //пользователь не имеет права сбрасывать голос
             $message = _x('You can not cancel your vote', 'Project Vote', 'tkgp');
         } elseif ($vote->userCanVote($user_id)) {
@@ -184,7 +190,7 @@ function tkgp_ajax_reset_user_vote()
 
     echo json_encode(array(
         'status' => $res,
-        'message' => $message
+        'message' => $message,
     ));
 
     wp_die();
@@ -199,8 +205,8 @@ function tkgp_ajax_get_vote_status()
         && (wp_verify_nonce($_POST['vote_nonce'], 'tkgp_reset_user_vote')
             || wp_verify_nonce($_POST['vote_nonce'], 'tkgp_user_vote'))
     ) {
-        $vote = new TK_GVote($_POST['post_id']);
         $project = new TK_GProject($_POST['post_id']);
+        $vote = $project->getVote();
         $user_id = get_current_user_id();
 
         if (!$project->userCanRead($user_id)) {
@@ -208,8 +214,15 @@ function tkgp_ajax_get_vote_status()
             $html = _x('You do not have access to the data of voting', 'Project Vote', 'tkgp');
         } else {
             $res = true;
-            $html = $vote->getResultVoteHtml($project->userCanVote($user_id), false,
-                !$project->userCanRevote($user_id));
+
+            $btn_titles = array();
+            foreach ($_POST as $key => $value) {
+                if (preg_match('/^(\w)+_(title|text)$/', $key)) {
+                    $btn_titles[$key] = $value;
+                }
+            }
+
+            $html = $vote->getVoteButtonHtml(false, $btn_titles);
         }
 
     }
@@ -220,33 +233,303 @@ function tkgp_ajax_get_vote_status()
 
     echo json_encode(array(
         'status' => true,
+        'approval_votes' => $vote->approval_votes,
+        'reproval_votes' => $vote->reproval_votes,
+        'target_votes' => $vote->target_votes,
         'new_content' => $html
     ));
 
     wp_die();
 }
 
-function tkgp_ajax_get_project_editor() {
-	$message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
+function tkgp_ajax_get_project_editor()
+{
+    $message = _x('Operation is not allowed', 'Project Vote', 'tkgp');
 
-	if(!empty($_POST['post_id'])
-		&& wp_verify_nonce($_POST['access_nonce'], 'tkgp_project_access')
-	) {
-		$project = new TK_GProject($_POST['post_id']);
-		$user_id = get_current_user_id();
-		
-		if($project->userCanEdit($user_id)) { //есть права на редактирование проета
-			tkgp_print_form('settings'); //выводим форму редактора
-			wp_die();
-		}
+    if (!empty($_POST['post_id'])
+        && wp_verify_nonce($_POST['access_nonce'], 'tkgp_project_access')
+    ) {
+        $project = new TK_GProject($_POST['post_id']);
+        $user_id = get_current_user_id();
 
-		$message = _x('You do not have permission to edit project', 'Project Edit','tkgp');
-		
-	}
+        if ($project->userCanEdit($user_id)) { //есть права на редактирование проета
+            tkgp_print_form('settings'); //выводим форму редактора
+            wp_die();
+        }
 
-	echo json_encode(array('status' => false, 'message' => $message));
-	
-	wp_die();
+        $message = _x('You do not have permission to edit project', 'Project Edit', 'tkgp');
+
+    }
+
+    echo json_encode(array('status' => false, 'message' => $message));
+
+    wp_die();
+}
+
+function tkgp_ajax_get_project_news()
+{
+    if (!empty($_POST['post_id'])) {
+        $project = new TK_GProject($_POST['post_id']);
+        $user_id = get_current_user_id();
+
+        if ($project->isValid() && $project->userCanRead($user_id)) {
+            require_once(TKGP_STYLES_DIR . 'default/ajax-news-page.php');
+        }
+    }
+
+    wp_die();
+}
+
+function tkgp_get_project_target()
+{
+    if (!empty($_POST['post_id'])) {
+        $project = new TK_GProject($_POST['post_id']);
+        $user_id = get_current_user_id();
+
+        if ($project->isValid() && $project->userCanRead($user_id)) {
+            echo apply_filters('the_content', $project->description);
+        }
+    }
+
+    wp_die();
+}
+
+function tkgp_get_projects()
+{
+    require_once(TKGP_STYLES_DIR . 'default/ajax-page.php');
+    wp_die();
+}
+
+function tkgp_get_tasks()
+{
+    if (!empty($_POST['post_id'])) {
+        $project = new TK_GProject($_POST['post_id']);
+        $user_id = get_current_user_id();
+
+        if ($project->isValid() && $project->userCanRead($user_id)) {
+            require_once(TKGP_STYLES_DIR . 'default/ajax-tasks.php');
+        }
+    }
+
+    wp_die();
+}
+
+function tkgp_task_save()
+{
+    $out = array('status' => 'error');
+    if (!empty($_POST['post_id']) && is_admin()) {
+        $title = tkgp_qtranslatex_compile($_POST['title']);
+        $desc = tkgp_qtranslatex_compile($_POST['desc']);
+
+        if (empty($_POST['task_id'])) {
+            $task = TK_GTask::createTask($_POST['post_id'],
+                array('title' => $title,
+                    'description' => $desc,
+                    'type' => $_POST['type'],
+                    'status' => 1,
+                ),
+                $_POST['parent_id']);
+
+            if ($task) {
+                $out['status'] = 'ok';
+            }
+        } else {
+            $edit_task = new TK_GTask(intval($_POST['task_id']));
+            if ($edit_task) {
+                $data = array(
+                    'title' => $title,
+                    'description' => $desc,
+                    'type' => $_POST['type']
+                );
+
+                if ($edit_task->setFields($data)) {
+                    $out['status'] = 'ok';
+                }
+            }
+        }
+    }
+
+    echo json_encode($out);
+
+    wp_die();
+}
+
+/**
+ * Returns string for qtranslate-x
+ *
+ * @param array $args
+ * @return string
+ */
+function tkgp_qtranslatex_compile($args)
+{
+    $out = '';
+    $in = json_decode(str_replace('\"', '"', $args), true);
+
+    if (is_array($in) && !empty($in)) {
+        foreach ($in as $key => $val) {
+            $out .= "[:$key]$val";
+        }
+
+        $out .= strlen($out) > 5 ? '[:]' : '';
+        $out = str_replace('\n', "\n", $out);
+    }
+
+    return $out;
+}
+
+function tkgp_task_delete()
+{
+    $out = array('status' => 'error',
+        'msg' => _x('Access denied.', 'Project Tasks', 'tkgp'));
+
+    if (!empty($_POST['task_id']) && is_admin()) {
+        $task = new TK_GTask($_POST['task_id']);
+
+        if ($task && $task->post_id == $_POST['post_id']) {
+            $task->setStatus(4);
+            $out['status'] = 'ok';
+            $out['msg'] = _x('Task marked as deleted.', 'Project Tasks', 'tkgp');
+        } else {
+            $out['msg'] = _x('Task not found.', 'Project Tasks', 'tkgp');
+        }
+    }
+
+    echo json_encode($out);
+
+    wp_die();
+}
+
+function tkgp_get_task_data()
+{
+    $out = array('status' => 'error',
+        'msg' => 'Access denied.',
+        'data' => null);
+
+    if (!empty($_POST['task_id']) && is_admin()) {
+        $task = new TK_GTask($_POST['task_id']);
+
+        if ($task) {
+            $out['status'] = 'ok';
+            unset($out['msg']);
+            $out['data'] = array(
+                'title' => $task->title,
+                'desc' => $task->description,
+                'type' => $task->type,
+                'status' => $task->status
+            );
+        }
+
+    }
+
+    echo json_encode($out);
+
+    wp_die();
+}
+
+function tkgp_upload_project_images()
+{
+    $out = array('status' => 'error', 'msg' => 'Access denied.');
+    $nonce_action = 'tkgp_upload_images_' . $_POST['post_id'] . '_' . get_current_user_id();
+
+    if (wp_verify_nonce($_POST['tkgp_images_nonce'], $nonce_action)) {
+        $project = new TK_GProject($_POST['post_id']);
+
+        if ($project->isValid()) {
+            $overrides = array('test_form' => false);
+
+            add_filter('upload_dir', 'tkgp_upload_dir');
+
+            foreach ($_FILES as $form => $file) {
+                $error = '';
+
+                if (!tkgp_check_img($form, $file, $error)) {
+                    unlink($file['tmp-name']);
+                    $out['errors'][$file['name']] = $error;
+                    $out['msg'] = 'Bad Image';
+                    unset($_FILES[$form]);
+                    continue;
+                }
+
+                $filename = basename($file['name']);
+                $img_type = '';
+
+                if ($form === 'tkgp_avatar') {
+                    $img_type = 'avatar';
+                } else if ($form === 'tkgp_logo') {
+                    $img_type = 'logo';
+                }
+
+                if (!empty($img_type)) {
+                    $filename = "{$img_type}-{$project->internal_id}." . end(explode(".", $filename));
+                    $file['name'] = $filename;
+                    $cur_img = $project->getProjectImages($img_type);
+
+                    if (is_file($cur_img)) {
+                        wp_delete_file($cur_img);
+                    }
+
+                    if (function_exists('wp_handle_upload')) {
+                        require_once(ABSPATH . 'wp-admin/includes/file.php');
+                    }
+
+                    $real_file = wp_handle_upload($file, $overrides);
+
+                    if (!empty($real_file['file'])) {
+                        $out['status'] = 'ok';
+                        $out['url'] = $project->getProjectImages($img_type);
+                        unset($out['msg']);
+                    }
+                }
+            }
+        }
+    }
+
+    echo json_encode($out);
+    wp_die();
+}
+
+function tkgp_delete_project_images()
+{
+    $out = array('status' => 'error', 'msg' => 'Access denied.');
+    $nonce_action = 'tkgp_upload_images_' . $_POST['post_id'] . '_' . get_current_user_id();
+
+    if (!empty($_POST['image']) && wp_verify_nonce($_POST['tkgp_images_nonce'], $nonce_action)) {
+
+        $project = new TK_GProject($_POST['post_id']);
+
+        if ($project->isValid()) {
+
+
+            $file = '';
+            $img_type = '';
+            switch ($_POST['image']) {
+                case 'tkgp_logo':
+                    $img_type = 'logo';
+                    $file = $project->getLogoPath();
+                    break;
+                case 'tkgp_avatar':
+                    $img_type = 'avatar';
+                    $file = $project->getAvatarPath();
+                    break;
+                default:
+                    $out['msg'] = 'Mismatch of image type';
+                    break;
+            }
+
+            if(!empty($file)) {
+                wp_delete_file($file);
+                $out['status'] = 'ok';
+                unset($out['msg']);
+
+                $default_img = array('path' => TKGP_STYLES_DIR, 'url' => TKGP_STYLES_URL, 'subdir' => 'default/images',
+                    'name' => 'default-logo.jpg');
+                $out['url'] = $project->getProjectImages($img_type, true, $default_img);
+            }
+        }
+    }
+
+    echo json_encode($out);
+    wp_die();
 }
 
 add_action('wp_ajax_tkgp_get_user', 'tkgp_ajax_get_user');
@@ -255,4 +538,17 @@ add_action('wp_ajax_tkgp_get_vote_status', 'tkgp_ajax_get_vote_status');
 add_action('wp_ajax_tkgp_reset_user_vote', 'tkgp_ajax_reset_user_vote');
 add_action('wp_ajax_tkgp_get_project_editor', 'tkgp_ajax_get_project_editor');
 
+add_action('wp_ajax_tkgp_get_project_news', 'tkgp_ajax_get_project_news');
+add_action('wp_ajax_nopriv_tkgp_get_project_news', 'tkgp_ajax_get_project_news');
+add_action('wp_ajax_tkgp_get_project_target', 'tkgp_get_project_target');
+add_action('wp_ajax_nopriv_tkgp_get_project_target', 'tkgp_get_project_target');
+add_action('wp_ajax_tkgp_get_projects', 'tkgp_get_projects');
+add_action('wp_ajax_nopriv_tkgp_get_projects', 'tkgp_get_projects');
+add_action('wp_ajax_tkgp_get_project_tasks', 'tkgp_get_tasks');
+add_action('wp_ajax_nopriv_tkgp_get_project_tasks', 'tkgp_get_tasks');
+add_action('wp_ajax_tkgp_task_save', 'tkgp_task_save');
+add_action('wp_ajax_tkgp_get_task_data', 'tkgp_get_task_data');
+add_action('wp_ajax_tkgp_task_delete', 'tkgp_task_delete');
+add_action('wp_ajax_tkgp_upload_image', 'tkgp_upload_project_images');
+add_action('wp_ajax_tkgp_delete_image', 'tkgp_delete_project_images');
 ?>

@@ -3,139 +3,280 @@
 /**
  * Class TK_GPage
  */
-class TK_GPage {
+class TK_GPage
+{
 
-	/**
-	 * WordPress Database Access Abstraction Object
-	 * @var object
-	 */
-	protected $wpdb;
+    /**
+     * WordPress Database Access Abstraction Object
+     * @var object
+     */
+    protected $wpdb;
 
-	/**
-	 * Current project index
-	 * @var integer
-	 */
-	protected $cur_project = 0;
+    /**
+     * Current project index
+     * @var integer
+     */
+    protected $cur_project = null;
 
-	/**
-	 * Current page index
-	 * @var integer
-	 */
-	protected $cur_page = 0;
+    /**
+     * Current project index
+     * @var int
+     */
+    protected $cur_project_idx = 0;
 
-	/**
-	 * Max count projects on page
-	 * @var integer
-	 */
-	protected $max_projects = 0;
+    /**
+     * Current page index
+     * @var integer
+     */
+    protected $cur_page = 0;
 
-	/**
-	 * Max count links on page
-	 * @var integer
-	 */
-	protected $max_links = 0;
+    /**
+     * Max count projects on page
+     * @var integer
+     */
+    protected $max_projects = 0;
 
-	/**
-	 * Last offset. This is needed for create next pages.
-	 * @var integer
-	 */
-	protected $last_offset = 0;
+    /**
+     * Max count links on page
+     * @var integer
+     */
+    protected $max_links = 0;
 
-	/**
-	 * A numerically indexed array of project row objects
-	 * @var array
-	 */
-	protected $projects;
+    /**
+     * Last offset. This is needed for create next pages.
+     * @var integer
+     */
+    protected $last_offset = 0;
 
-	public function __construct() {
-		global $wpdb;
+    /**
+     * Default SQL
+     * @var string
+     */
+    private $sql_src = '';
 
-		$this->wpdb = $wpdb;
-		$this->wpdb->enable_nulls = true;
-		$this->max_projects = 15;
-		$this->max_links = 10;
-	}
+    /**
+     * A numerically indexed array of project row objects
+     * @var array
+     */
+    protected $projects;
 
-	/**
-	 * Creates a list of projects for the page
-	 * @param $page_num integer Page Number
-	 * @param $ptype integer Page type
-	 */
-	public function createPage($page_num = 1, $ptype = 3) {
-		unset($this->projects);
-		$offset = $this->max_projects - $page_num * $this->max_projects;
-		$slug = TK_GProject::slug;
-		$user_id = get_current_user_id();
-		$prefix = $this->wpdb->prefix;
+    public function __construct()
+    {
+        global $wpdb;
 
-		$sql = "SELECT p.`id`/*,
-					p.`post_author`,
-					p.`post_date`,
-					p.`post_title`,
-					p.`guid`,
-					pm1.meta_value as ptype,
-					pm2.meta_value as ptarget*/
-			FROM `{$prefix}posts` p,
-				 `{$prefix}postmeta` pm1,
-				 `{$prefix}postmeta` pm2
-			WHERE pm1.post_id = p.id
-				AND pm2.post_id = p.id
-				AND p.`post_type` = '{$slug}'
-				AND pm1.meta_key = 'ptype'
-				AND pm1.meta_value = %d
-				AND pm2.meta_key = 'ptarget'
-			ORDER BY p.`post_date` DESC
-			LIMIT %d OFFSET %d";
+        $this->wpdb = $wpdb;
+        $this->wpdb->enable_nulls = true;
+        $this->max_projects = 15;
+        $this->max_links = 10;
 
-		while (count($this->projects) < $this->max_projects) {
-			$res = $this->wpdb->get_results($this->wpdb->prepare($sql, $ptype, $this->max_projects, $offset), OBJECT);
+        $this->sql_src = array(
+            'fields' => array('p.`id`'),
+            'tables' => array('posts p', 'postmeta pm1'),
+            'tables_links' => array('pm1.`post_id` = p.`id`'),
+            'where' => array("AND p.`post_type` =  '" . TK_GProject::slug . "'",
+                "AND pm1.meta_key = 'ptype'",
+                "AND pm1.meta_value = %d",
+                "AND not exists(SELECT 1 FROM `{$this->wpdb->prefix}tkgp_tasks_links`
+					WHERE `child_type` = 0
+					AND `child_id` = p.`id`)"
+            ),
+            'order_by' => array('p.`post_date` DESC'),
+            'limit' => '%d',
+            'offset' => '%d'
+        );
+    }
 
-			if (empty($res)) {
-				$this->last_offset;
-				break;
-			}
+    /**
+     * Creates a list of projects for the page
+     *
+     * @param $page_num integer Page Number
+     * @param $project_type integer Page type
+     */
+    public function createPage($page_num = 1, $project_type = 3)
+    {
+        unset($this->projects);
+        $this->cur_project_idx = 0;
+        $offset = $page_num * $this->max_projects - $this->max_projects;
+        $user_id = get_current_user_id();
 
-			foreach ($res as $row) {
-				$cur = new TK_GProject($row->id);
-				++$offset;
+        $sql = $this->compileSqlQuery();
 
-				if ($cur->userCanRead($user_id)) {
-					$this->projects[] = $cur;
-				}
-			}
-		}
-	}
+        while (count($this->projects) < $this->max_projects) {
+            $res = $this->wpdb->get_results($this->wpdb->prepare($sql, $project_type,
+                $this->max_projects + 1, $offset), OBJECT);
 
-	/**
-	 * Parses the meta tag archive projects page
-	 * @param $data string
-	 * @return string
-	 */
-	public function parsePostData($data) {
-		$data = str_replace('{tk_project_page}', $this->getPageHtml(), $data);
+            if (empty($res)) {
+                $this->last_offset;
+                break;
+            }
 
-		return $data;
-	}
+            foreach ($res as $row) {
+                $cur = new TK_GProject($row->id);
+                ++$offset;
 
-	/**
-	 * Returns html code project page
-	 * @return string
-	 */
-	public function getPageHtml() {
-		$html = '';
-		$l18n = _x('Traget:', 'Project Page', 'tkgp');
-		
-		foreach ($this->projects as $project) {
-			$target = wpautop($project->target);
-			$html .= "<div style='display: block; width:98%; border: 1px solid rgba(204,204,204,0.5); margin: 0 auto 5px auto; padding: 5px; border-radius: 5px;'>
-			<h3><a href='{$project->permalink}'>{$project->title}</a></h3>
-			<div><h5>{$l18n}</h5></div>
-			<div>{$target}</div>
-			</div>";
-		}
+                if ($cur->userCanRead($user_id)) {
+                    $this->projects[] = $cur->project_id;
+                }
+            }
+        }
+    }
 
-		return $html;
-	}
+    /**
+     * @return bool
+     */
+    public function hasMore()
+    {
+        return (count($this->projects) > $this->max_projects);
+    }
 
-};
+    /**
+     * Allows you to specify query and field parameters
+     */
+    public function query($args)
+    {
+        if (is_array($args)) {
+            foreach ($args as $key => $val) {
+                if (is_array($val)) {
+                    $this->parseQuery($key, $val);
+                }
+            }
+        }
+    }
+
+    private function parseQuery($type, $args)
+    {
+        if ($type === 'sort_by') {
+            foreach ($args as $val) {
+                switch ($val) {
+                    case 'priority':
+                        unset($this->sql_src['order_by']);
+                        $this->sql_src['tables'][] = "tkgp_projects pr";
+                        $this->sql_src['tables_links'][] = "pr.`post_id` = p.`id`";
+                        $this->sql_src['order_by'] = array("(100 - pr.`priority`) DESC", "p.`post_date` DESC");
+                        break;
+
+                    case 'popularity':
+                        unset($this->sql_src['order_by']);
+                        $this->sql_src['order_by'][] = "get_project_popularity(p.`id`,0) DESC";
+                        break;
+
+                    case 'date':
+                        unset($this->sql_src['order_by']);
+                        $this->sql_src['order_by'][] = "p.`post_date` DESC";
+                        break;
+
+                    case 'title':
+                        unset($this->sql_src['order_by']);
+                        $lang = function_exists('qtranxf_getLanguage') ? qtranxf_getLanguage() : '';
+                        $this->sql_src['order_by'][] = !empty($lang) ? "get_wp_localize(p.`post_title`,'{$lang}') ASC"
+                            : 'p.`post_title` ASC';
+                        break;
+
+                    default:
+                        continue;
+                        break;
+                }
+            }
+        } else if ($type === 'order_by' && !empty($this->sql_src['order_by'])) {
+            foreach ($args as $key => $val) {
+                if (!empty($this->sql_src['order_by'][$key])) {
+                    $this->sql_src['order_by'][$key] = preg_replace('/(ASC)|(DESC)/i',
+                        $val, $this->sql_src['order_by'][$key]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Compiles the query based on the milestones of the specified parameters and returns its code
+     * @return string
+     */
+    protected function compileSqlQuery()
+    {
+        $sql = 'SELECT';
+
+        foreach ($this->sql_src['fields'] as $field) {
+            $sql .= " {$field},";
+        }
+
+        $sql = trim($sql, ",");
+        $sql .= "\r\n   FROM";
+
+        foreach ($this->sql_src['tables'] as $table) {
+            $sql .= " {$this->wpdb->prefix}{$table},";
+        }
+
+        $sql = trim($sql, ",");
+        $sql .= " \r\n   WHERE";
+
+        foreach ($this->sql_src['tables_links'] as $link) {
+            $sql .= substr($sql, -5) === 'WHERE' ? " {$link}" : "\r\n       AND {$link}";
+        }
+
+        foreach ($this->sql_src['where'] as $where) {
+            $sql .= substr($sql, -5) === 'WHERE' ? " {$where}" : "\r\n      {$where}";
+        }
+
+        if (!empty($this->sql_src['order_by'])) {
+            $sql .= "\r\nORDER BY";
+            foreach ($this->sql_src['order_by'] as $order) {
+                $sql .= " {$order},";
+            }
+
+            $sql = trim($sql, ",");
+        }
+
+        if (!empty($this->sql_src['limit'])) {
+            $sql .= "\r\nLIMIT {$this->sql_src['limit']}";
+            $sql .= !empty($this->sql_src['offset']) ? " OFFSET {$this->sql_src['offset']}" : '';
+        }
+
+        $sql .= ';';
+
+        return $sql;
+    }
+
+    /**
+     * Returns TRUE when next Project is exists else false
+     * @return bool
+     */
+    public function nextProject()
+    {
+        $max_projects = count($this->projects);
+        $max_projects = $max_projects <= $this->max_projects ? $max_projects + 1 : $max_projects;
+        if (++$this->cur_project_idx < $max_projects) {
+            $project = new TK_GProject($this->projects[$this->cur_project_idx - 1]);
+            if ($project->isValid()) {
+                $this->cur_project = $project;
+                return true;
+            }
+        }
+
+        $this->cur_project_idx = 0;
+        return false;
+    }
+
+    /**
+     * Returns TK_Gproject object when project exists or NULL
+     * @return object | null
+     */
+    public function project()
+    {
+        return is_object($this->cur_project) ? $this->cur_project : null;
+    }
+
+    public static function getTotalProjectCount()
+    {
+        global $wpdb;
+        $slug = TK_GProject::slug;
+
+        $sql = "SELECT COUNT(*) FROM `{$wpdb->prefix}posts` 
+WHERE `post_type` = '{$slug}' AND `post_status` = 'publish'";
+        $res = $wpdb->get_var($sql);
+
+        return intval($res);
+    }
+}
+
+;
 ?>

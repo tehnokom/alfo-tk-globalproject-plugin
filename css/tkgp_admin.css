@@ -78,11 +78,11 @@
 }
 
 #tkgp_modal_footer, #tkgp_modal_header {
-	height: 12%;
+    height: 12%;
 }
 
 #tkgp_add_selected {
-	float: right;
+    float: right;
 }
 
 #tkgp_modal_user th {
@@ -92,4 +92,72 @@
 
 #tkgp_modal_user th:last-child {
     width: 35px;
+}
+
+.tkgp_tasks {
+    margin-top: 5px;
+    min-height: 10px;
+}
+
+.tkgp_tasks h3, .tkgp_tasks h4 {
+    margin: 2px 0 5px 0;
+}
+
+.tkgp_tasks > li[data-tkgp-task-type="2"] {
+    background: #fff1d0;
+}
+
+.tkgp_tasks > li[data-tkgp-task-type="3"] {
+    background: #ceffc2;
+}
+
+.tkgp_tasks > li {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.tkgp_tasks li > div {
+    padding-left: 10px;
+}
+
+.tkgp_tasks_tool {
+    border: none !important;
+}
+
+.tkgp_tasks_tool > div {
+    text-align: right;
+}
+
+.tkgp_circle_button {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid #0009;
+    padding: 0 !important;
+    text-align: center;
+    box-shadow: 0 0 5px #0009;
+    background: #fff;
+}
+
+.ui-button-text {
+    margin: 0 !important;
+}
+
+.tkgp_modal_wall {
+    position: fixed !important;
+    z-index: 100000 !important;
+}
+
+.tkgp_task_mlang {
+    width: 90%;
+}
+
+.tkgp_logo_avatar th, .tkgp_logo_avatar td {
+    vertical-align: middle !important;
+}
+
+.tkgp_logo_avatar tr > td:nth-child(3) {
+    text-align: center !important;
 }
